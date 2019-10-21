@@ -2,22 +2,19 @@
 
 
 class Monomer:
-    unique_id = 0
-    all_Monomers = []
-
     # CONSTRUCTOR
 
-    def __init__(self, binding_sites):  # binding_sites = [BindingSite, BindingSite, ...]
+    def __init__(self, problem_obj, binding_sites):  # binding_sites = [BindingSite, BindingSite, ...]
         # increment unique_id
-        Monomer.unique_id = Monomer.unique_id + 1
+        problem_obj.monomer_count = problem_obj.monomer_count + 1
 
         # parent all sites
         for BindingSite in binding_sites:
             BindingSite.ParentMonomer = self
 
         # constructor
-        self.id = Monomer.unique_id
+        self.id = problem_obj.monomer_count
         self.BindingSites = binding_sites
 
-        # append new Monomer to all_Monomers
-        Monomer.all_Monomers.append(self)
+        # add monomer to lis
+        problem_obj.all_monomers.append(self)
