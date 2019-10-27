@@ -1,8 +1,10 @@
 from src.parser.Parser import parse_input_file
+from src.encoder.SATSolver import solve
+from src.encoder.SATProblem import SATProblem
 
 if __name__ == '__main__':
     # parse the input to encode it into BindingSite/Monomer classes
-    tbn_problem = parse_input_file("input/basic.txt")
+    tbn_problem = parse_input_file("../input/basic.txt")
 
     # encode problem to SAT solver compatible problem
     pass
