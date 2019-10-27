@@ -1,28 +1,34 @@
 # Parser library
 from BindingSite import BindingSite
 from Monomer import Monomer
-from Problem import Problem
+from TBNProblem import TBNProblem
+from SiteList import SiteList
 
 
-def parse_monomer(problem_obj, str_line):
+def parse_monomer(tbn_problem, str_line):
     all_sites = []
     tokens = str_line.replace("\n", "").split(' ')
 
     for token in tokens:
-        all_sites.append(BindingSite(problem_obj, token))
+        site = BindingSite(tbn_problem, token)
+        all_sites.append(site)
 
-    return Monomer(problem_obj, all_sites)
+        # Create a new SiteMap for a specific type
+        if site.name not in tbn_problem.site_name_to_sitelist_map:
+            tbn_problem.site_name_to_sitelist_map[site.name] = SiteList(site.name)
+
+        tbn_problem.site_name_to_sitelist_map[site.name].add(site)
+
+    return Monomer(tbn_problem, all_sites)
 
 
 def parse_input_file(input_file):
-    new_problem = Problem()
+    tbn_problem = TBNProblem()
     open_file = open(input_file, 'rt')
+    next_line = open_file.readline()
+    while next_line:
+        parse_monomer(tbn_problem, next_line)
+        next_line = open_file.readline()
 
-    while True:
-        try:
-            next_line = open_file.next()
-            parse_monomer(new_problem, next_line)
-        except StopIteration:
-            break
-
-    return new_problem
+    open_file.close()
+    return tbn_problem
