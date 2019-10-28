@@ -5,6 +5,7 @@ from src.common.TBNProblem import TBNProblem
 from src.common.SiteList import SiteList
 
 
+
 def parse_monomer(tbn_problem, str_line):
     all_sites = []
     tokens = str_line.replace("\n", "").split(' ')
