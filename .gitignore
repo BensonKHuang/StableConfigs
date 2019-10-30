@@ -1,4 +1,7 @@
 venv
 .idea
 __pycache__
+src/common/__pycache__
 src/encoder/__pycache__
+src/decode/__pycache__
+src/parser/__pycache__
