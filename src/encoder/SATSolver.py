@@ -4,6 +4,11 @@ from src.encoder.SATProblem import SATProblem
 
 def solve(sat_problem: SATProblem):
     solver = Glucose4()
+
+    # solver = Maplesat()
+    # solver = Lingeling()
+    # solver = Cadical()
+
     for clause in sat_problem.clauses:
         solver.add_clause(clause)
 

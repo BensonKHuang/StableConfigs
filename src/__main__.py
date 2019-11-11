@@ -9,7 +9,7 @@ import src.encoder.Encoder as Encoder
 
 if __name__ == '__main__':
     # parse the input to encode it into BindingSite/Monomer classes
-    tbn_problem = parse_input_file("../input/basic.txt")
+    tbn_problem = parse_input_file("../input/exponential_tree.txt")
 
     # encode problem to SAT solver compatible problem
     sat_problem = SATProblem()
@@ -17,10 +17,11 @@ if __name__ == '__main__':
 
     while sat_problem.success:
         Encoder.increment_min_representatives(tbn_problem, sat_problem)
+        print("[ k =", sat_problem.min_reps, "]")
         solve(sat_problem)
 
     print(sat_problem.result)
-    a = 1+1
+
     # solve the problem (SAT solver)
     pass
 
