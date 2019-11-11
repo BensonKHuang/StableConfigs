@@ -25,21 +25,21 @@ def encode_each_site_binds_at_most_once(tbn : TBNProblem, sat : SATProblem):
 
 		#ensures each complement(*) site binds at most once to any possible suitable binding site (no *)
 		for complement_site in complement_sites:
-			for pair1 in normal_sites:
-				for pair2 in normal_sites:
-					if pair1.id < pair2.id:
-						pairID1 = sat.get_pair_id(complement_site, pair1)
-						pairID2 = sat.get_pair_id(complement_site, pair2)
+			for site1 in normal_sites:
+				for site2 in normal_sites:
+					if site1.id < site2.id:
+						pairID1 = sat.get_pair_id(complement_site, site1)
+						pairID2 = sat.get_pair_id(complement_site, site2)
 						clause = create_clause(-pairID1, -pairID2)
 						sat.add_clause(clause)
 
 		#ensures each non complement site (no *) binds at most once to any possible suitable binding site (*)				
 		for normal_site in normal_sites:
-			for pair1 in complement_sites:
-				for pair2 in complement_sites:
-					if pair1.id < pair2.id:
-						pairID1 = sat.get_pair_id(normal_site, pair1)
-						pairID2 = sat.get_pair_id(normal_site, pair2)
+			for site1 in complement_sites:
+				for site2 in complement_sites:
+					if site1.id < site2.id:
+						pairID1 = sat.get_pair_id(normal_site, site1)
+						pairID2 = sat.get_pair_id(normal_site, site2)
 						clause = create_clause(-pairID1, -pairID2)
 						sat.add_clause(clause)
 
@@ -102,25 +102,32 @@ def increment_min_representatives(tbn : TBNProblem, sat : SATProblem):
 		rep_id = sat.rep_to_id.get(sat.rep_list[rep_index])
 
 		# Base case for first rep and k = 1
-		if rep_index == 1 and sat.min_reps == 1:
-			sat.add_clause(create_clause(-sum_id, rep_id))
+		if sat.min_reps == 1:
+			if rep_index == 1:
+				sat.add_clause(create_clause(-sum_id, rep_id))
+			else:
+				sum_id_previous_sum = sat.get_sum_id(rep_index - 1, sat.min_reps)
+				sat.add_clause(create_clause(-sum_id, sum_id_previous_sum, rep_id))
 
 		# top left triangle are all false
 		elif rep_index < sat.min_reps:
 			sat.add_clause(create_clause(-sum_id))
 
 		else:
-			# Always Add clause for sum(n, k) -> sum(n - 1, k): ~sum(n, k), sum(n - 1, k)
+			# sum(n, k) -> (sum(n - 1, k - 1) and rep(n)) V sum(n - 1, k)
 			sum_id_previous_sum = sat.get_sum_id(rep_index - 1, sat.min_reps)
-			sat.add_clause(create_clause(-sum_id, sum_id_previous_sum))
+			sum_id_diagonal_sum = sat.get_sum_id(rep_index - 1, sat.min_reps - 1)
 
-			# Add clause for sum(n, k) -> sum(n - 1, k - 1) and rep(n): ~sum(n, k), ~sum(n - 1, k - 1), ~rep(n)
-			if sat.min_reps != 1:
-				sum_id_diagonal_sum = sat.get_sum_id(rep_index - 1, sat.min_reps - 1)
-				sat.add_clause(create_clause(-sum_id, -sum_id_diagonal_sum, -rep_id))
+			# Add two clauses for cnf form:
+
+			# ~sum(n, k) V sum(n - 1, k - 1) V sum(n - 1, k)
+			sat.add_clause(create_clause(-sum_id, sum_id_diagonal_sum, sum_id_previous_sum))
+			# ~sum(n, k) V rep(n) V sum(n - 1, k)
+			sat.add_clause(create_clause(-sum_id, rep_id, sum_id_previous_sum))
 
 	sum_id = sat.get_sum_id(len(sat.rep_list) - 1, sat.min_reps)
 	sat.add_clause(create_clause(sum_id))
+
 
 def create_clause(*args):
 	clause = []

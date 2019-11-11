@@ -20,7 +20,7 @@ if __name__ == '__main__':
         solve(sat_problem)
 
     print(sat_problem.result)
-
+    a = 1+1
     # solve the problem (SAT solver)
     pass
 
