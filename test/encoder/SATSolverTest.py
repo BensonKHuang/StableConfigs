@@ -7,7 +7,8 @@ class SATSolverCase(unittest.TestCase):
     def test_solve_empty_clause(self):
         sat_problem = SATProblem()
         sat_problem.add_clause([])
-        success = solve(sat_problem)
+        solve(sat_problem)
+        success = sat_problem.success
         result = sat_problem.result
 
         self.assertFalse(success)
@@ -17,7 +18,8 @@ class SATSolverCase(unittest.TestCase):
     def test_solve_single_clause(self):
         sat_problem = SATProblem()
         sat_problem.add_clause([1])
-        success = solve(sat_problem)
+        solve(sat_problem)
+        success = sat_problem.success
         result = sat_problem.result
 
         self.assertTrue(success)
@@ -29,7 +31,8 @@ class SATSolverCase(unittest.TestCase):
         sat_problem.add_clause([1, 2, 3])
         sat_problem.add_clause([-2])
         sat_problem.add_clause([-3])
-        success = solve(sat_problem)
+        solve(sat_problem)
+        success = sat_problem.success
         result = sat_problem.result
 
         self.assertTrue(success)
@@ -41,7 +44,8 @@ class SATSolverCase(unittest.TestCase):
         sat_problem.add_clause([1, 2])
         sat_problem.add_clause([-1])
         sat_problem.add_clause([-2])
-        success = solve(sat_problem)
+        solve(sat_problem)
+        success = sat_problem.success
         result = sat_problem.result
 
         self.assertFalse(success)
@@ -56,7 +60,8 @@ class SATSolverCase(unittest.TestCase):
         sat_problem.add_clause([1, 3, 4])
         sat_problem.add_clause([-1, 2, -3])
         sat_problem.add_clause([2])
-        success = solve(sat_problem)
+        solve(sat_problem)
+        success = sat_problem.success
         result = sat_problem.result
 
         self.assertTrue(success)

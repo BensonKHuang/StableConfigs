@@ -4,7 +4,7 @@ from src.common.Monomer import Monomer
 
 class Bind(object):
 
-	def __init__(self, monomer1 : Monomer, monomer2 : Monomer):
+	def __init__(self, monomer1: Monomer, monomer2: Monomer):
 		self.monomer1 = monomer1
 		self.monomer2 = monomer2
 

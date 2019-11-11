@@ -4,7 +4,7 @@ from src.common.BindingSite import BindingSite
 
 class Pair(object):
 
-	def __init__(self, site1 : BindingSite, site2 : BindingSite):
+	def __init__(self, site1: BindingSite, site2: BindingSite):
 		self.site1 = site1
 		self.site2 = site2
 

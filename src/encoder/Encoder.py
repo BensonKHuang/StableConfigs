@@ -1,50 +1,50 @@
-#class for Encoding/adding clauses to a SATProblem
-from src.common.TBNProblem import TBNProblem 
-from src.encoder.boolean.Pair import Pair
-from src.common.SiteList import SiteList
+# class for Encoding/adding clauses to a SATProblem
+from src.common.TBNProblem import TBNProblem
 from src.encoder.SATProblem import SATProblem
 
-###generateBasicClauses(solution) 	
-#eachSiteBindsAtMostOnce(solution) ------> for every site, can bind to at max 1  	
-#eachLimitingSiteBinds(solution) ------> each limiting site bound 	
-#pairImpliesBind(solution) -----> generates bind objects and pair->bind clauses 	
-#bindRep(solution) -> bind rep relationship clause  incrementK(solution)  	
-#modify clauses for the sum(n,k) table
+# generateBasicClauses(solution)
+# eachSiteBindsAtMostOnce(solution) ------> for every site, can bind to at max 1
+# eachLimitingSiteBinds(solution) ------> each limiting site bound
+# pairImpliesBind(solution) -----> generates bind objects and pair->bind clauses
+# bindRep(solution) -> bind rep relationship clause  incrementK(solution)
+# modify clauses for the sum(n,k) table
 
-def encode_basic_clause(tbn : TBNProblem, sat : SATProblem):
+
+def encode_basic_clause(tbn: TBNProblem, sat: SATProblem):
 	encode_each_site_binds_at_most_once(tbn, sat)
 	encode_limiting_site_binds(tbn, sat)
 	encode_pair_implies_bind(tbn, sat)
 	encode_bind_transitive(tbn, sat)
 	encode_bind_representatives(tbn, sat)
 
-def encode_each_site_binds_at_most_once(tbn : TBNProblem, sat : SATProblem):
+
+def encode_each_site_binds_at_most_once(tbn: TBNProblem, sat: SATProblem):
 	for site_type in tbn.site_name_to_sitelist_map.keys():
 		normal_sites = tbn.site_name_to_sitelist_map[site_type].get_normal_sites()
 		complement_sites = tbn.site_name_to_sitelist_map[site_type].get_complement_sites()
 
-		#ensures each complement(*) site binds at most once to any possible suitable binding site (no *)
+		# ensures each complement(*) site binds at most once to any possible suitable binding site (no *)
 		for complement_site in complement_sites:
 			for site1 in normal_sites:
 				for site2 in normal_sites:
 					if site1.id < site2.id:
-						pairID1 = sat.get_pair_id(complement_site, site1)
-						pairID2 = sat.get_pair_id(complement_site, site2)
-						clause = create_clause(-pairID1, -pairID2)
+						pair_id_1 = sat.get_pair_id(complement_site, site1)
+						pair_id_2 = sat.get_pair_id(complement_site, site2)
+						clause = create_clause(-pair_id_1, -pair_id_2)
 						sat.add_clause(clause)
 
-		#ensures each non complement site (no *) binds at most once to any possible suitable binding site (*)				
+		# ensures each non complement site (no *) binds at most once to any possible suitable binding site (*)
 		for normal_site in normal_sites:
 			for site1 in complement_sites:
 				for site2 in complement_sites:
 					if site1.id < site2.id:
-						pairID1 = sat.get_pair_id(normal_site, site1)
-						pairID2 = sat.get_pair_id(normal_site, site2)
-						clause = create_clause(-pairID1, -pairID2)
+						pair_id_1 = sat.get_pair_id(normal_site, site1)
+						pair_id_2 = sat.get_pair_id(normal_site, site2)
+						clause = create_clause(-pair_id_1, -pair_id_2)
 						sat.add_clause(clause)
 
 
-def encode_limiting_site_binds(tbn : TBNProblem, sat : SATProblem):
+def encode_limiting_site_binds(tbn: TBNProblem, sat: SATProblem):
 	for site_type in tbn.site_name_to_sitelist_map.keys():
 		limiting_sites, non_limiting_sites = tbn.site_name_to_sitelist_map[site_type].get_limiting_site_and_non_limiting_site()
 
@@ -57,7 +57,7 @@ def encode_limiting_site_binds(tbn : TBNProblem, sat : SATProblem):
 			sat.add_clause(clause)
 
 
-def encode_pair_implies_bind(tbn : TBNProblem, sat : SATProblem):
+def encode_pair_implies_bind(tbn: TBNProblem, sat: SATProblem):
 	for pair in sat.pair_to_id.keys():
 		pair_id = sat.pair_to_id.get(pair)
 		bind_id = sat.get_bind_id(pair.site1.ParentMonomer, pair.site2.ParentMonomer)
@@ -66,7 +66,7 @@ def encode_pair_implies_bind(tbn : TBNProblem, sat : SATProblem):
 		sat.add_clause(clause)
 
 
-def encode_bind_transitive(tbn : TBNProblem, sat : SATProblem):
+def encode_bind_transitive(tbn: TBNProblem, sat: SATProblem):
 	original_binds = dict(sat.bind_to_id).items()
 
 	for bind1, bind1_id in original_binds:
@@ -80,7 +80,7 @@ def encode_bind_transitive(tbn : TBNProblem, sat : SATProblem):
 					sat.add_clause(clause)
 
 
-def encode_bind_representatives(tbn : TBNProblem, sat : SATProblem):
+def encode_bind_representatives(tbn: TBNProblem, sat: SATProblem):
 	# Generate all representatives
 	for monomer in tbn.all_monomers:
 		sat.get_rep_id(monomer)
@@ -92,7 +92,7 @@ def encode_bind_representatives(tbn : TBNProblem, sat : SATProblem):
 		sat.add_clause(clause)
 
 
-def increment_min_representatives(tbn : TBNProblem, sat : SATProblem):
+def increment_min_representatives(tbn: TBNProblem, sat: SATProblem):
 
 	sat.increment_min_reps()
 
