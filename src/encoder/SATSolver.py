@@ -1,7 +1,8 @@
 from pysat.solvers import Glucose4
+from src.encoder.SATProblem import SATProblem
 
 
-def solve(sat_problem):
+def solve(sat_problem: SATProblem):
     solver = Glucose4()
     for clause in sat_problem.clauses:
         solver.add_clause(clause)
@@ -9,5 +10,5 @@ def solve(sat_problem):
     success = solver.solve()
     if success:
         sat_problem.result = solver.get_model()
-    return success
-    return False
+
+    sat_problem.success = success

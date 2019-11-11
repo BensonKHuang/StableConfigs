@@ -18,3 +18,6 @@ class Monomer:
 
         # add monomer to lis
         tbn_problem.all_monomers.append(self)
+
+    def get_max(self, other):
+        return self if self.id > other.id else other

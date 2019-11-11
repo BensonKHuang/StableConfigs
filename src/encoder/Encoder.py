@@ -16,7 +16,7 @@ def encode_basic_clause(tbn : TBNProblem, sat : SATProblem):
 	encode_limiting_site_binds(tbn, sat)
 	encode_pair_implies_bind(tbn, sat)
 	encode_bind_transitive(tbn, sat)
-
+	encode_bind_representatives(tbn, sat)
 
 def encode_each_site_binds_at_most_once(tbn : TBNProblem, sat : SATProblem):
 	for site_type in tbn.site_name_to_sitelist_map.keys():
@@ -81,12 +81,46 @@ def encode_bind_transitive(tbn : TBNProblem, sat : SATProblem):
 
 
 def encode_bind_representatives(tbn : TBNProblem, sat : SATProblem):
-	return True
+	# Generate all representatives
+	for monomer in tbn.all_monomers:
+		sat.get_rep_id(monomer)
+
+	for bind, bind_id in sat.bind_to_id.items():
+		max_monomer = bind.monomer1.get_max(bind.monomer2)
+		rep_id = sat.get_rep_id(max_monomer)
+		clause = create_clause(-bind_id, -rep_id)
+		sat.add_clause(clause)
 
 
-def add_k_clause(tbn : TBNProblem, sa : SATProblem):
-	return True
+def increment_min_representatives(tbn : TBNProblem, sat : SATProblem):
 
+	sat.increment_min_reps()
+
+	for rep_index in range(1, len(sat.rep_list)):
+
+		sum_id = sat.get_sum_id(rep_index, sat.min_reps)
+		rep_id = sat.rep_to_id.get(sat.rep_list[rep_index])
+
+		# Base case for first rep and k = 1
+		if rep_index == 1 and sat.min_reps == 1:
+			sat.add_clause(create_clause(-sum_id, rep_id))
+
+		# top left triangle are all false
+		elif rep_index < sat.min_reps:
+			sat.add_clause(create_clause(-sum_id))
+
+		else:
+			# Always Add clause for sum(n, k) -> sum(n - 1, k): ~sum(n, k), sum(n - 1, k)
+			sum_id_previous_sum = sat.get_sum_id(rep_index - 1, sat.min_reps)
+			sat.add_clause(create_clause(-sum_id, sum_id_previous_sum))
+
+			# Add clause for sum(n, k) -> sum(n - 1, k - 1) and rep(n): ~sum(n, k), ~sum(n - 1, k - 1), ~rep(n)
+			if sat.min_reps != 1:
+				sum_id_diagonal_sum = sat.get_sum_id(rep_index - 1, sat.min_reps - 1)
+				sat.add_clause(create_clause(-sum_id, -sum_id_diagonal_sum, -rep_id))
+
+	sum_id = sat.get_sum_id(len(sat.rep_list) - 1, sat.min_reps)
+	sat.add_clause(create_clause(sum_id))
 
 def create_clause(*args):
 	clause = []
