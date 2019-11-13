@@ -56,6 +56,10 @@ class SATProblem:
 			self.id_to_pair[new_id] = pair_obj
 			return new_id
 
+	def does_bind_exist(self, monomer1: Monomer, monomer2: Monomer):
+		bind_obj = Bind(monomer1, monomer2)
+		return bind_obj in self.bind_to_id.keys()
+
 	def get_bind_id(self, monomer1: Monomer, monomer2: Monomer):
 		bind_obj = Bind(monomer1, monomer2)
 		if bind_obj in self.bind_to_id.keys():

@@ -1,13 +1,7 @@
 # class for Encoding/adding clauses to a SATProblem
 from src.common.TBNProblem import TBNProblem
 from src.encoder.SATProblem import SATProblem
-
-# generateBasicClauses(solution)
-# eachSiteBindsAtMostOnce(solution) ------> for every site, can bind to at max 1
-# eachLimitingSiteBinds(solution) ------> each limiting site bound
-# pairImpliesBind(solution) -----> generates bind objects and pair->bind clauses
-# bindRep(solution) -> bind rep relationship clause  incrementK(solution)
-# modify clauses for the sum(n,k) table
+import queue
 
 
 def encode_basic_clause(tbn: TBNProblem, sat: SATProblem):
@@ -67,17 +61,40 @@ def encode_pair_implies_bind(tbn: TBNProblem, sat: SATProblem):
 
 
 def encode_bind_transitive(tbn: TBNProblem, sat: SATProblem):
-	original_binds = dict(sat.bind_to_id).items()
+	visited_binds = set()
+	available_binds = []
+	for bind in sat.bind_to_id.keys():
+		available_binds.append(bind)
 
-	for bind1, bind1_id in original_binds:
-		for bind2, bind2_id in original_binds:
-			if bind1_id < bind2_id:
-				diff_list = list(bind1.get_symmetric_difference(bind2))
-				if len(diff_list) == 2:
-					new_bind_id = sat.get_bind_id(diff_list[0], diff_list[1])
+	while len(available_binds) > 0:
+		available_bind = available_binds.pop(0)
 
-					clause = create_clause(-bind1_id, -bind2_id, new_bind_id)
-					sat.add_clause(clause)
+		for visited_bind in visited_binds:
+
+			diff_list = list(available_bind.get_symmetric_difference(visited_bind))
+			if len(diff_list) == 2:
+
+				available_bind_id = sat.bind_to_id.get(available_bind)
+				visited_bind_id = sat.bind_to_id.get(visited_bind)
+
+				created_new_bind = False
+				if not sat.does_bind_exist(diff_list[0], diff_list[1]):
+					created_new_bind = True
+
+				new_bind_id = sat.get_bind_id(diff_list[0], diff_list[1])
+
+				if available_bind_id < visited_bind_id:
+					clause = create_clause(-available_bind_id, -visited_bind_id, new_bind_id)
+				else:
+					clause = create_clause(-visited_bind_id, -available_bind_id, new_bind_id)
+
+				sat.add_clause(clause)
+
+				# Only add newly created binds to queue
+				if created_new_bind:
+					available_binds.append(sat.id_to_bind.get(new_bind_id))
+
+		visited_binds.add(available_bind)
 
 
 def encode_bind_representatives(tbn: TBNProblem, sat: SATProblem):
