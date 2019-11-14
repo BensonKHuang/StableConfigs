@@ -1,6 +1,5 @@
 import unittest
 import src.encoder.Encoder as Encoder
-from src.encoder.SATSolver import solve
 from src.encoder.SATProblem import SATProblem
 from src.parser.Parser import parse_input_file
 
@@ -15,7 +14,7 @@ class SATSolverCase(unittest.TestCase):
 
 		while sat_problem.success:
 			Encoder.increment_min_representatives(tbn_problem, sat_problem)
-			solve(sat_problem)
+			sat_problem.solve()
 
 		self.assertEquals(sat_problem.min_reps, 5)
 
@@ -27,7 +26,7 @@ class SATSolverCase(unittest.TestCase):
 
 		while sat_problem.success:
 			Encoder.increment_min_representatives(tbn_problem, sat_problem)
-			solve(sat_problem)
+			sat_problem.solve()
 
 		self.assertEquals(sat_problem.min_reps, 7)
 
@@ -39,10 +38,9 @@ class SATSolverCase(unittest.TestCase):
 
 		while sat_problem.success:
 			Encoder.increment_min_representatives(tbn_problem, sat_problem)
-			solve(sat_problem)
+			sat_problem.solve()
 
-		self.assertEquals(sat_problem.min_reps, 53)
-
+		self.assertEquals(sat_problem.min_reps, 50)
 
 	def test_strand_displacement(self):
 		tbn_problem = parse_input_file("../../input/strand_displacement.txt")
@@ -52,9 +50,10 @@ class SATSolverCase(unittest.TestCase):
 
 		while sat_problem.success:
 			Encoder.increment_min_representatives(tbn_problem, sat_problem)
-			solve(sat_problem)
+			sat_problem.solve()
 
 		self.assertEquals(sat_problem.min_reps, 6)
 
+
 if __name__ == '__main__':
-    unittest.main()
+	unittest.main()

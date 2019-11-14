@@ -5,6 +5,7 @@ from src.encoder.boolean.Rep import Rep
 from src.encoder.boolean.Sum import Sum
 from src.common.BindingSite import BindingSite
 from src.common.Monomer import Monomer
+from pysat.solvers import Glucose4
 
 
 class SATProblem:
@@ -90,3 +91,19 @@ class SATProblem:
 			self.sum_to_id[sum_obj] = new_id
 			self.id_to_sum[new_id] = sum_obj
 			return new_id
+
+	def solve(self):
+		solver = Glucose4()
+
+		# solver = Maplesat()
+		# solver = Lingeling()
+		# solver = Cadical()
+
+		for clause in self.clauses:
+			solver.add_clause(clause)
+
+		success = solver.solve()
+		if success:
+			self.result = solver.get_model()
+
+		self.success = success

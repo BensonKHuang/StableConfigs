@@ -1,5 +1,4 @@
 import unittest
-from src.encoder.SATSolver import solve
 from src.encoder.SATProblem import SATProblem
 
 
@@ -7,7 +6,7 @@ class SATSolverCase(unittest.TestCase):
     def test_solve_empty_clause(self):
         sat_problem = SATProblem()
         sat_problem.add_clause([])
-        solve(sat_problem)
+        sat_problem.solve()
         success = sat_problem.success
         result = sat_problem.result
 
@@ -18,7 +17,7 @@ class SATSolverCase(unittest.TestCase):
     def test_solve_single_clause(self):
         sat_problem = SATProblem()
         sat_problem.add_clause([1])
-        solve(sat_problem)
+        sat_problem.solve()
         success = sat_problem.success
         result = sat_problem.result
 
@@ -31,7 +30,7 @@ class SATSolverCase(unittest.TestCase):
         sat_problem.add_clause([1, 2, 3])
         sat_problem.add_clause([-2])
         sat_problem.add_clause([-3])
-        solve(sat_problem)
+        sat_problem.solve()
         success = sat_problem.success
         result = sat_problem.result
 
@@ -44,7 +43,7 @@ class SATSolverCase(unittest.TestCase):
         sat_problem.add_clause([1, 2])
         sat_problem.add_clause([-1])
         sat_problem.add_clause([-2])
-        solve(sat_problem)
+        sat_problem.solve()
         success = sat_problem.success
         result = sat_problem.result
 
@@ -60,7 +59,7 @@ class SATSolverCase(unittest.TestCase):
         sat_problem.add_clause([1, 3, 4])
         sat_problem.add_clause([-1, 2, -3])
         sat_problem.add_clause([2])
-        solve(sat_problem)
+        sat_problem.solve()
         success = sat_problem.success
         result = sat_problem.result
 
