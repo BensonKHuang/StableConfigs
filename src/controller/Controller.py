@@ -1,6 +1,7 @@
 from src.parser.Parser import parse_input_file
 from src.encoder.SATProblem import SATProblem
 import src.encoder.Encoder as Encoder
+import src.decoder.Decoder as Decoder
 import time
 
 
@@ -22,5 +23,12 @@ def run(file_path):
     print(sat_problem.result)
     print(time.time() - t0)
 
-    # decode the SAT solver output into Polymer classes
-    pass
+    polymers = Decoder.decode_boolean_values(tbn_problem, sat_problem)
+    for index, polymer in enumerate(polymers):
+        print("Polymer", index + 1)
+        for monomer in polymer.monomer_list:
+            print("\t" + str(monomer.id))
+        
+    print("ended")
+
+

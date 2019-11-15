@@ -1,7 +1,6 @@
 # class for Encoding/adding clauses to a SATProblem
 from src.common.TBNProblem import TBNProblem
 from src.encoder.SATProblem import SATProblem
-import queue
 
 
 def encode_basic_clause(tbn: TBNProblem, sat: SATProblem):
