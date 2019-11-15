@@ -20,15 +20,13 @@ def run(file_path):
         print("[ k =", sat_problem.min_reps, "]")
         sat_problem.solve()
 
-    print(sat_problem.result)
-    print(time.time() - t0)
-
     polymers = Decoder.decode_boolean_values(tbn_problem, sat_problem)
     for index, polymer in enumerate(polymers):
-        print("Polymer", index + 1)
+        print("Polymer number", index + 1)
         for monomer in polymer.monomer_list:
-            print("\t" + str(monomer.id))
-        
-    print("ended")
+            print("\t" + str(list(map(lambda x: (x.name + "*") if x.IsComplement else x.name, monomer.BindingSites))))
+
+    print("Completed in", time.time() - t0, "seconds.")
+
 
 
