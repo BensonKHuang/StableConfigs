@@ -9,3 +9,5 @@ stableconfigs/controller/__pycache__
 stableconfigs/encoder/__pycache__
 stableconfigs/decoder/__pycache__
 stableconfigs/parser/__pycache__
+
+test/__pycache__

@@ -1,10 +1,12 @@
 import unittest
+import stableconfigs
+
 from stableconfigs.parser.Parser import parse_input_file
 
 
-class ParserTest(unittest.TestCase):
+class Test_Parser(unittest.TestCase):
     def test_basic(self):
-        tbn_problem = parse_input_file("../../input/basic.txt")
+        tbn_problem = parse_input_file("../input/basic.txt")
 
         # basic count check
         self.assertEqual(tbn_problem.monomer_count, 6)
@@ -19,7 +21,7 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(len(site_list_b._complementary_sites), 1)
 
     def test_no_b_complement(self):
-        tbn_problem = parse_input_file("../../input/tiny.txt")
+        tbn_problem = parse_input_file("../input/tiny.txt")
 
         # basic count check
         self.assertEqual(tbn_problem.monomer_count, 2)
@@ -34,7 +36,7 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(len(site_list_b._complementary_sites), 0)
 
     def test_one_site(self):
-        tbn_problem = parse_input_file("../../input/one_site.txt")
+        tbn_problem = parse_input_file("../input/one_site.txt")
 
         # basic count check
         self.assertEqual(tbn_problem.monomer_count, 4)

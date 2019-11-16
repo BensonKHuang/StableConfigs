@@ -2,7 +2,7 @@ import unittest
 from stableconfigs.encoder.SATProblem import SATProblem
 
 
-class SATSolverCase(unittest.TestCase):
+class Test_SATProblem(unittest.TestCase):
     def test_solve_empty_clause(self):
         sat_problem = SATProblem()
         sat_problem.add_clause([])
