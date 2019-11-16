@@ -49,18 +49,23 @@ Install the StableConfigs package (needed for importing StableConfig modules int
     
     $ python3.7 -m src input/basic.txt
 
-    Polymer number 1
-            ['a', 'b*']
-            ['a*', 'b']
-    Polymer number 2
-            ['a']
-            ['a*', 'b']
-    Polymer number 3
-            ['b']
-    Polymer number 4
-            ['b']
+    Found a stable configuration with [ 4 ] polymers:
 
-    Completed in 0.005658149719238281 seconds.
+        Polymer number 1
+                ['a', 'b*']
+                ['a*', 'b']
+
+        Polymer number 2
+                ['a']
+                ['a*', 'b']
+
+        Polymer number 3
+                ['b']
+
+        Polymer number 4
+                ['b']
+
+    Completed in 0.0041961669921875 seconds.
 
 # Citation
 

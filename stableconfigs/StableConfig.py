@@ -18,16 +18,24 @@ def get_stable_config(file_path):
     # solve the problem (SAT solver)
     while sat_problem.success:
         Encoder.increment_min_representatives(tbn_problem, sat_problem)
-        print("[ k =", sat_problem.min_reps, "]")
+        print("[Checking for k =", sat_problem.min_reps, "polymers]")
         sat_problem.solve()
 
+    # Formatting for printing
+    print()
+    num_reps = sat_problem.min_reps - 1
+    if num_reps > 0:
+        print("Found a stable configuration with [", num_reps, "] polymers:\n")
+    
     # Decode the problem into polymers
     polymers = Decoder.decode_boolean_values(tbn_problem, sat_problem)
     for index, polymer in enumerate(polymers):
-        print("Polymer number", index + 1)
+        print("\t" + "Polymer number", index + 1)
         for monomer in polymer.monomer_list:
-            print("\t" + str(list(map(lambda x: (x.name + "*") if x.IsComplement else x.name, monomer.BindingSites))))
-
-    print("Completed in", time.time() - t0, "seconds.")
+            print("\t\t" + str(list(map(lambda x: (x.name + "*") if x.IsComplement else x.name, monomer.BindingSites))))
+        print()
+    
+    # Printing execution time
+    print("\nCompleted in", time.time() - t0, "seconds.")
 
     return polymers
