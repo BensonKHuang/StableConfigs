@@ -1,5 +1,0 @@
-change get_limiting_site
-
-get complemented monomers/sites
-
-sum n+k

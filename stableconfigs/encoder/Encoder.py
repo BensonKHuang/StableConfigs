@@ -1,6 +1,6 @@
 # class for Encoding/adding clauses to a SATProblem
-from src.common.TBNProblem import TBNProblem
-from src.encoder.SATProblem import SATProblem
+from stableconfigs.common.TBNProblem import TBNProblem
+from stableconfigs.encoder.SATProblem import SATProblem
 
 
 # Helper function that runs all basic functions

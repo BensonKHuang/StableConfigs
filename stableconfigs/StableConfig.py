@@ -1,11 +1,11 @@
-from src.parser.Parser import parse_input_file
-from src.encoder.SATProblem import SATProblem
-import src.encoder.Encoder as Encoder
-import src.decoder.Decoder as Decoder
+from stableconfigs.parser.Parser import parse_input_file
+from stableconfigs.encoder.SATProblem import SATProblem
+import stableconfigs.encoder.Encoder as Encoder
+import stableconfigs.decoder.Decoder as Decoder
 import time
 
 
-def run(file_path):
+def get_stable_config(file_path):
     # parse the input to encode it into BindingSite/Monomer classes
     
     t0 = time.time()

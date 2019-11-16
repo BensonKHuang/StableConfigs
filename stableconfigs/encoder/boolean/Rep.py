@@ -1,5 +1,5 @@
 # Bind Monomer class
-from src.common.Monomer import Monomer
+from stableconfigs.common.Monomer import Monomer
 
 
 class Rep(object):

@@ -1,8 +1,8 @@
 # Parser library
-from src.common.BindingSite import BindingSite
-from src.common.Monomer import Monomer
-from src.common.TBNProblem import TBNProblem
-from src.common.SiteList import SiteList
+from stableconfigs.common.BindingSite import BindingSite
+from stableconfigs.common.Monomer import Monomer
+from stableconfigs.common.TBNProblem import TBNProblem
+from stableconfigs.common.SiteList import SiteList
 
 
 def parse_monomer(tbn_problem, str_line):

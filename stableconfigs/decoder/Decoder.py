@@ -1,6 +1,6 @@
-from src.common.TBNProblem import TBNProblem
-from src.common.Polymer import Polymer
-from src.encoder.SATProblem import SATProblem
+from stableconfigs.common.TBNProblem import TBNProblem
+from stableconfigs.common.Polymer import Polymer
+from stableconfigs.encoder.SATProblem import SATProblem
 
 
 def decode_boolean_values(tbn: TBNProblem, sat: SATProblem):

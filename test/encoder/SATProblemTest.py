@@ -1,5 +1,5 @@
 import unittest
-from src.encoder.SATProblem import SATProblem
+from stableconfigs.encoder.SATProblem import SATProblem
 
 
 class SATSolverCase(unittest.TestCase):

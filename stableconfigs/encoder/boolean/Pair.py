@@ -1,5 +1,5 @@
 
-from src.common.BindingSite import BindingSite
+from stableconfigs.common.BindingSite import BindingSite
 
 
 class Pair(object):

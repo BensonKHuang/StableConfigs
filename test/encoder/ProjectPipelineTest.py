@@ -1,7 +1,7 @@
 import unittest
-import src.encoder.Encoder as Encoder
-from src.encoder.SATProblem import SATProblem
-from src.parser.Parser import parse_input_file
+import stableconfigs.encoder.Encoder as Encoder
+from stableconfigs.encoder.SATProblem import SATProblem
+from stableconfigs.parser.Parser import parse_input_file
 
 
 class SATSolverCase(unittest.TestCase):

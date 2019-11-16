@@ -1,10 +1,10 @@
 # SATProblem Class
-from src.encoder.boolean.Pair import Pair
-from src.encoder.boolean.Bind import Bind
-from src.encoder.boolean.Rep import Rep
-from src.encoder.boolean.Sum import Sum
-from src.common.BindingSite import BindingSite
-from src.common.Monomer import Monomer
+from stableconfigs.encoder.boolean.Pair import Pair
+from stableconfigs.encoder.boolean.Bind import Bind
+from stableconfigs.encoder.boolean.Rep import Rep
+from stableconfigs.encoder.boolean.Sum import Sum
+from stableconfigs.common.BindingSite import BindingSite
+from stableconfigs.common.Monomer import Monomer
 from pysat.solvers import Glucose4
 
 

@@ -1,7 +1,11 @@
 venv
 .idea
+.vscode
+.
 __pycache__
-src/common/__pycache__
-src/encoder/__pycache__
-src/decode/__pycache__
-src/parser/__pycache__
+stableconfigs/__pycache__
+stableconfigs/common/__pycache__
+stableconfigs/controller/__pycache__
+stableconfigs/encoder/__pycache__
+stableconfigs/decoder/__pycache__
+stableconfigs/parser/__pycache__

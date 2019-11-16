@@ -5,17 +5,33 @@ Python tool to generate Stable Configurations of Monomers by reducing the proble
 Finding Stable Configurations of Thermodynamic Binding Networks
 
 #### System Requirements
-+ Linux or MacOS environment 
++ POSIX-compliant operating system (Linux or MacOS environment) 
 + python3.6 or higher 
 
 # Installation instructions
 
-*coming soon*
+Install the requirements (needed for Command Line Tool):
 
+    $ pip install -r requirements.txt
+
+Install the StableConfigs package (needed for importing StableConfig modules into project):
+
+    $ python setup.py build
+    $ python setup.py install
+
+*Use a virtual environment (virtualenv) or add "--user" flag if working on personal environment to end of commands*
+
+# Python Usage
+
+    from stableconfigs import StableConfig
+
+    example_path = 'input/basic.txt'
+    polymers = StableConfig.get_stable_configs(example_path)
+
+  
 # Command line tool
     
-    $ python3.7 -m src {path/to/tbn_file.txt}
-
+    $ python -m stableconfigs {path/to/tbn_file.txt}
 
 #### Example input
 

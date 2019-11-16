@@ -1,5 +1,5 @@
 import unittest
-from src.parser.Parser import parse_input_file
+from stableconfigs.parser.Parser import parse_input_file
 
 
 class ParserTest(unittest.TestCase):
