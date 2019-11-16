@@ -1,7 +1,13 @@
 README.md
 setup.py
+stableconfigs/StableConfig.py
+stableconfigs/__init__.py
+stableconfigs/__main__.py
 stableconfigs.egg-info/PKG-INFO
 stableconfigs.egg-info/SOURCES.txt
 stableconfigs.egg-info/dependency_links.txt
 stableconfigs.egg-info/requires.txt
 stableconfigs.egg-info/top_level.txt
+test/test_Parser.py
+test/test_ProjectPipeline.py
+test/test_SATProblem.py

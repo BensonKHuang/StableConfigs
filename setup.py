@@ -10,7 +10,7 @@ setup(
 	author_email='BensonKHuang@gmail.com',
 	
 	# specifiy individual modules
-	py_modules=['stableconfigs'],
+	packages=find_packages(),
 		
 	classifiers=[
 		'Development Status :: 3 - Alpha',
