@@ -36,6 +36,4 @@ def my_post():
 
 
 def run_app():
-    app.run(debug=True)
-
-
+    app.run(debug=False, use_reloader=False, threaded=False)
