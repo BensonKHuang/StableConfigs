@@ -25,6 +25,7 @@ def my_post():
 
         # Return polymer output in expected format
         polymer_output = []
+        polymer_count = len(polymers)
         for index, polymer in enumerate(polymers):
             cur_polymer = []
             for monomer in polymer.monomer_list:
@@ -32,7 +33,7 @@ def my_post():
                 cur_polymer.append(cur_monomer)
             polymer_output.append(cur_polymer)
 
-        return jsonify({"polymers": polymer_output}), 201
+        return jsonify({"polymers": polymer_output}, {"polymers count": polymer_count}), 201
 
 
 def run_app():
