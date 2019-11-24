@@ -73,7 +73,7 @@ Install the StableConfigs package (needed for importing StableConfig modules int
 Benson Huang, Varun Prabhu, Hasan Saleemi, Anthony Vento, Steven Wang, Kyle Zhou
 
 #### Contributors
-Dr. David Soloveichik, Keenan Breit
+Dr. David Soloveichik, Keenan Breik
 
 #### References
 Breik K., et. al, “Computing properties of stable configurations of thermodynamic binding networks,” 
