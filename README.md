@@ -6,18 +6,19 @@ Finding Stable Configurations of Thermodynamic Binding Networks
 
 #### System Requirements
 + POSIX-compliant operating system (Linux or MacOS environment) 
-+ python3.6 or higher 
++ python3.6 or higher
++ pip3 (Python Package Installer for Python 3)
 
 # Installation instructions
 
 Install the requirements (needed for Command Line Tool):
 
-    $ pip install -r requirements.txt
+    $ pip3 install -r requirements.txt
 
-Install the StableConfigs package (needed for importing StableConfig modules into project):
+*Optional:* Install the StableConfigs package (needed for importing StableConfig modules into project):
 
-    $ python setup.py build
-    $ python setup.py install
+    $ python3 setup.py build
+    $ python3 setup.py install
 
 *Use a virtual environment (virtualenv) or add "--user" flag if working on personal environment to end of commands*
 
@@ -31,7 +32,7 @@ Install the StableConfigs package (needed for importing StableConfig modules int
   
 # Command line tool
     
-    $ python -m stableconfigs {path/to/tbn_file.txt}
+    $ python3 -m stableconfigs {path/to/tbn_file.txt}
 
 #### Example input
 
@@ -47,7 +48,7 @@ Install the StableConfigs package (needed for importing StableConfig modules int
 
 #### Example output
     
-    $ python3.7 -m src input/basic.txt
+    $ python3 -m src input/basic.txt
 
     Found a stable configuration with [ 4 ] polymers:
 
