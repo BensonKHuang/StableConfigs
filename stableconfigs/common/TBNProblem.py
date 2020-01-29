@@ -12,3 +12,5 @@ class TBNProblem:
         self.site_name_to_sitelist_map = dict()
 
         self.all_monomers = list()
+
+        self.instr = list()
