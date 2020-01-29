@@ -13,4 +13,4 @@ class TBNProblem:
 
         self.all_monomers = list()
 
-        self.instr = list()
+        self.instructions = list()

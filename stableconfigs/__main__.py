@@ -7,7 +7,8 @@ if __name__ == '__main__':
     API_Debug = False # Set to True for debugging
     if not API_Debug:
         file_path = sys.argv[1]
-        StableConfig.get_stable_config(file_path)
+        instr_path = sys.argv[2] if len(sys.argv) >= 2 else None
+        StableConfig.get_stable_config(file_path, instr_path)
     else:
         server.run_app()
 

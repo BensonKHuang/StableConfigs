@@ -5,11 +5,11 @@ import stableconfigs.decoder.Decoder as Decoder
 import time
 
 
-def get_stable_config(file_path):
+def get_stable_config(file_path, instr_path):
     # parse the input to encode it into BindingSite/Monomer classes
     
     t0 = time.time()
-    tbn_problem = parse_input_file(file_path)
+    tbn_problem = parse_input_file(file_path, instr_path)
 
     # encode problem to SAT solver compatible problem
     sat_problem = SATProblem()

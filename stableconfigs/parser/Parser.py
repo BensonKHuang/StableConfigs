@@ -1,4 +1,5 @@
 # Parser library
+from stableconfigs.common.Instruction import Instruction
 from stableconfigs.common.BindingSite import BindingSite
 from stableconfigs.common.Monomer import Monomer
 from stableconfigs.common.TBNProblem import TBNProblem
@@ -29,6 +30,20 @@ def parse_monomer(tbn_problem, str_line):
         new_Monomer.assign_name(monomer_names)
     return new_Monomer
 
+def parse_instruction(tbn_problem, str_line):
+    i_type = None
+    monomer_names = list()
+    tokens = str_line.replace("\n", "").split(' ')
+
+    for ind in range(len(tokens)):
+        token = tokens[ind]
+        if ind == 1:
+            i_type = token
+        else:
+            monomer_names.append(token)
+
+    return Instruction(tbn_problem, i_type, monomer_names)
+
 
 def parse_input_file(input_file, instr_file):
     tbn_problem = TBNProblem()
@@ -46,7 +61,7 @@ def parse_input_file(input_file, instr_file):
         open_file = open(instr_file, 'rt')
         next_line = open_file.readline()
         while next_line:
-            
+            parse_instruction(tbn_problem, next_line)     
             next_line = open_file.readline()
         open_file.close()
 
