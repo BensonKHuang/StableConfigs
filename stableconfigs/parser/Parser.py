@@ -10,11 +10,13 @@ def parse_monomer(tbn_problem, str_line):
     all_sites = []
     tokens = str_line.replace("\n", "").split(' ')
 
-    monomer_names = None
+    monomer_name = None
     for token in tokens:
+        
+        # Check for monomer name with key character "$"
         if token[0] == "$":
-            assert monomer_names == None, "Monomer given multiple names." # TODO Add error handling.
-            monomer_names = token[1:]
+            assert monomer_name == None, "Monomer given multiple names." # TODO Add error handling.
+            monomer_name = token[1:]
         else:
             site = BindingSite(tbn_problem, token)
             all_sites.append(site)
@@ -26,8 +28,10 @@ def parse_monomer(tbn_problem, str_line):
             tbn_problem.site_name_to_sitelist_map[site.name].add(site)
 
     new_Monomer = Monomer(tbn_problem, all_sites)
-    if monomer_names is not None:
-        new_Monomer.assign_name(monomer_names)
+    
+    # If monomer name exists, add it to monomer name map in the tbn problem
+    if monomer_name is not None:
+        tbn_problem.assign_name(monomer_name, new_Monomer)
     return new_Monomer
 
 def parse_instruction(tbn_problem, str_line):
@@ -37,7 +41,7 @@ def parse_instruction(tbn_problem, str_line):
 
     for ind in range(len(tokens)):
         token = tokens[ind]
-        if ind == 1:
+        if ind == 0:
             i_type = token
         else:
             monomer_names.append(token)

@@ -32,8 +32,12 @@ def get_stable_config(file_path, instr_path):
     for index, polymer in enumerate(polymers):
         print("\t" + "Polymer number", index + 1)
         for monomer in polymer.monomer_list:
-            print("\t\t" + str(list(map(lambda x: (x.name + "*") if x.IsComplement else x.name, monomer.BindingSites))))
+            print("\t\t" + str(monomer))
         print()
+
+    print("Properties:")
+    for instr in tbn_problem.instructions:
+        print("\t" + str(instr))
     
     # Printing execution time
     print("\nCompleted in", time.time() - t0, "seconds.")
