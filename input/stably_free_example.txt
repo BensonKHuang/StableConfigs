@@ -1,0 +1,12 @@
+a b c d e
+a* b* c* d*
+b* c* d* e*
+d e f 
+a b
+b c
+c d
+e f $t1
+e* f*
+g* h*
+g
+h

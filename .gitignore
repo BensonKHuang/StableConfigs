@@ -2,6 +2,7 @@ venv
 .idea
 .vscode
 .
+*.pyc
 __pycache__
 stableconfigs/__pycache__
 stableconfigs/common/__pycache__
