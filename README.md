@@ -28,15 +28,15 @@ StableConfigs contains a Dockerfile to support running the server on Docker. In 
 
 Build a docker image:
 
-    Docker build .
+    $ Docker build .
     
 Find your image id:
 
-    Docker images
+    $ Docker images
     
 Run stable configs on docker:
 
-    Docker run {image id}
+    $ Docker run {image id}
 
 # Python Usage
 
