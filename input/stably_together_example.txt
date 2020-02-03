@@ -1,1 +1,4 @@
-TOGETHER t1 t2
+a b
+a* b* $t1
+a $t2
+b

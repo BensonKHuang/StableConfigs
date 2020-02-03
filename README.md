@@ -22,6 +22,22 @@ Install the requirements (needed for Command Line Tool):
 
 *Use a virtual environment (virtualenv) or add "--user" flag if working on personal environment to end of commands*
 
+## Docker
+
+StableConfigs contains a Dockerfile to support running the server on Docker. In order to use docker you need to have Docker locally on your machine.
+
+Build a docker image:
+
+    $ Docker build .
+    
+Find your image id:
+
+    $ Docker images
+    
+Run stable configs on docker:
+
+    $ Docker run {image id}
+
 # Python Usage
 
     from stableconfigs import StableConfig
