@@ -6,16 +6,15 @@ from stableconfigs.common.TBNProblem import TBNProblem
 from stableconfigs.common.SiteList import SiteList
 
 
-def parse_monomer(tbn_problem, str_line):
+def parse_monomer(tbn_problem: TBNProblem, str_line: str):
     all_sites = []
-    tokens = str_line.replace("\n", "").split(' ')
-
+    tokens = str_line.strip().split(' ')
     # Check for duplicate names
     monomer_name = None
     for token in tokens:
         if token[0] == ":":
-            assert (monomer_names is None), "Monomer given multiple names."  # TODO Add error handling.
-            monomer_names = token[1:].strip()
+            assert (monomer_name is None), "Monomer given multiple names."  # TODO Add error handling.
+            monomer_name = token[1:].strip()
         else:
             site = BindingSite(tbn_problem, token)
             all_sites.append(site)
