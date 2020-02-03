@@ -1,1 +1,1 @@
-TOGETHER t1 t2
+TOGETHER t2 t3

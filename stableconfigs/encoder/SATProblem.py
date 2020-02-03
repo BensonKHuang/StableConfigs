@@ -98,6 +98,13 @@ class SATProblem:
 			self.id_to_sum[new_id] = sum_obj
 			return new_id
 
+	# Reset clauses for a rerun without re-encoding all clauses
+	def reset_clauses(self):
+		self.increment_min_representatives_clauses = list()
+		self.success = True
+		self.min_reps = 0
+		self.result = list()
+
 
 	def add_clauses_to_solver(self, solver):
 		for clause in self.each_site_binds_at_most_once_clauses:

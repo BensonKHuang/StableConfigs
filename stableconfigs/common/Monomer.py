@@ -22,9 +22,6 @@ class Monomer:
     def get_max(self, other):
         return self if self.id > other.id else other
 
-    @staticmethod
-    def monomer_from_name(monomer_name):
-        return Monomer.monomer_id_map[monomer_name]
 
     def __str__(self):
         monomer_name = ("\t" + self.name) if self.name is not None else ""

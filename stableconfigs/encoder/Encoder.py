@@ -1,7 +1,7 @@
 # class for Encoding/adding clauses to a SATProblem
 from stableconfigs.common.TBNProblem import TBNProblem
 from stableconfigs.encoder.SATProblem import SATProblem
-
+from stableconfigs.common.Instruction import Instruction
 
 # Helper function that runs all basic functions
 def encode_basic_clause(tbn: TBNProblem, sat: SATProblem):
@@ -174,6 +174,35 @@ def increment_min_representatives(tbn: TBNProblem, sat: SATProblem):
 	sum_id = sat.get_sum_id(len(sat.rep_list) - 1, sat.min_reps)
 	sat.increment_min_representatives_clauses.append(create_clause(sum_id))
 
+# Encodes additional instructions into clauses
+def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
+	for instruction in tbn.instructions:
+		
+		if instruction.i_type == Instruction.TOGETHER_INSTR:
+			# TODO: Throw hands if duplicate name in arguments 
+			
+			# Compare every combination of monomers
+			visited_monomers = set()
+			for monomer_name in instruction.monomer_names:
+				mono = tbn.monomer_name_map.get(monomer_name)
+
+				for other_mon in visited_monomers:
+					if sat.does_bind_exist(mono, other_mon):
+						bind_id = sat.get_bind_id(mono, other_mon)
+						clause = create_clause(bind_id)
+						sat.instruction_clauses.append(clause)
+					else:
+						# TODO: Throw hands
+						pass
+
+				visited_monomers.add(mono)
+				# Check if bind is valid
+
+		elif instruction.i_type == Instruction.FREE_INSTR:
+			print("Free Instruction")
+		
+		else:
+			print()
 
 def create_clause(*args):
 	clause = []

@@ -9,7 +9,7 @@ from stableconfigs.common.SiteList import SiteList
 def parse_monomer(tbn_problem: TBNProblem, str_line: str):
     all_sites = []
     tokens = str_line.strip().split(' ')
-    # Check for duplicate names
+
     monomer_name = None
     for token in tokens:
         if token[0] == ":":
@@ -28,6 +28,9 @@ def parse_monomer(tbn_problem: TBNProblem, str_line: str):
 
     # If monomer name exists, add it to monomer name map in the tbn problem
     if monomer_name is not None:
+        # TODO: Check for duplicate names
+        assert(monomer_name not in tbn_problem.monomer_name_map)
+
         tbn_problem.assign_name(monomer_name, new_monomer)
     return new_monomer
 
