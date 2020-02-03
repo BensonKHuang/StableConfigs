@@ -13,7 +13,7 @@ def parse_monomer(tbn_problem, str_line):
     monomer_name = None
     for token in tokens:
         if token[0] == ":":
-            assert monomer_names is None, "Monomer given multiple names."  # TODO Add error handling.
+            assert (monomer_names is None), "Monomer given multiple names."  # TODO Add error handling.
             monomer_names = token[1:].strip()
         else:
             site = BindingSite(tbn_problem, token)
@@ -24,12 +24,13 @@ def parse_monomer(tbn_problem, str_line):
                 tbn_problem.site_name_to_sitelist_map[site.name] = SiteList(site.name)
 
             tbn_problem.site_name_to_sitelist_map[site.name].add(site)
-    new_Monomer = Monomer(tbn_problem, all_sites)
+    new_monomer = Monomer(tbn_problem, all_sites)
 
     # If monomer name exists, add it to monomer name map in the tbn problem
     if monomer_name is not None:
-        tbn_problem.assign_name(monomer_name, new_Monomer)
-    return new_Monomer
+        tbn_problem.assign_name(monomer_name, new_monomer)
+    return new_monomer
+
 
 def parse_instruction(tbn_problem, str_line):
     i_type = None
