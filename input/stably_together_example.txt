@@ -1,4 +1,4 @@
 a b
-a* b* $t1
-a $t2
+a* b* :t1
+a :t2
 b
