@@ -28,7 +28,7 @@ def encode_each_site_binds_at_most_once(tbn: TBNProblem, sat: SATProblem):
 						
 						# ~Pair(s, t) ∨ ~Pair(s, u) ==> "at most one"
 						clause = create_clause(-pair_id_1, -pair_id_2)
-						sat.add_clause(clause)
+						sat.each_site_binds_at_most_once_clauses.append(clause)
 
 		# ensures each non complement site (no *) binds at most once to any possible suitable binding site (*)
 		for normal_site in normal_sites:
@@ -40,7 +40,7 @@ def encode_each_site_binds_at_most_once(tbn: TBNProblem, sat: SATProblem):
 
 						# ~Pair(s, t) ∨ ~Pair(s, u) ==> "at most one"
 						clause = create_clause(-pair_id_1, -pair_id_2)
-						sat.add_clause(clause)
+						sat.each_site_binds_at_most_once_clauses.append(clause)
 
 
 # Ensure each limiting binding site is binded 
@@ -55,7 +55,7 @@ def encode_limiting_site_binds(tbn: TBNProblem, sat: SATProblem):
 
 			# {Pair(s, t) : t ∈ C(s)} ==> "at least one"
 			clause = create_clause(*pair_id_list)
-			sat.add_clause(clause)
+			sat.limited_site_binds_clauses.append(clause)
 
 
 # Encode a pair of two sites will bind the two monomers
@@ -66,7 +66,7 @@ def encode_pair_implies_bind(tbn: TBNProblem, sat: SATProblem):
 
 		# Pair(s, t) → Bind(m, n) ==> ""
 		clause = create_clause(-pair_id, bind_id)
-		sat.add_clause(clause)
+		sat.pair_implies_bind_clauses.append(clause)
 
 # Encode the transitive property of Binds
 def encode_bind_transitive(tbn: TBNProblem, sat: SATProblem):
@@ -99,7 +99,7 @@ def encode_bind_transitive(tbn: TBNProblem, sat: SATProblem):
 
 				# Bind(m, n) ∧ Bind(m, r) → Bind(n, r) ==> Two overlapping binds implies another bind
 				clause = create_clause(-available_bind_id, -visited_bind_id, new_bind_id)				
-				sat.add_clause(clause)
+				sat.bind_transitive_clauses.append(clause)
 
 				# Only add newly created binds to queue
 				if created_new_bind:
@@ -119,7 +119,7 @@ def encode_bind_representatives(tbn: TBNProblem, sat: SATProblem):
 
 		# Bind(m, n) → ~Rep(n) ==> A Bind(m, n), where m < n, forces n to not be a representative
 		clause = create_clause(-bind_id, -rep_id)
-		sat.add_clause(clause)
+		sat.bind_representatives_clauses.append(clause)
 
 # Encoding is enforcing the configuration to have at least k polymers 
 def increment_min_representatives(tbn: TBNProblem, sat: SATProblem):
@@ -137,18 +137,21 @@ def increment_min_representatives(tbn: TBNProblem, sat: SATProblem):
 			if rep_index == 1:
 				# The first Sum(1, 1) is true if Rep(1) is true
 				# Sum(1, 1) → Rep(1) 
-				sat.add_clause(create_clause(-sum_id, rep_id))
+				clause = create_clause(-sum_id, rep_id)
+				sat.increment_min_representatives_clauses.append(clause)
 			else:
 				sum_id_previous_sum = sat.get_sum_id(rep_index - 1, sat.min_reps)
 				
 				# The first row Sum(n, 1) is true if Sum (n - 1, 1) is true or Rep(n) is true
 				# Sum(n, 1) → Sum(n - 1, 1) V Rep(n) 
-				sat.add_clause(create_clause(-sum_id, sum_id_previous_sum, rep_id))
+				clause = create_clause(-sum_id, sum_id_previous_sum, rep_id)
+				sat.increment_min_representatives_clauses.append(clause)
 
 		# top left triangle are all false
 		elif rep_index < sat.min_reps:
 			# Sum(n, k) is false for n < k
-			sat.add_clause(create_clause(-sum_id))
+			clause = create_clause(-sum_id)
+			sat.increment_min_representatives_clauses.append(clause)
 
 		else:
 			# Sum(n - 1, k)
@@ -161,13 +164,15 @@ def increment_min_representatives(tbn: TBNProblem, sat: SATProblem):
 			# Need to decompose into cnf form due to constraints of SAT Solvers:
 			
 			# ~Sum(n, k) V Sum(n - 1, k - 1) V Sum(n - 1, k)
-			sat.add_clause(create_clause(-sum_id, sum_id_diagonal_sum, sum_id_previous_sum))
+			clause = create_clause(-sum_id, sum_id_diagonal_sum, sum_id_previous_sum)
+			sat.increment_min_representatives_clauses.append(clause)
 			# ~Sum(n, k) V Rep(n) V Sum(n - 1, k)
-			sat.add_clause(create_clause(-sum_id, rep_id, sum_id_previous_sum))
+			clause = create_clause(-sum_id, rep_id, sum_id_previous_sum)
+			sat.increment_min_representatives_clauses.append(clause)
 
 	# Ensures Sum(n, k) is true to propogate implies logic from previous clauses 
 	sum_id = sat.get_sum_id(len(sat.rep_list) - 1, sat.min_reps)
-	sat.add_clause(create_clause(sum_id))
+	sat.increment_min_representatives_clauses.append(create_clause(sum_id))
 
 
 def create_clause(*args):

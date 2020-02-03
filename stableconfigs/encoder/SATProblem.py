@@ -11,7 +11,16 @@ from pysat.solvers import Glucose4
 class SATProblem:
 	# CONSTRUCTOR
 	def __init__(self):
-		self.clauses = list()
+
+		# Seperate each types of clauses into different lists
+		self.each_site_binds_at_most_once_clauses = list()
+		self.limited_site_binds_clauses = list()
+		self.pair_implies_bind_clauses = list()
+		self.bind_transitive_clauses = list()
+		self.bind_representatives_clauses = list()
+		self.increment_min_representatives_clauses = list()
+		self.instruction_clauses = list()
+
 		self.result = list()
 		self.success = True
 		self.unique_id = 0
@@ -36,9 +45,6 @@ class SATProblem:
 		# Sum maps
 		self.sum_to_id = dict()
 		self.id_to_sum = dict()
-
-	def add_clause(self, clause):
-		self.clauses.append(clause)
 
 	def increment_min_reps(self):
 		self.min_reps += 1
@@ -92,6 +98,35 @@ class SATProblem:
 			self.id_to_sum[new_id] = sum_obj
 			return new_id
 
+
+	def add_clauses_to_solver(self, solver):
+		for clause in self.each_site_binds_at_most_once_clauses:
+			solver.add_clause(clause)
+
+		for clause in self.limited_site_binds_clauses:
+			solver.add_clause(clause)
+
+		for clause in self.each_site_binds_at_most_once_clauses:
+			solver.add_clause(clause)
+
+		for clause in self.limited_site_binds_clauses:
+			solver.add_clause(clause)
+
+		for clause in self.pair_implies_bind_clauses:
+			solver.add_clause(clause)
+
+		for clause in self.bind_transitive_clauses:
+			solver.add_clause(clause)
+
+		for clause in self.bind_representatives_clauses:
+			solver.add_clause(clause)
+
+		for clause in self.increment_min_representatives_clauses:
+			solver.add_clause(clause)
+
+		for clause in self.instruction_clauses:
+			solver.add_clause(clause)
+
 	def solve(self):
 		solver = Glucose4()
 
@@ -99,8 +134,7 @@ class SATProblem:
 		# solver = Lingeling()
 		# solver = Cadical()
 
-		for clause in self.clauses:
-			solver.add_clause(clause)
+		self.add_clauses_to_solver(solver)
 
 		success = solver.solve()
 		if success:

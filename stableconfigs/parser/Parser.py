@@ -10,6 +10,7 @@ def parse_monomer(tbn_problem, str_line):
     all_sites = []
     tokens = str_line.replace("\n", "").split(' ')
 
+    # Check for duplicate names
     monomer_name = None
     for token in tokens:
         if token[0] == ":":
