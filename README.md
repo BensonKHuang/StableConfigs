@@ -2,13 +2,16 @@
 Python tool to generate Stable Configurations of Monomers by reducing the problem to NP-Complete SAT. 
 
 
-#### Uses
-Finding Stable Configurations of Thermodynamic Binding Networks
+#### Use Cases
++ Finding Stable Configurations of Thermodynamic Binding Networks
++ Finding Stable Configurations with specified instructions
 
-#### System Requirements
+#### System Requirements for Command Line Tool and Native installation
 + POSIX-compliant operating system (Linux or MacOS environment) 
 + python3.6 or higher
 + pip3 (Python Package Installer for Python 3)
+
+Docker instructions are also specified in [Docker Usage](#-docker-usage) section.
 
 # Installation instructions
 
@@ -24,7 +27,7 @@ Install the requirements (needed for Command Line Tool):
 *Use a virtual environment (virtualenv) or add "--user" flag if working on personal environment to end of commands*
 
 
-# Python Usage
+## Python Usage (import in project)
 
     from stableconfigs import StableConfig
 
@@ -35,7 +38,7 @@ Install the requirements (needed for Command Line Tool):
 ## Command line tool
     
     $ python3 -m stableconfigs {path/to/tbn_file.txt} {optional/path/to/instr.txt}
-ƒ
+
 
 ### Solving General TBN Problems (tbn_file.txt)
 
