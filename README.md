@@ -35,7 +35,7 @@ Install the requirements (needed for Command Line Tool):
 ## Command line tool
     
     $ python3 -m stableconfigs {path/to/tbn_file.txt} {optional/path/to/instr.txt}
-
+ƒ
 
 ### Solving General TBN Problems (tbn_file.txt)
 
@@ -43,11 +43,11 @@ The input file to solve tbn problems is as follows:
 
 #### Binding Sites
 - Each token represents a binding site: "a"
-- Each token that ends with a "*" indicates a compliment binding site: "a*"
+- Each token that ends with a "&ast;" indicates a compliment binding site: "a&ast;"
 
 #### Monomers
-- Each line represents a monomer (space separated binding sites): "a b c d*"
-- Ending the line with ":name1" will uniquely label the monomer : "a b c d* :m1"
+- Each line represents a monomer (space separated binding sites): "a b c d&ast;"
+- Ending the line with ":{name}" will uniquely label the monomer : "a b c d&ast; :m1"
 
 
 ### Additional Feature Instructions (instr.txt)
@@ -56,13 +56,13 @@ In the instruction file (the second argument), you can provide instructions to c
 
 #### TOGETHER
 
-Specifying **TOGETHER** will force the monomers to bind into a polymer     
+Specifying **TOGETHER** attempts to force the specified monomers to bind into a polymer
 
     TOGETHER {m1} {m2} {m3}
 
 #### FREE
 
-Specifying **FREE** will force the monomer(s) to not bind to any other monomer
+Specifying **FREE** attempts to force the specified monomer(s) to not bind to any other monomer
 
     FREE {m1}
 
