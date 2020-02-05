@@ -1,6 +1,7 @@
 # Stable Configurations
 Python tool to generate Stable Configurations of Monomers by reducing the problem to NP-Complete SAT. 
 
+
 #### Uses
 Finding Stable Configurations of Thermodynamic Binding Networks
 
@@ -22,21 +23,6 @@ Install the requirements (needed for Command Line Tool):
 
 *Use a virtual environment (virtualenv) or add "--user" flag if working on personal environment to end of commands*
 
-## Docker
-
-StableConfigs contains a Dockerfile to support running the server on Docker. In order to use docker you need to have Docker locally on your machine.
-
-Build a docker image:
-
-    $ Docker build .
-    
-Find your image id:
-
-    $ Docker images
-    
-Run stable configs on docker:
-
-    $ Docker run {image id}
 
 # Python Usage
 
@@ -46,11 +32,42 @@ Run stable configs on docker:
     polymers = StableConfig.get_stable_configs(example_path)
 
   
-# Command line tool
+## Command line tool
     
-    $ python3 -m stableconfigs {path/to/tbn_file.txt}
+    $ python3 -m stableconfigs {path/to/tbn_file.txt} {optional/path/to/instr.txt}
 
-#### Example input
+
+### Solving General TBN Problems (tbn_file.txt)
+
+The input file to solve tbn problems is as follows:
+
+#### Binding Sites
+- Each token represents a binding site: "a"
+- Each token that ends with a "*" indicates a compliment binding site: "a*"
+
+#### Monomers
+- Each line represents a monomer (space separated binding sites): "a b c d*"
+- Ending the line with ":name1" will uniquely label the monomer : "a b c d* :m1"
+
+
+### Additional Feature Instructions (instr.txt)
+
+In the instruction file (the second argument), you can provide instructions to check additional properties
+
+#### TOGETHER
+
+Specifying **TOGETHER** will force the monomers to bind into a polymer     
+
+    TOGETHER {m1} {m2} {m3}
+
+#### FREE
+
+Specifying **FREE** will force the monomer(s) to not bind to any other monomer
+
+    FREE {m1}
+
+
+#### Example 1 input
 
     basic.txt
 
@@ -62,9 +79,9 @@ Run stable configs on docker:
     b
 
 
-#### Example output
+#### Example 1 output
     
-    $ python3 -m src input/basic.txt
+    $ python3 -m stableconfigs input/basic.txt
 
     Found a stable configuration with [ 4 ] polymers:
 
@@ -83,6 +100,71 @@ Run stable configs on docker:
                 ['b']
 
     Completed in 0.0041961669921875 seconds.
+
+
+#### Example 2 input
+
+    stably_together_example.txt
+
+    a :t1
+    a* b* :t2
+    a b
+    b
+
+
+    stably_together_instructions.txt
+
+    TOGETHER t1 t2
+
+
+#### Example 2 output
+    
+    $ python3 -m stableconfigs input/stably_together_example.txt input/stably_together_instructions.txt
+
+
+    ...
+    Found an original stable configuration with [ 3 ] polymers.
+
+    ...
+    Found a modified stable configuration with [ 2 ] polymers.
+
+    Entropy is [ 1 ] away from stable configuration
+
+        Polymer number 1
+            ['a', 'b']
+
+        Polymer number 2
+            ['a']	t2
+            ['a*', 'b*']	t1
+            ['b']	t3
+
+    Properties:
+        TOGETHER ['t2', 't3']
+
+    Completed in 0.008085012435913086 seconds.
+
+
+# Docker Usage
+
+StableConfigs contains a Dockerfile to support running the program on Docker. In order to use docker you need to have Docker locally on your machine. Using Docker is useful to ensure that the program will work on your machine.
+
+Build a docker image:
+
+    $ Docker build -t stablegen .
+
+
+Run stable configs on docker and pass local files as arguments by using the "-v" docker option for mounting:
+
+    $ Docker run -v {/absolute/local/path/tbn_file.txt}:/{tbn_file.txt} stablegen {tbn_file.txt}
+
+General TBN Problem Example:
+
+    $ Docker run -v /users/solo/and.txt:/and.txt stablegen and.txt
+
+To run additional instructions, you must provide an additional file:
+
+    $ Docker run -v {absolute/local/path/tbn_file.txt}:/{tbn_file.txt} -v {absolute/local/path/instr.txt}:/{instr.txt} stablegen {tbn_file.txt} {instr.txt} 
+
 
 # Citation
 
