@@ -16,6 +16,7 @@ class Instruction:
             # TODO: Throw error for invalid instruction
             self.i_type = self.IGNORE_INSTR
             
+        # TODO: Error handling for duplicate monomer names in same list
         self.monomer_names = monomer_names
 
         tbn_problem.instructions.append(self)

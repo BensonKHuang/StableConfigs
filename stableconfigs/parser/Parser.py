@@ -38,7 +38,7 @@ def parse_monomer(tbn_problem: TBNProblem, str_line: str):
 def parse_instruction(tbn_problem, str_line):
     i_type = None
     monomer_names = list()
-    tokens = str_line.replace("\n", "").split(' ')
+    tokens = str_line.replace("\n", "").split(' ') # TODO: Fix bug where you can have spaces in name
 
     for ind in range(len(tokens)):
         token = tokens[ind]

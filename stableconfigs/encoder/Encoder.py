@@ -178,6 +178,7 @@ def increment_min_representatives(tbn: TBNProblem, sat: SATProblem):
 def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
 	for instruction in tbn.instructions:
 		
+		# TOGETHER: Force monomers into the same polymer
 		if instruction.i_type == Instruction.TOGETHER_INSTR:
 			# TODO: Throw hands if duplicate name in arguments 
 			
@@ -197,8 +198,8 @@ def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
 						pass
 
 				visited_monomers.add(mono)
-				# Check if bind is valid
 
+		# FREE: Force monomer to not bind to any other monomer
 		elif instruction.i_type == Instruction.FREE_INSTR:
 			# Set every bind to false for that monomer
 			for monomer_name in instruction.monomer_names:
@@ -210,8 +211,9 @@ def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
 						# Set bind clause to false
 						clause = create_clause(-bind_id)
 						sat.instruction_clauses.append(clause)
+		# TODO: Add Error handling for wrong instruction types
 		else:
-			print()
+			pass
 
 def create_clause(*args):
 	clause = []
