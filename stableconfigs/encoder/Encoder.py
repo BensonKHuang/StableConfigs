@@ -191,6 +191,7 @@ def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
 						bind_id = sat.get_bind_id(mono, other_mon)
 						clause = create_clause(bind_id)
 						sat.instruction_clauses.append(clause)
+						# Add clauses to propogate transitivity clauses
 					else:
 						# TODO: Throw hands
 						pass
@@ -199,8 +200,16 @@ def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
 				# Check if bind is valid
 
 		elif instruction.i_type == Instruction.FREE_INSTR:
-			print("Free Instruction")
-		
+			# Set every bind to false for that monomer
+			for monomer_name in instruction.monomer_names:
+				mono = tbn.monomer_name_map.get(monomer_name)
+
+				for other_mon in tbn.all_monomers:
+					if (sat.does_bind_exist(mono, other_mon)):
+						bind_id = sat.get_bind_id(mono, other_mon)
+						# Set bind clause to false
+						clause = create_clause(-bind_id)
+						sat.instruction_clauses.append(clause)
 		else:
 			print()
 

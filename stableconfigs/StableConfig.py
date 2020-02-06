@@ -14,11 +14,11 @@ def get_stable_config(file_path, instr_path):
     # encode problem to SAT solver compatible problem
     sat_problem = SATProblem()
     Encoder.encode_basic_clause(tbn_problem, sat_problem)
-
+    print("\nCOMPUTING ORIGINAL STABLE CONFIGURATION:")
     # solve the problem (SAT solver)
     while sat_problem.success:
         Encoder.increment_min_representatives(tbn_problem, sat_problem)
-        print("[Checking for k =", sat_problem.min_reps, "polymers]")
+        print("... Checking for k =", sat_problem.min_reps, "polymers")
         sat_problem.solve()
 
     # Formatting for printing
@@ -29,20 +29,22 @@ def get_stable_config(file_path, instr_path):
     
     # Add instruction set clauses
     if len(tbn_problem.instructions) != 0:
+        print("\nCOMPUTING STABLE CONFIGURATION WITH ADDITIONAL PROPERTIES:")
         sat_problem.reset_clauses()
         Encoder.encode_instruction_clauses(tbn_problem, sat_problem)
 
         # solve the problem again (SAT solver)
         while sat_problem.success:
             Encoder.increment_min_representatives(tbn_problem, sat_problem)
-            print("[Checking for k =", sat_problem.min_reps, "polymers]")
+            print("... Checking for k =", sat_problem.min_reps, "polymers")
             sat_problem.solve() 
 
-    modified_num_reps = sat_problem.min_reps - 1
+        modified_num_reps = sat_problem.min_reps - 1
 
-    if modified_num_reps > 0:
-        print("Found a modified stable configuration with [", modified_num_reps, "] polymers.\n")
-        print("Entropy is [", original_num_reps - modified_num_reps, "] away from stable configuration\n")
+        if modified_num_reps > 0:
+            print("Found a modified stable configuration with [", modified_num_reps, "] polymers.\n")
+            print("Entropy is [", original_num_reps - modified_num_reps, "] away from stable configuration:\n")
+
 
     # Decode the problem into polymers
     polymers = Decoder.decode_boolean_values(tbn_problem, sat_problem)
@@ -57,6 +59,6 @@ def get_stable_config(file_path, instr_path):
         print("\t" + str(instr))
     
     # Printing execution time
-    print("\nCompleted in", time.time() - t0, "seconds.")
+    print("\nCompleted in", time.time() - t0, "seconds.\n")
 
     return polymers
