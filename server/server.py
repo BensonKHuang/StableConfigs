@@ -11,17 +11,27 @@ def my_post():
         monomers = received_json['monomers']
 
         # Creates a file to write monomers in order to call get_stable_config
-        my_file = "temp.txt"
-        f = open(my_file, "w+")
+        monomer_file_path = "temp.txt"
+        monomer_f = open(monomer_file_path, "w+")
         for index, monomer in enumerate(monomers):
-            f.write(' '.join(monomer))
+            monomer_f.write(' '.join(monomer))
             if index != len(monomers) - 1:
-                f.write('\n')
-        f.close()
+                monomer_f.write('\n')
+        monomer_f.close()
+
+        instructions = received_json['instructions']
+        instr_file_path = "instr.txt"
+        instr_f = open(instr_file_path, "w+")
+        for index, token in enumerate(instructions):
+            instr_f.write(' '.join(token))
+            if index != len(instructions) - 1:
+                instr_f.write('\n')
+        instr_f.close()
 
         # Call get stable config and delete file
-        polymers = StableConfig.get_stable_config(my_file)
-        os.remove(my_file)
+        polymers = StableConfig.get_stable_config(monomer_file_path, instr_file_path)
+        os.remove(monomer_file_path)
+        os.remove(instr_file_path)
 
         # Return polymer output in expected format
         polymer_output = []
