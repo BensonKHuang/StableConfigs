@@ -12,12 +12,25 @@ def parse_monomer(tbn_problem: TBNProblem, str_line: str):
 
     monomer_name = None
     for token in tokens:
-        if token[0] == ":":
+        if token[0] == ">":
             assert (monomer_name is None), "Monomer given multiple names."  # TODO Add error handling.
             monomer_name = token[1:].strip()
         else:
+            find_site_name = token.find(":")
+            site_name = None
+            if find_site_name != -1:
+                site_name = token[(find_site_name + 1):]
+                token = token[:find_site_name]
+                # TODO: global error checking
+                assert(len(site_name) > 0 and len(token) > 0, "Invalid Binding Site name.")
+
             site = BindingSite(tbn_problem, token)
             all_sites.append(site)
+
+            if site_name is not None:
+                # TODO: Check for duplicate BindingSite names.
+                assert(site_name not in tbn_problem.bindingsite_name_map, "Duplicate BindingSite name.")
+                tbn_problem.assign_bindingsite_name(site, site_name)
 
             # Create a new SiteMap for a specific type
             if site.name not in tbn_problem.site_name_to_sitelist_map:
@@ -28,10 +41,9 @@ def parse_monomer(tbn_problem: TBNProblem, str_line: str):
 
     # If monomer name exists, add it to monomer name map in the tbn problem
     if monomer_name is not None:
-        # TODO: Check for duplicate names
-        assert(monomer_name not in tbn_problem.monomer_name_map)
-
-        tbn_problem.assign_name(monomer_name, new_monomer)
+        # TODO: Check for duplicate Monomer names
+        assert(monomer_name not in tbn_problem.monomer_name_map, "Duplicate monomer name.")
+        tbn_problem.assign_monomer_name(new_monomer, monomer_name)
     return new_monomer
 
 
