@@ -1,4 +1,4 @@
-a :t2
-a* b* :t1
+a >t2
+a* b* >t1
 a b
-b :t3
+b >t3
