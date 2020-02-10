@@ -63,12 +63,47 @@ Specifying **TOGETHER** attempts to force the specified monomers to bind into a 
 
     TOGETHER {m1} {m2} {m3}
 
+#### NOTTOGETHER
+
+Specifying **NOTTOGETHER** prevents two monomers from being in the same polymer
+
+    NOTTOGETHER {m1} {m2}
+
 #### FREE
 
 Specifying **FREE** attempts to force the specified monomer(s) to not bind to any other monomer
 
     FREE {m1}
 
+#### NOTFREE
+
+Specifying **NOTFREE** forces specified monomer(s) to bind to any other monomer
+
+    NOTFREE {m1}
+
+#### PAIRED
+
+Specifying **PAIRED** attempts to force two binding sites to bind together
+
+    PAIRED {b1} {b2}
+
+#### NOTPAIRED
+
+Specifying **NOTPAIRED** prevents two binding sites from binding together
+
+    NOTPAIRED {b1} {b2}
+
+#### ANYPAIRED
+
+Specifying **ANYPAIRED** forces a binding site to bind to some other binding site
+
+    ANYPAIRED {b1}
+
+#### NOTANYPAIRED
+
+Specifying **NOTANYPAIRED** attempts to force the specified binding site to not bind to any other binding site
+
+    NOTANYPAIRED {b1}
 
 #### Example 1 input
 
