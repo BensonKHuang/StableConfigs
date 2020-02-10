@@ -43,7 +43,7 @@ def get_stable_config(file_path, instr_path):
         modified_num_reps = sat_problem.min_reps - 1
 
         if modified_num_reps > 0:
-            print("Found a modified stable configuration with [", modified_num_reps, "] polymers.\n")
+            print("Found a constrained stable configuration with [", modified_num_reps, "] polymers.\n")
             print("Entropy is [", original_num_reps - modified_num_reps, "] away from stable configuration:\n")
 
 
