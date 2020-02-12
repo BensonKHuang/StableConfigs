@@ -71,13 +71,13 @@ Specifying **NOTTOGETHER** prevents two monomers from being in the same polymer
 
 #### FREE
 
-Specifying **FREE** attempts to force the specified monomer(s) to not bind to any other monomer
+Specifying **FREE** attempts to force the specified monomer to not bind to any other monomer
 
     FREE {m1}
 
 #### NOTFREE
 
-Specifying **NOTFREE** forces specified monomer(s) to bind to any other monomer
+Specifying **NOTFREE** forces specified monomer to bind to any other monomer
 
     NOTFREE {m1}
 

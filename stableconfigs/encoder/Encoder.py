@@ -175,6 +175,7 @@ def increment_min_representatives(tbn: TBNProblem, sat: SATProblem):
 	sum_id = sat.get_sum_id(len(sat.rep_list) - 1, sat.min_reps)
 	sat.increment_min_representatives_clauses.append(create_clause(sum_id))
 
+
 # Encodes additional instructions into clauses
 def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
 	for instruction in tbn.instructions:
@@ -185,7 +186,7 @@ def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
 			
 			# Compare every combination of monomers
 			visited_monomers = set()
-			for monomer_name in instruction.monomer_names:
+			for monomer_name in instruction.arguments:
 				mono = tbn.monomer_name_map.get(monomer_name)
 
 				for other_mon in visited_monomers:
@@ -195,6 +196,7 @@ def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
 						sat.instruction_clauses.append(clause)
 						# Add clauses to propogate transitivity clauses
 					else:
+						# TODO: Send exception on WHY this will cause unsat
 						# TODO: Throw hands
 						pass
 
@@ -202,11 +204,21 @@ def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
 
 		elif instruction.i_type == INSTR.NOTTOGETHER:
 			pass
+		
+		# NOTTOGETHER: Prevents two monomers from being in the same polymer
+		elif instruction.i_type == INSTR.NOTTOGETHER:
+			mono = tbn.monomer_name_map.get(instruction.arguments[0])
+			other_mon = tbn.monomer_name_map.get(instruction.arguments[1])
+			
+			if sat.does_bind_exist(mono, other_mon):
+				bind_id = sat.get_bind_id(mono, other_mon)
+				clause = create_clause(-bind_id)
+				sat.instruction_clauses.append(clause)
 
 		# FREE: Force monomer to not bind to any other monomer
 		elif instruction.i_type == INSTR.FREE:
 			# Set every bind to false for that monomer
-			for monomer_name in instruction.monomer_names:
+			for monomer_name in instruction.arguments:
 				mono = tbn.monomer_name_map.get(monomer_name)
 
 				for other_mon in tbn.all_monomers:
@@ -215,13 +227,46 @@ def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
 						# Set bind clause to false
 						clause = create_clause(-bind_id)
 						sat.instruction_clauses.append(clause)
-		# TODO: Add Error handling for wrong instruction types
 		
+		#NOTFREE: Force specified monomer to bind to any other monomers
 		elif instruction.i_type == INSTR.NOTFREE:
-			pass
+			mono = tbn.monomer_name_map.get(instruction.arguments[0])
 
+			potential_binds = []
+			for other_mon in tbn.all_monomers:
+				if sat.does_bind_exist(mono, other_mon):
+					bind_id = sat.get_bind_id(mono, other_mon)
+					potential_binds.append(bind_id)
+
+			# If there exists no binds, then we force unsat
+			if len(potential_binds) == 0:
+				# TODO: Send exception on WHY this will cause unsat
+				# TODO: Throw hands
+				
+				bind_id = sat.get_bind_id(mono, mono)
+				# Adding two clauses that are true and false will force an unsat
+				clause_true = create_clause(bind_id)
+				clause_false = create_clause(-bind_id)
+				sat.instruction_clauses.append(clause_true)
+				sat.instruction_clauses.append(clause_false)
+
+			else:
+				clause = create_clause(potential_binds)
+				sat.instruction_clauses.append(potential_binds)
+
+		#PAIRED: Forces two binding sites to bind together
 		elif instruction.i_type == INSTR.PAIRED:
-			pass
+			bsite = tbn.bindingsite_name_map.get(instruction.arguments[0])
+			other_bsite = tbn.bindingsite_name_map.get(instruction.arguments[1])
+
+			if sat.does_pair_exist(bsite, other_bsite):
+				pair_id = sat.get_pair_id(bsite, other_bsite)
+				clause = create_clause(pair_id)
+				sat.instruction_clauses.append(clause)
+			else:
+				# TODO: Send exception on WHY this will cause unsat
+				# TODO: Throw hands
+				pass
 		
 		elif instruction.i_type == INSTR.NOTPAIRED:
 			pass
@@ -232,6 +277,7 @@ def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
 		elif instruction.i_type == INSTR.NOTANYPAIRED:
 			pass
 		
+		# TODO: Add Error handling for wrong instruction types
 		else:
 			# TODO: Assert error, should never reach...?
 			pass
