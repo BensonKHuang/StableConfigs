@@ -199,7 +199,8 @@ def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
 
 				visited_monomers.add(mono)
 
-		elif instruction.i_type == INSTR.NOTTOGETHER:
+		# NOTTOGETHER: PRevents two monomers from being in the same polymer
+		elif instruction.i_type == INSTR.NOTTOGETHER:			
 			pass
 
 		# FREE: Force monomer to not bind to any other monomer

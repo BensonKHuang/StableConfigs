@@ -61,7 +61,7 @@ In the instruction file (the second argument), you can provide instructions to c
 
 Specifying **TOGETHER** attempts to force the specified monomers to bind into a polymer
 
-    TOGETHER {m1} {m2} {m3}
+    TOGETHER {m1} {m2} {m3} ...
 
 #### NOTTOGETHER
 
