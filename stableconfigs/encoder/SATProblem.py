@@ -20,6 +20,7 @@ class SATProblem:
 		self.bind_representatives_clauses = list()
 		self.increment_min_representatives_clauses = list()
 		self.instruction_clauses = list()
+		self.unique_combination_clauses = list()
 
 		self.result = list()
 		self.success = True
@@ -45,6 +46,9 @@ class SATProblem:
 		# Sum maps
 		self.sum_to_id = dict()
 		self.id_to_sum = dict()
+
+		# Original Binds
+		self.original_binds = set()
 
 	def increment_min_reps(self):
 		self.min_reps += 1
@@ -132,6 +136,9 @@ class SATProblem:
 			solver.add_clause(clause)
 
 		for clause in self.instruction_clauses:
+			solver.add_clause(clause)
+		
+		for clause in self.unique_combination_clauses:
 			solver.add_clause(clause)
 
 	def solve(self):

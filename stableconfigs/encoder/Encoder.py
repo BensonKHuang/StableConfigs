@@ -63,6 +63,7 @@ def encode_pair_implies_bind(tbn: TBNProblem, sat: SATProblem):
 	for pair in sat.pair_to_id.keys():
 		pair_id = sat.pair_to_id.get(pair)
 		bind_id = sat.get_bind_id(pair.site1.ParentMonomer, pair.site2.ParentMonomer)
+		sat.original_binds.add(bind_id)
 
 		# Pair(s, t) → Bind(m, n) ==> ""
 		clause = create_clause(-pair_id, bind_id)
@@ -199,8 +200,7 @@ def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
 
 				visited_monomers.add(mono)
 
-		# NOTTOGETHER: PRevents two monomers from being in the same polymer
-		elif instruction.i_type == INSTR.NOTTOGETHER:			
+		elif instruction.i_type == INSTR.NOTTOGETHER:
 			pass
 
 		# FREE: Force monomer to not bind to any other monomer
@@ -235,6 +235,18 @@ def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
 		else:
 			# TODO: Assert error, should never reach...?
 			pass
+
+
+#Encodes not having the same solution combination
+def encode_unique_solution(tbn : TBNProblem, sat : SATProblem):
+	true_original_binds = []
+	for boolean in sat.result:
+		if boolean > 0 & boolean in sat.id_to_pair.keys():
+			true_original_binds.append(boolean * -1)
+
+	clause = create_clause(*true_original_binds)
+	sat.unique_combination_clauses.append(clause)
+
 
 def create_clause(*args):
 	clause = []

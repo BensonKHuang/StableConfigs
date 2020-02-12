@@ -31,35 +31,54 @@ def get_stable_config(file_path, instr_path):
     # Add instruction set clauses
     if len(tbn_problem.instructions) != 0:
         print("\nCOMPUTING STABLE CONFIGURATION WITH ADDITIONAL PROPERTIES:")
-        sat_problem.reset_clauses()
         Encoder.encode_instruction_clauses(tbn_problem, sat_problem)
+        get_stable_configs_using_instructions(tbn_problem, sat_problem, original_num_reps)
+    else:
+        # Decode the problem into polymers
+        polymers = Decoder.decode_boolean_values(tbn_problem, sat_problem)
+        for index, polymer in enumerate(polymers):
+            print("\t" + "Polymer number", index + 1)
+            for monomer in polymer.monomer_list:
+                print("\t\t" + str(monomer))
+            print()
+    
+    # Printing execution time
+    print("\nCompleted in", time.time() - t0, "seconds.\n")
+
+
+def get_stable_configs_using_instructions(tbn_problem, sat_problem, original_num_reps):
+    counter = 0
+    while counter < tbn_problem.gen_count:
 
         # solve the problem again (SAT solver)
         while sat_problem.success:
+            sat_problem.reset_clauses()
             Encoder.increment_min_representatives(tbn_problem, sat_problem)
             print("... Checking for k =", sat_problem.min_reps, "polymers")
-            sat_problem.solve() 
+            sat_problem.solve()
 
         modified_num_reps = sat_problem.min_reps - 1
 
         if modified_num_reps > 0:
             print("Found a constrained stable configuration with [", modified_num_reps, "] polymers.\n")
             print("Entropy is [", original_num_reps - modified_num_reps, "] away from stable configuration:\n")
+        else:
+            print("Unsat")
 
 
-    # Decode the problem into polymers
-    polymers = Decoder.decode_boolean_values(tbn_problem, sat_problem)
-    for index, polymer in enumerate(polymers):
-        print("\t" + "Polymer number", index + 1)
-        for monomer in polymer.monomer_list:
-            print("\t\t" + str(monomer))
-        print()
+        # Decode the problem into polymers
+        polymers = Decoder.decode_boolean_values(tbn_problem, sat_problem)
+        for index, polymer in enumerate(polymers):
+            print("\t" + "Polymer number", index + 1)
+            for monomer in polymer.monomer_list:
+                print("\t\t" + str(monomer))
+            print()
 
-    print("Properties:")
-    for instr in tbn_problem.instructions:
-        print("\t" + str(instr))
-    
-    # Printing execution time
-    print("\nCompleted in", time.time() - t0, "seconds.\n")
+        print("Properties:")
+        for instr in tbn_problem.instructions:
+            print("\t" + str(instr))
 
-    return polymers
+        Encoder.encode_unique_solution(tbn_problem, sat_problem)
+
+        counter += 1
+
