@@ -204,7 +204,7 @@ def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
 
 		elif instruction.i_type == INSTR.NOTTOGETHER:
 			pass
-		
+
 		# NOTTOGETHER: Prevents two monomers from being in the same polymer
 		elif instruction.i_type == INSTR.NOTTOGETHER:
 			mono = tbn.monomer_name_map.get(instruction.arguments[0])
@@ -251,8 +251,8 @@ def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
 				sat.instruction_clauses.append(clause_false)
 
 			else:
-				clause = create_clause(potential_binds)
-				sat.instruction_clauses.append(potential_binds)
+				clause = create_clause(*potential_binds)
+				sat.instruction_clauses.append(clause)
 
 		#PAIRED: Forces two binding sites to bind together
 		elif instruction.i_type == INSTR.PAIRED:
@@ -287,7 +287,7 @@ def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
 def encode_unique_solution(tbn : TBNProblem, sat : SATProblem):
 	true_original_binds = []
 	for boolean in sat.result:
-		if boolean > 0 & boolean in sat.id_to_pair.keys():
+		if boolean > 0 and boolean in sat.original_binds:
 			true_original_binds.append(boolean * -1)
 
 	clause = create_clause(*true_original_binds)

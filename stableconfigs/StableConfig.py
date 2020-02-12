@@ -49,10 +49,10 @@ def get_stable_config(file_path, instr_path):
 def get_stable_configs_using_instructions(tbn_problem, sat_problem, original_num_reps):
     counter = 0
     while counter < tbn_problem.gen_count:
-
+        sat_problem.reset_clauses()
+        
         # solve the problem again (SAT solver)
         while sat_problem.success:
-            sat_problem.reset_clauses()
             Encoder.increment_min_representatives(tbn_problem, sat_problem)
             print("... Checking for k =", sat_problem.min_reps, "polymers")
             sat_problem.solve()
