@@ -50,7 +50,7 @@ def parse_monomer(tbn_problem: TBNProblem, str_line: str):
 def parse_instruction(tbn_problem, str_line):
     i_type = None
     monomer_names = list()
-    tokens = str_line.replace("\n", "").split(' ') # TODO: Fix bug where you can have spaces in name
+    tokens = str_line.replace("\n", "").split(' ')  # TODO: Fix bug where you can have spaces in name
 
     for ind in range(len(tokens)):
         token = tokens[ind]
@@ -58,8 +58,18 @@ def parse_instruction(tbn_problem, str_line):
             i_type = token
         else:
             monomer_names.append(token)
-
-    return Instruction(tbn_problem, i_type, monomer_names)
+    if i_type == Instruction.GEN_INSTR:
+        if len(tokens) > 1:
+            get_num = None
+            try:
+                get_num = int(tokens[1])
+            except ValueError:
+                get_num = None
+            if get_num is not None:
+                tbn_problem.gen_to = get_num
+            # TODO: Throw exception on bad number.
+    else:
+        Instruction(tbn_problem, i_type, monomer_names)
 
 
 def parse_input_file(input_file, instr_file):

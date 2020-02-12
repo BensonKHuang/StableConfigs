@@ -6,6 +6,7 @@ class Instruction:
     TOGETHER_INSTR = "TOGETHER"
     FREE_INSTR = "FREE"
     IGNORE_INSTR = "IGNORE"
+    GEN_INSTR = "GEN"
 
     # CONSTRUCTOR
     def __init__(self, tbn_problem, i_type, monomer_names):

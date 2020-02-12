@@ -15,6 +15,8 @@ class TBNProblem:
         self.monomer_name_map = dict()
         self.bindingsite_name_map = dict()
 
+        self.gen_to = None
+
         self.instructions = list()
 
     def assign_monomer_name(self, monomer, monomer_name):
