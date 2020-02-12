@@ -66,7 +66,7 @@ def parse_instruction(tbn_problem, str_line):
             except ValueError:
                 get_num = None
             if get_num is not None:
-                tbn_problem.gen_to = get_num
+                tbn_problem.gen_count = get_num
             # TODO: Throw exception on bad number.
     else:
         Instruction(tbn_problem, i_type, monomer_names)

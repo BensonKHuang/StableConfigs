@@ -15,7 +15,7 @@ class TBNProblem:
         self.monomer_name_map = dict()
         self.bindingsite_name_map = dict()
 
-        self.gen_to = None
+        self.gen_count = 1
 
         self.instructions = list()
 
