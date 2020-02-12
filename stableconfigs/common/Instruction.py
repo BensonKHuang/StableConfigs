@@ -1,19 +1,22 @@
 # Instruction Class
 
+
 class INSTR:
-    GEN = "GEN"
-    TOGETHER = "TOGETHER"
-    NOTTOGETHER = "NOTTOGETHER"
-    FREE = "FREE"
-    NOTFREE = "NOTFREE"
-    PAIRED = "PAIRED"
-    NOTPAIRED = "NOTPAIRED"
-    ANYPAIRED = "ANYPAIRED"
-    NOTANYPAIRED = "NOTANYPAIRED"
+    arg_count = dict()
+
+    GEN = "GEN";                   arg_count[GEN] = 1
+    TOGETHER = "TOGETHER";         arg_count[TOGETHER] = -1
+    NOTTOGETHER = "NOTTOGETHER";   arg_count[NOTTOGETHER] = 2
+    FREE = "FREE";                 arg_count[FREE] = 1
+    NOTFREE = "NOTFREE";           arg_count[NOTFREE] = 1
+    PAIRED = "PAIRED";             arg_count[PAIRED] = 2
+    NOTPAIRED = "NOTPAIRED";       arg_count[NOTPAIRED] = 2
+    ANYPAIRED = "ANYPAIRED";       arg_count[ANYPAIRED] = 1
+    NOTANYPAIRED = "NOTANYPAIRED"; arg_count[NOTANYPAIRED] = 1
+
 
 class Instruction:
-
-    instr_set = set([
+    instr_set = {
         INSTR.GEN,
         INSTR.TOGETHER,
         INSTR.NOTTOGETHER,
@@ -22,8 +25,8 @@ class Instruction:
         INSTR.PAIRED,
         INSTR.NOTPAIRED,
         INSTR.ANYPAIRED,
-        INSTR.NOTANYPAIRED,
-    ])
+        INSTR.NOTANYPAIRED
+    }
 
     # CONSTRUCTOR
     def __init__(self, tbn_problem, i_type, monomer_names):
