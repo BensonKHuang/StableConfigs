@@ -55,10 +55,21 @@ def parse_instruction(tbn_problem, str_line):
 
     for ind in range(len(tokens)):
         token = tokens[ind]
+
+        find_hash = token.find("#")
+        if find_hash != -1:
+            if find_hash == 0:  # if the '#' is found in the beginning of the token, the entire token is a comment
+                break
+            else:
+                token = token[:find_hash]
+
         if ind == 0:
             i_type = token
         else:
             arguments.append(token)
+
+        if find_hash != -1:
+            break
 
     if i_type in Instruction.instr_set:
         if INSTR.arg_count[i_type] != -1 and len(arguments) != INSTR.arg_count[i_type]:
