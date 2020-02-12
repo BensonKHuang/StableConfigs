@@ -1,7 +1,7 @@
 # class for Encoding/adding clauses to a SATProblem
 from stableconfigs.common.TBNProblem import TBNProblem
 from stableconfigs.encoder.SATProblem import SATProblem
-from stableconfigs.common.Instruction import Instruction
+from stableconfigs.common.Instruction import Instruction, INSTR
 
 # Helper function that runs all basic functions
 def encode_basic_clause(tbn: TBNProblem, sat: SATProblem):
@@ -179,7 +179,7 @@ def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
 	for instruction in tbn.instructions:
 		
 		# TOGETHER: Force monomers into the same polymer
-		if instruction.i_type == Instruction.TOGETHER_INSTR:
+		if instruction.i_type == INSTR.TOGETHER:
 			# TODO: Throw hands if duplicate name in arguments 
 			
 			# Compare every combination of monomers
@@ -199,8 +199,11 @@ def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
 
 				visited_monomers.add(mono)
 
+		elif instruction.i_type == INSTR.NOTTOGETHER:
+			pass
+
 		# FREE: Force monomer to not bind to any other monomer
-		elif instruction.i_type == Instruction.FREE_INSTR:
+		elif instruction.i_type == INSTR.FREE:
 			# Set every bind to false for that monomer
 			for monomer_name in instruction.monomer_names:
 				mono = tbn.monomer_name_map.get(monomer_name)
@@ -212,7 +215,24 @@ def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
 						clause = create_clause(-bind_id)
 						sat.instruction_clauses.append(clause)
 		# TODO: Add Error handling for wrong instruction types
+		
+		elif instruction.i_type == INSTR.NOTFREE:
+			pass
+
+		elif instruction.i_type == INSTR.PAIRED:
+			pass
+		
+		elif instruction.i_type == INSTR.NOTPAIRED:
+			pass
+		
+		elif instruction.i_type == INSTR.ANYPAIRED:
+			pass
+		
+		elif instruction.i_type == INSTR.NOTANYPAIRED:
+			pass
+		
 		else:
+			# TODO: Assert error, should never reach...?
 			pass
 
 def create_clause(*args):

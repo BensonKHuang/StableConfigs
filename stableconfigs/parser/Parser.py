@@ -1,5 +1,5 @@
 # Parser library
-from stableconfigs.common.Instruction import Instruction
+from stableconfigs.common.Instruction import Instruction, INSTR
 from stableconfigs.common.BindingSite import BindingSite
 from stableconfigs.common.Monomer import Monomer
 from stableconfigs.common.TBNProblem import TBNProblem
@@ -58,7 +58,7 @@ def parse_instruction(tbn_problem, str_line):
             i_type = token
         else:
             monomer_names.append(token)
-    if i_type == Instruction.GEN_INSTR:
+    if i_type == INSTR.GEN:
         if len(tokens) > 1:
             get_num = None
             try:
