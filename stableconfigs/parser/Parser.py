@@ -84,7 +84,7 @@ def parse_instruction(tbn_problem, str_line):
                     get_num = None
                 if get_num is not None:
                     tbn_problem.gen_count = get_num
-                # TODO: Throw exception on bad number.
+                # TODO: Throw exception on non-positive numbers.
             else:
                 Instruction(tbn_problem, i_type, arguments)
 

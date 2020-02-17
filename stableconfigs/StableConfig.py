@@ -28,11 +28,16 @@ def get_stable_config(file_path, instr_path):
     if original_num_reps > 0:
         print("Found an original stable configuration with [", original_num_reps, "] polymers.\n")
     
-    # Add instruction set clauses
+    # Add instruction set clauses and solve specified number of times
     if len(tbn_problem.instructions) != 0:
         print("\nCOMPUTING STABLE CONFIGURATION WITH ADDITIONAL PROPERTIES:")
         Encoder.encode_instruction_clauses(tbn_problem, sat_problem)
         get_stable_configs_using_instructions(tbn_problem, sat_problem, original_num_reps)
+
+    # Generate more than one solution with no additional constraints
+    elif tbn_problem.gen_count > 1:
+         get_stable_configs_using_instructions(tbn_problem, sat_problem, original_num_reps)
+
     else:
         # Decode the problem into polymers
         polymers = Decoder.decode_boolean_values(tbn_problem, sat_problem)
@@ -48,6 +53,7 @@ def get_stable_config(file_path, instr_path):
 
 def get_stable_configs_using_instructions(tbn_problem, sat_problem, original_num_reps):
     counter = 0
+    # Generate multiple unique solutions
     while counter < tbn_problem.gen_count:
         sat_problem.reset_clauses()
         
@@ -78,6 +84,7 @@ def get_stable_configs_using_instructions(tbn_problem, sat_problem, original_num
         for instr in tbn_problem.instructions:
             print("\t" + str(instr))
 
+        # Encode a new unique solution
         Encoder.encode_unique_solution(tbn_problem, sat_problem)
 
         counter += 1
