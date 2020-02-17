@@ -14,8 +14,8 @@ class Test_Parser(unittest.TestCase):
         self.assertEqual(tbn_problem.site_count, 9)
 
         # check if valid number of non-complements and complements
-        site_list_a = tbn_problem.site_name_to_sitelist_map.get("a")
-        site_list_b = tbn_problem.site_name_to_sitelist_map.get("b")
+        site_list_a = tbn_problem.site_type_to_sitelist_map.get("a")
+        site_list_b = tbn_problem.site_type_to_sitelist_map.get("b")
 
         self.assertEqual(len(site_list_a._complementary_sites), 2)
         self.assertEqual(len(site_list_b._complementary_sites), 1)
@@ -29,8 +29,8 @@ class Test_Parser(unittest.TestCase):
         self.assertEqual(tbn_problem.site_count, 3)
 
         # check a 0-complement problem
-        site_list_a = tbn_problem.site_name_to_sitelist_map.get("a")
-        site_list_b = tbn_problem.site_name_to_sitelist_map.get("b")
+        site_list_a = tbn_problem.site_type_to_sitelist_map.get("a")
+        site_list_b = tbn_problem.site_type_to_sitelist_map.get("b")
 
         self.assertEqual(len(site_list_a._complementary_sites), 1)
         self.assertEqual(len(site_list_b._complementary_sites), 0)
@@ -44,8 +44,8 @@ class Test_Parser(unittest.TestCase):
         self.assertEqual(tbn_problem.site_count, 4)
 
         # check a single site problem instance
-        site_list_a = tbn_problem.site_name_to_sitelist_map.get("a")
-        site_list_b = tbn_problem.site_name_to_sitelist_map.get("b")
+        site_list_a = tbn_problem.site_type_to_sitelist_map.get("a")
+        site_list_b = tbn_problem.site_type_to_sitelist_map.get("b")
 
         self.assertEqual(len(site_list_a._complementary_sites), 2)
         self.assertEqual(site_list_b, None)

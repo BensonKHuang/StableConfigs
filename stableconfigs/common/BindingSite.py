@@ -16,10 +16,11 @@ class BindingSite:
             has_comp = False
 
         # grab the name of the binding site
-        site_name = str_site[0:find_comp]
+        site_type = str_site[0:find_comp]
 
         # constructor
         self.id = tbn_problem.site_count
-        self.name = site_name
+        self.type = site_type
+        self.name = None
         self.IsComplement = has_comp
         self.ParentMonomer = None

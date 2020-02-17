@@ -1,12 +1,12 @@
 a b c d e
 a* b* c* d*
 b* c* d* e*
-d e f
+d e f:b5 >line4
 a b
 b c
 c d
-e f:b1 >gate
-e* f* >extra
+e:b3 f:b1 >gate
+e*:b4 f*:b2 >extra
 g* h*
 g
 h

@@ -9,7 +9,7 @@ class TBNProblem:
         self.monomer_count = 0
 
         # site name to objects map
-        self.site_name_to_sitelist_map = dict()
+        self.site_type_to_sitelist_map = dict()
 
         self.all_monomers = list()
         self.monomer_name_map = dict()

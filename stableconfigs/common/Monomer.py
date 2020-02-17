@@ -25,4 +25,4 @@ class Monomer:
 
     def __str__(self):
         monomer_name = ("\t" + self.name) if self.name is not None else ""
-        return (str(list(map(lambda x: (x.name + "*") if x.IsComplement else x.name, self.BindingSites))) + monomer_name) 
+        return (str(list(map(lambda x: ((x.type + "*") if x.IsComplement else x.type), self.BindingSites))) + monomer_name) 

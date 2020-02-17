@@ -39,7 +39,7 @@ def my_post():
         for index, polymer in enumerate(polymers):
             cur_polymer = []
             for monomer in polymer.monomer_list:
-                cur_monomer = list(map(lambda x: (x.name + "*") if x.IsComplement else x.name, monomer.BindingSites))
+                cur_monomer = list(map(lambda x: (x.type + "*") if x.IsComplement else x.type, monomer.BindingSites))
                 cur_polymer.append(cur_monomer)
             polymer_output.append(cur_polymer)
 

@@ -14,9 +14,9 @@ def encode_basic_clause(tbn: TBNProblem, sat: SATProblem):
 # Encoding Saturated Configs
 # Ensure a binding site binds to at most one other binding site
 def encode_each_site_binds_at_most_once(tbn: TBNProblem, sat: SATProblem):
-	for site_type in tbn.site_name_to_sitelist_map.keys():
-		normal_sites = tbn.site_name_to_sitelist_map[site_type].get_normal_sites()
-		complement_sites = tbn.site_name_to_sitelist_map[site_type].get_complement_sites()
+	for site_type in tbn.site_type_to_sitelist_map.keys():
+		normal_sites = tbn.site_type_to_sitelist_map[site_type].get_normal_sites()
+		complement_sites = tbn.site_type_to_sitelist_map[site_type].get_complement_sites()
 
 		# ensures each complement(*) site binds at most once to any possible suitable binding site (no *)
 		for complement_site in complement_sites:
@@ -45,8 +45,8 @@ def encode_each_site_binds_at_most_once(tbn: TBNProblem, sat: SATProblem):
 
 # Ensure each limiting binding site is binded 
 def encode_limiting_site_binds(tbn: TBNProblem, sat: SATProblem):
-	for site_type in tbn.site_name_to_sitelist_map.keys():
-		limiting_sites, non_limiting_sites = tbn.site_name_to_sitelist_map[site_type].get_limiting_site_and_non_limiting_site()
+	for site_type in tbn.site_type_to_sitelist_map.keys():
+		limiting_sites, non_limiting_sites = tbn.site_type_to_sitelist_map[site_type].get_limiting_site_and_non_limiting_site()
 
 		for limiting_site in limiting_sites:
 			pair_id_list = []
@@ -269,13 +269,51 @@ def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
 				pass
 		
 		elif instruction.i_type == INSTR.NOTPAIRED:
-			pass
+			bsite = tbn.bindingsite_name_map.get(instruction.arguments[0])
+			other_bsite = tbn.bindingsite_name_map.get(instruction.arguments[1])
 		
+			if sat.does_pair_exist(bsite, other_bsite):
+				pair_id = sat.get_pair_id(bsite, other_bsite)
+				clause = create_clause(-pair_id)
+				sat.instruction_clauses.append(clause)
+			else:
+				# Can ignore because will not cause UNSAT.
+				pass
+
 		elif instruction.i_type == INSTR.ANYPAIRED:
-			pass
+			bsite = tbn.bindingsite_name_map.get(instruction.arguments[0])
+			if bsite.IsComplement:
+				other_binds = tbn.site_type_to_sitelist_map[bsite.type].get_normal_sites()
+			else:
+				other_binds = tbn.site_type_to_sitelist_map[bsite.type].get_complement_sites()
+
+			if len(other_binds) != 0:
+				potential_binds = []
+				for other_bsite in other_binds:
+					pair_id = sat.get_pair_id(bsite, other_bsite)
+					potential_binds.append(pair_id)
+				
+				clause = create_clause(*potential_binds)
+				sat.instruction_clauses.append(clause)
+			else:
+				# Throw Hands
+				pass
 		
 		elif instruction.i_type == INSTR.NOTANYPAIRED:
-			pass
+			bsite = tbn.bindingsite_name_map.get(instruction.arguments[0])
+			if bsite.IsComplement:
+				other_binds = tbn.site_type_to_sitelist_map[bsite.type].get_normal_sites()
+			else:
+				other_binds = tbn.site_type_to_sitelist_map[bsite.type].get_complement_sites()
+
+			if len(other_binds) != 0:
+				for other_bsite in other_binds:
+					pair_id = sat.get_pair_id(bsite, other_bsite)
+					clause = create_clause(-pair_id)
+					sat.instruction_clauses.append(clause)
+			else:
+				# Throw Hands
+				pass
 		
 		# TODO: Add Error handling for wrong instruction types
 		else:

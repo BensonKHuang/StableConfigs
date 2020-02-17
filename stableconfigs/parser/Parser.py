@@ -33,10 +33,10 @@ def parse_monomer(tbn_problem: TBNProblem, str_line: str):
                 tbn_problem.assign_bindingsite_name(site, site_name)
 
             # Create a new SiteMap for a specific type
-            if site.name not in tbn_problem.site_name_to_sitelist_map:
-                tbn_problem.site_name_to_sitelist_map[site.name] = SiteList(site.name)
+            if site.type not in tbn_problem.site_type_to_sitelist_map:
+                tbn_problem.site_type_to_sitelist_map[site.type] = SiteList(site.type)
 
-            tbn_problem.site_name_to_sitelist_map[site.name].add(site)
+            tbn_problem.site_type_to_sitelist_map[site.type].add(site)
     new_monomer = Monomer(tbn_problem, all_sites)
 
     # If monomer name exists, add it to monomer name map in the tbn problem
