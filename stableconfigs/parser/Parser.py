@@ -76,17 +76,7 @@ def parse_instruction(tbn_problem, str_line):
             pass
             # TODO: Throw invalid instr count error.
         else:
-            if i_type == INSTR.GEN:
-                get_num = None
-                try:
-                    get_num = int(arguments[0])
-                except ValueError:
-                    get_num = None
-                if get_num is not None:
-                    tbn_problem.gen_count = get_num
-                # TODO: Throw exception on non-positive numbers.
-            else:
-                Instruction(tbn_problem, i_type, arguments)
+            Instruction(tbn_problem, i_type, arguments)
 
 
 def parse_input_file(input_file, instr_file):

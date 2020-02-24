@@ -4,7 +4,6 @@
 class INSTR:
     arg_count = dict()
 
-    GEN = "GEN";                   arg_count[GEN] = 1
     TOGETHER = "TOGETHER";         arg_count[TOGETHER] = -1
     NOTTOGETHER = "NOTTOGETHER";   arg_count[NOTTOGETHER] = 2
     FREE = "FREE";                 arg_count[FREE] = 1
@@ -17,7 +16,6 @@ class INSTR:
 
 class Instruction:
     instr_set = {
-        INSTR.GEN,
         INSTR.TOGETHER,
         INSTR.NOTTOGETHER,
         INSTR.FREE,
