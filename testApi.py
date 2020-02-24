@@ -2,7 +2,7 @@ import requests
 import os
 
 open_file = open("input/wraparound_sorting_network.txt", "rt")
-# open_file = open("input/basic.txt", "rt")
+open_file = open("input/basic.txt", "rt")
 
 next_line = open_file.readline()
 my_mon = []
