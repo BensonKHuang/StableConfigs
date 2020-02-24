@@ -51,7 +51,7 @@ def get_stable_config(file_path, instr_path):
     
     # Printing execution time
     print("\nCompleted in", time.time() - t0, "seconds.\n")
-    return polymers
+    return retValue
 
 def get_stable_configs_using_instructions(tbn_problem, sat_problem, original_num_reps):
     counter = 0
