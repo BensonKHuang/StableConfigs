@@ -1,14 +1,18 @@
 from stableconfigs import StableConfig
-from server import server
+from bottleServer import server
 import sys
+import argparse
 
 if __name__ == '__main__':
-    # python3 -m src /home/kyle/StableConfigs/input/wraparound_sorting_network.txt
-    API_Debug = False # Set to True for debugging
-    if not API_Debug:
-        file_path = sys.argv[1]
-        instr_path = sys.argv[2] if len(sys.argv) >= 3 else None
-        StableConfig.get_stable_config(file_path, instr_path)
-    else:
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-s', action='store_true', default=False)
+    parser.add_argument('rest', nargs=argparse.REMAINDER)
+    options = parser.parse_args()
+
+    if options.s:
         server.run_app()
+    else:
+        file_path = options.rest[0]
+        instr_path = options.rest[1] if len(options.rest) >= 2 else None
+        StableConfig.get_stable_config(file_path, instr_path)
 

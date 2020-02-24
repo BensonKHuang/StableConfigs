@@ -10,6 +10,7 @@ def get_stable_config(file_path, instr_path):
     
     t0 = time.time()
     tbn_problem = parse_input_file(file_path, instr_path)
+    retValue = None
 
     # encode problem to SAT solver compatible problem
     sat_problem = SATProblem()
@@ -41,6 +42,7 @@ def get_stable_config(file_path, instr_path):
     else:
         # Decode the problem into polymers
         polymers = Decoder.decode_boolean_values(tbn_problem, sat_problem)
+        retValue = polymers
         for index, polymer in enumerate(polymers):
             print("\t" + "Polymer number", index + 1)
             for monomer in polymer.monomer_list:
@@ -49,7 +51,7 @@ def get_stable_config(file_path, instr_path):
     
     # Printing execution time
     print("\nCompleted in", time.time() - t0, "seconds.\n")
-
+    return polymers
 
 def get_stable_configs_using_instructions(tbn_problem, sat_problem, original_num_reps):
     counter = 0

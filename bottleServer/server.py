@@ -20,19 +20,22 @@ def my_post():
                 monomer_f.write('\n')
         monomer_f.close()
 
-        instructions = received_json['instructions']
-        instr_file_path = "instr.txt"
-        instr_f = open(instr_file_path, "w+")
-        for index, token in enumerate(instructions):
-           instr_f.write(' '.join(token))
-           if index != len(instructions) - 1:
-               instr_f.write('\n')
-        instr_f.close()
+        instr_file_path = None
+        if 'instructions' in received_json:
+            instructions = received_json['instructions']
+            instr_file_path = "instr.txt"
+            instr_f = open(instr_file_path, "w+")
+            for index, token in enumerate(instructions):
+                instr_f.write(' '.join(token))
+                if index != len(instructions) - 1:
+                    instr_f.write('\n')
+            instr_f.close()
 
         # Call get stable config and delete file
-        polymers = StableConfig.get_stable_config(monomer_file_path, None)
+        polymers = StableConfig.get_stable_config(monomer_file_path, instr_file_path)
         os.remove(monomer_file_path)
-        os.remove(instr_file_path)
+        if 'instructions' in received_json:
+            os.remove(instr_file_path)
 
         if polymers is None:
             return
@@ -47,7 +50,7 @@ def my_post():
                 cur_polymer.append(cur_monomer)
             polymer_output.append(cur_polymer)
 
-        return json.dumps({"polymers": polymer_output}, {"polymers count": polymer_count}), 201
+        return json.dumps({"polymers": polymer_output, "polymers_count": polymer_count})
 
 
 def run_app():
