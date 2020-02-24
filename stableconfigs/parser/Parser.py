@@ -79,24 +79,15 @@ def parse_instruction(tbn_problem, str_line):
             Instruction(tbn_problem, i_type, arguments)
 
 
-def parse_input_file(input_file, instr_file):
+def parse_input_lines(tbn_lines, instr_lines):
     tbn_problem = TBNProblem()
     
     # parse input
-    open_file = open(input_file, 'rt')
-    next_line = open_file.readline()
-    while next_line:
-        parse_monomer(tbn_problem, next_line)
-        next_line = open_file.readline()
-    open_file.close()
+    for tbn_line in tbn_lines:
+        parse_monomer(tbn_problem, tbn_line)
 
     # parse instr
-    if instr_file is not None:
-        open_file = open(instr_file, 'rt')
-        next_line = open_file.readline()
-        while next_line:
-            parse_instruction(tbn_problem, next_line)     
-            next_line = open_file.readline()
-        open_file.close()
+    for instr_line in instr_lines:
+        parse_instruction(tbn_problem, instr_line)
 
     return tbn_problem
