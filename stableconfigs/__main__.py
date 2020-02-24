@@ -18,15 +18,15 @@ if __name__ == '__main__':
     else:
         file_path = options.rest[0]
         tbn_file = open(file_path, 'rt')
-        tbn_lines = tbn_file.readLines()
+        tbn_lines = tbn_file.readlines()
         tbn_file.close()
 
         instr_lines = []
         if len(options.rest) >= 2:
             instr_path = options.rest[1]
             instr_file = open(instr_path, 'rt')
-            instr_lines = instr_file.readlines()
+            instr_lines = instr_file.read()
             instr_file.close()
         
-        StableConfig.get_stable_config(file_path, instr_path, gen_count)
+        StableConfig.get_stable_config(tbn_lines, instr_lines, gen_count)
 
