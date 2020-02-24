@@ -5,7 +5,7 @@ import argparse
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-g', default=1)
+    parser.add_argument('-g', default=1, type=int)
     parser.add_argument('-s', action='store_true', default=False)
     parser.add_argument('rest', nargs=argparse.REMAINDER)
     options = parser.parse_args()
