@@ -25,7 +25,7 @@ if __name__ == '__main__':
         if len(options.rest) >= 2:
             instr_path = options.rest[1]
             instr_file = open(instr_path, 'rt')
-            instr_lines = instr_file.read()
+            instr_lines = instr_file.readlines()
             instr_file.close()
         
         succ, msg = StableConfig.get_stable_config(tbn_lines, instr_lines, gen_count)

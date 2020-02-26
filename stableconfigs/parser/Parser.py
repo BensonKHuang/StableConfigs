@@ -76,11 +76,19 @@ def parse_instruction(tbn_problem, str_line):
     if i_type in Instruction.instr_set:
         if INSTR.arg_count[i_type] != -1 and len(arguments) != INSTR.arg_count[i_type]:
             return False, "Instruction '" + i_type + "' takes " + str(INSTR.arg_count[i_type]) + " arguments, got " \
-                   + str(len(arguments)) + "."
+                   + str(len(arguments)) + ": " + str_line
         else:
+            if i_type in Instruction.binding_instr:
+                for arg in arguments:
+                    if arg not in tbn_problem.bindingsite_name_map:
+                        return False, "BindingSite '" + arg + "' does not exist: " + str_line
+            else:
+                for arg in arguments:
+                    if arg not in tbn_problem.monomer_name_map:
+                        return False, "Monomer '" + arg + "' does not exist: " + str_line
             Instruction(tbn_problem, i_type, arguments)
     else:
-        return False, "Invalid instruction '" + i_type + "'."
+        return False, "Invalid instruction '" + i_type + "': " + str_line
 
     return True, ""
 

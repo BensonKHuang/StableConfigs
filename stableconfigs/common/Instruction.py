@@ -8,6 +8,7 @@ class INSTR:
     NOTTOGETHER = "NOTTOGETHER";   arg_count[NOTTOGETHER] = 2
     FREE = "FREE";                 arg_count[FREE] = 1
     NOTFREE = "NOTFREE";           arg_count[NOTFREE] = 1
+
     PAIRED = "PAIRED";             arg_count[PAIRED] = 2
     NOTPAIRED = "NOTPAIRED";       arg_count[NOTPAIRED] = 2
     ANYPAIRED = "ANYPAIRED";       arg_count[ANYPAIRED] = 1
@@ -20,6 +21,13 @@ class Instruction:
         INSTR.NOTTOGETHER,
         INSTR.FREE,
         INSTR.NOTFREE,
+        INSTR.PAIRED,
+        INSTR.NOTPAIRED,
+        INSTR.ANYPAIRED,
+        INSTR.NOTANYPAIRED
+    }
+
+    binding_instr = {
         INSTR.PAIRED,
         INSTR.NOTPAIRED,
         INSTR.ANYPAIRED,
