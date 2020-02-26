@@ -12,6 +12,7 @@ while next_line:
     next_line = open_file.readline()
 open_file.close()
 
-dicToSend = {'monomers': my_mon}
-res = requests.post('http://198.23.133.106:5005/', json=dicToSend)
+dicToSend = {'monomers': my_mon, 'gen':3}
+res = requests.post('http://localhost:5005/', json=dicToSend)
+print(res.status_code)
 print(res.json())

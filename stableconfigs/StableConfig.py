@@ -16,7 +16,7 @@ def get_stable_config(tbn_lines, instr_lines, gen_count):
         return False, tbn_problem
 
     tbn_problem.gen_count = gen_count
-    ret_value = None
+    configs = []
 
     # encode problem to SAT solver compatible problem
     sat_problem = SATProblem()
@@ -43,11 +43,11 @@ def get_stable_config(tbn_lines, instr_lines, gen_count):
 
     # Generate more than one solution with no additional constraints
     elif tbn_problem.gen_count > 1:
-        get_stable_configs_using_instructions(tbn_problem, sat_problem, original_num_reps)
+        configs = get_stable_configs_using_instructions(tbn_problem, sat_problem, original_num_reps)
     else:
         # Decode the problem into polymers
         polymers = Decoder.decode_boolean_values(tbn_problem, sat_problem)
-        ret_value = polymers
+        configs.append(polymers)
         for index, polymer in enumerate(polymers):
             print("\t" + "Polymer number", index + 1)
             for monomer in polymer.monomer_list:
@@ -56,11 +56,12 @@ def get_stable_config(tbn_lines, instr_lines, gen_count):
     
     # Printing execution time
     print("\nCompleted in", time.time() - t0, "seconds.\n")
-    return True, ret_value
+    return True, configs
 
 
 def get_stable_configs_using_instructions(tbn_problem, sat_problem, original_num_reps):
     counter = 0
+    configs = []
     # Generate multiple unique solutions
     while counter < tbn_problem.gen_count:
         sat_problem.reset_clauses()
@@ -81,6 +82,7 @@ def get_stable_configs_using_instructions(tbn_problem, sat_problem, original_num
 
         # Decode the problem into polymers
         polymers = Decoder.decode_boolean_values(tbn_problem, sat_problem)
+        configs.append(polymers)
         for index, polymer in enumerate(polymers):
             print("\t" + "Polymer number", index + 1)
             for monomer in polymer.monomer_list:
@@ -95,3 +97,4 @@ def get_stable_configs_using_instructions(tbn_problem, sat_problem, original_num
         Encoder.encode_unique_solution(tbn_problem, sat_problem)
 
         counter += 1
+    return configs

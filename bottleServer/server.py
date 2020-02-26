@@ -1,5 +1,5 @@
 from stableconfigs import StableConfig
-from bottle import post, run, request, Bottle
+from bottle import post, run, request, Bottle, HTTPResponse
 import json
 import os
 
@@ -21,24 +21,36 @@ def my_post():
             instructions = received_json['instructions']
             for index, token in enumerate(instructions):
                 instr_lines.append((' ').join(token))
+        
+        gen = 1
+        if 'gen' in received_json:
+            gen = received_json['gen']
 
         # Call get stable config and delete file
-        succ, polymers = StableConfig.get_stable_config(monomer_lines, instr_lines, 1)
-
+        succ, config_list = StableConfig.get_stable_config(monomer_lines, instr_lines, gen)
         if not succ:
-            return polymers  # TODO: replace with JSON error message right here, the 'polymers' variable has the msg
+            return HTTPResponse(status=403, body='Something went wrong')
 
-        # Return polymer output in expected format
-        polymer_output = []
-        polymer_count = len(polymers)
-        for index, polymer in enumerate(polymers):
-            cur_polymer = []
-            for monomer in polymer.monomer_list:
-                cur_monomer = list(map(lambda x: (x.type + "*") if x.IsComplement else x.type, monomer.BindingSites))
-                cur_polymer.append(cur_monomer)
-            polymer_output.append(cur_polymer)
+        # Return polymer output in expected for mat
+        config_ouput_list = []
+        for index, config in enumerate(config_list):
+            config, config_size = config_to_output(config)
+            config_ouput_list.append({
+                "polymers": config, 
+                "polymers_count": config_size
+            })
 
-        return json.dumps({"polymers": polymer_output, "polymers_count": polymer_count})
+        return json.dumps({"configs":config_ouput_list})
+
+def config_to_output(config):
+    polymer_output = []
+    for index, polymer in enumerate(config):
+        cur_polymer = []
+        for monomer in polymer.monomer_list:
+            cur_monomer = list(map(lambda x: (x.type + "*") if x.IsComplement else x.type, monomer.BindingSites))
+            cur_polymer.append(cur_monomer)
+        polymer_output.append(cur_polymer)
+    return polymer_output, len(polymer_output)
 
 
 def run_app():

@@ -203,6 +203,46 @@ To run additional instructions, you must provide an additional file:
 
     $ Docker run -v {absolute/local/path/tbn_file.txt}:/{tbn_file.txt} -v {absolute/local/path/instr.txt}:/{instr.txt} stablegen {tbn_file.txt} {instr.txt} 
 
+# API Server Usage
+We provide an api server that can serve StableConfigs over the network.
+The default serve location is at http://localhost:5005/ that handles one POST request on /
+
+To run the server:
+    python3 -m stableconfigs -s
+
+To run the server with gunicorn on ubuntu:
+    cd bottleServer
+    ./run.sh
+
+POST request body format (json):
+    {
+        "monomers":[
+            ["a", "b"],
+            ["a*", "b*"],
+            ["a*", ">mon1"],
+            ["b*"],
+        ],
+        "instructions":[
+            ["FREE", "mon1"]
+        ],
+        "gen":1
+    }
+
+POST response body format (json):
+    {
+        "configs":[
+            {
+                "polymers":[
+                    [["a*", "b*"], ["a", "b"]], 
+                    [["b"]], 
+                    [["a"]]
+                ],
+                "polymers_count":3
+            }
+        ]
+    }
+
+
 
 # Citation
 
