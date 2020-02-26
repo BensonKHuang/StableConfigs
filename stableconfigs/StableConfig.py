@@ -79,7 +79,6 @@ def get_stable_configs_using_instructions(tbn_problem, sat_problem, original_num
         else:
             print("Unsat")
 
-
         # Decode the problem into polymers
         polymers = Decoder.decode_boolean_values(tbn_problem, sat_problem)
         for index, polymer in enumerate(polymers):
@@ -96,4 +95,3 @@ def get_stable_configs_using_instructions(tbn_problem, sat_problem, original_num
         Encoder.encode_unique_solution(tbn_problem, sat_problem)
 
         counter += 1
-
