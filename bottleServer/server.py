@@ -23,8 +23,11 @@ def my_post():
                 instr_lines.append((' ').join(token))
 
         # Call get stable config and delete file
-        polymers = StableConfig.get_stable_config(monomer_lines, instr_lines, 1)
-        
+        succ, polymers = StableConfig.get_stable_config(monomer_lines, instr_lines, 1)
+
+        if not succ:
+            return polymers  # TODO: replace with JSON error message right here, the 'polymers' variable has the msg
+
         # Return polymer output in expected format
         polymer_output = []
         polymer_count = len(polymers)

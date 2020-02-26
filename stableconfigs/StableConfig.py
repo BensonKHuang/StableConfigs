@@ -9,9 +9,14 @@ def get_stable_config(tbn_lines, instr_lines, gen_count):
     # parse the input to encode it into BindingSite/Monomer classes
     
     t0 = time.time()
-    tbn_problem = parse_input_lines(tbn_lines, instr_lines)
+    succ, tbn_problem = parse_input_lines(tbn_lines, instr_lines)
+
+    if not succ:
+        print("ERROR\n\t" + tbn_problem)
+        return False, tbn_problem
+
     tbn_problem.gen_count = gen_count
-    retValue = None
+    ret_value = None
 
     # encode problem to SAT solver compatible problem
     sat_problem = SATProblem()
@@ -38,12 +43,11 @@ def get_stable_config(tbn_lines, instr_lines, gen_count):
 
     # Generate more than one solution with no additional constraints
     elif tbn_problem.gen_count > 1:
-         get_stable_configs_using_instructions(tbn_problem, sat_problem, original_num_reps)
-
+        get_stable_configs_using_instructions(tbn_problem, sat_problem, original_num_reps)
     else:
         # Decode the problem into polymers
         polymers = Decoder.decode_boolean_values(tbn_problem, sat_problem)
-        retValue = polymers
+        ret_value = polymers
         for index, polymer in enumerate(polymers):
             print("\t" + "Polymer number", index + 1)
             for monomer in polymer.monomer_list:
@@ -52,7 +56,7 @@ def get_stable_config(tbn_lines, instr_lines, gen_count):
     
     # Printing execution time
     print("\nCompleted in", time.time() - t0, "seconds.\n")
-    return retValue
+    return True, ret_value
 
 
 def get_stable_configs_using_instructions(tbn_problem, sat_problem, original_num_reps):

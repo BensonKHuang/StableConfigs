@@ -13,7 +13,8 @@ def parse_monomer(tbn_problem: TBNProblem, str_line: str):
     monomer_name = None
     for token in tokens:
         if token[0] == ">":
-            assert (monomer_name is None), "Monomer given multiple names."  # TODO Add error handling.
+            if monomer_name is not None:
+                return False, "Monomer given multiple names: " + str_line
             monomer_name = token[1:].strip()
         else:
             find_site_name = token.find(":")
@@ -21,15 +22,15 @@ def parse_monomer(tbn_problem: TBNProblem, str_line: str):
             if find_site_name != -1:
                 site_name = token[(find_site_name + 1):]
                 token = token[:find_site_name]
-                # TODO: global error checking
-                assert(len(site_name) > 0 and len(token) > 0, "Invalid Binding Site name.")
+                if len(site_name) == 0 or len(token) == 0:
+                    return False, "Invalid Binding Site name: " + str_line
 
             site = BindingSite(tbn_problem, token)
             all_sites.append(site)
 
             if site_name is not None:
-                # TODO: Check for duplicate BindingSite names.
-                assert(site_name not in tbn_problem.bindingsite_name_map, "Duplicate BindingSite name.")
+                if site_name in tbn_problem.bindingsite_name_map:
+                    return False, "Duplicate BindingSite name: " + str_line
                 tbn_problem.assign_bindingsite_name(site, site_name)
 
             # Create a new SiteMap for a specific type
@@ -41,14 +42,15 @@ def parse_monomer(tbn_problem: TBNProblem, str_line: str):
 
     # If monomer name exists, add it to monomer name map in the tbn problem
     if monomer_name is not None:
-        # TODO: Check for duplicate Monomer names
-        assert(monomer_name not in tbn_problem.monomer_name_map, "Duplicate monomer name.")
+        if monomer_name in tbn_problem.monomer_name_map:
+            return False, "Duplicate monomer name."
         tbn_problem.assign_monomer_name(new_monomer, monomer_name)
-    return new_monomer
+
+    return True, ""
 
 
 def parse_instruction(tbn_problem, str_line):
-    tokens = str_line.replace("\n", "").split(' ')  # TODO: Fix bug where you can have spaces in name
+    tokens = str_line.replace("\n", "").split(' ')
 
     i_type = None
     arguments = list()  # For the most part, these are monomer names.
@@ -73,10 +75,14 @@ def parse_instruction(tbn_problem, str_line):
 
     if i_type in Instruction.instr_set:
         if INSTR.arg_count[i_type] != -1 and len(arguments) != INSTR.arg_count[i_type]:
-            pass
-            # TODO: Throw invalid instr count error.
+            return False, "Instruction '" + i_type + "' takes " + str(INSTR.arg_count[i_type]) + " arguments, got " \
+                   + str(len(arguments)) + "."
         else:
             Instruction(tbn_problem, i_type, arguments)
+    else:
+        return False, "Invalid instruction '" + i_type + "'."
+
+    return True, ""
 
 
 def parse_input_lines(tbn_lines, instr_lines):
@@ -84,10 +90,14 @@ def parse_input_lines(tbn_lines, instr_lines):
     
     # parse input
     for tbn_line in tbn_lines:
-        parse_monomer(tbn_problem, tbn_line)
+        succ, msg = parse_monomer(tbn_problem, tbn_line)
+        if not succ:
+            return succ, msg
 
     # parse instr
     for instr_line in instr_lines:
-        parse_instruction(tbn_problem, instr_line)
+        succ, msg = parse_instruction(tbn_problem, instr_line)
+        if not succ:
+            return succ, msg
 
-    return tbn_problem
+    return True, tbn_problem
