@@ -1,0 +1,12 @@
+a b >input1
+a b e
+a* b*
+b e f
+b* e*
+c d >input2
+c d e
+c* d*
+d e f
+d* e* 
+e f >output #input1 OR input2
+e* f*

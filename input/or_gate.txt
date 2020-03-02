@@ -1,0 +1,18 @@
+a b c d e
+a* b* c* d*
+b* c* d* e*
+d e f
+a b >input1
+b c 
+c d >input2
+e f >output1
+e* f*
+g h i j e
+g* h* i* j*
+h* i* j* e*
+j e f
+g h >input3
+h i 
+i j >input4
+e f >output2
+e* f*

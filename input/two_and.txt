@@ -1,0 +1,17 @@
+a b c d e
+a* b* c* d*
+b* c* d* e*
+d e f
+a b >input1
+b c 
+c d >input2
+e f >output1 #input1 AND input2
+e* f*
+e f g h i
+e* f* g* h*
+f* g* h* i*
+h i j
+f g  
+g h >input3
+i j >output2 #output1 AND input3
+i* j*
