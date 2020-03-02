@@ -43,14 +43,14 @@ def parse_monomer(tbn_problem: TBNProblem, str_line: str):
     # If monomer name exists, add it to monomer name map in the tbn problem
     if monomer_name is not None:
         if monomer_name in tbn_problem.monomer_name_map:
-            return False, "Duplicate monomer name."
+            return False, "Duplicate monomer name: " + monomer_name
         tbn_problem.assign_monomer_name(new_monomer, monomer_name)
 
     return True, ""
 
 
 def parse_instruction(tbn_problem, str_line):
-    tokens = str_line.replace("\n", "").split(' ')
+    tokens = str_line.strip().split(' ')
 
     i_type = None
     arguments = list()  # For the most part, these are monomer names.
