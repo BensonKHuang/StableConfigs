@@ -2,6 +2,7 @@
 from stableconfigs.common.TBNProblem import TBNProblem
 from stableconfigs.encoder.SATProblem import SATProblem
 from stableconfigs.common.Instruction import Instruction, INSTR
+from stableconfigs.common.CustomExceptions import *
 
 # Helper function that runs all basic functions
 def encode_basic_clause(tbn: TBNProblem, sat: SATProblem):
@@ -182,7 +183,6 @@ def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
 		
 		# TOGETHER: Force monomers into the same polymer
 		if instruction.i_type == INSTR.TOGETHER:
-			# TODO: Throw hands if duplicate name in arguments 
 			
 			# Compare every combination of monomers
 			visited_monomers = set()
@@ -194,11 +194,10 @@ def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
 						bind_id = sat.get_bind_id(mono, other_mon)
 						clause = create_clause(bind_id)
 						sat.instruction_clauses.append(clause)
-						# Add clauses to propogate transitivity clauses
+					
 					else:
-						# TODO: Send exception on WHY this will cause unsat
-						# TODO: Throw hands
-						pass
+						# Exception because there is no possible path for monomers to be bound together
+						raise TogetherConstraintException(instruction, mono, other_mon)
 
 				visited_monomers.add(mono)
 
@@ -227,7 +226,8 @@ def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
 		
 		#NOTFREE: Force specified monomer to bind to any other monomers
 		elif instruction.i_type == INSTR.NOTFREE:
-			mono = tbn.monomer_name_map.get(instruction.arguments[0])
+			monomer_name = instruction.arguments[0]
+			mono = tbn.monomer_name_map.get(monomer_name)
 
 			potential_binds = []
 			for other_mon in tbn.all_monomers:
@@ -237,15 +237,7 @@ def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
 
 			# If there exists no binds, then we force unsat
 			if len(potential_binds) == 0:
-				# TODO: Send exception on WHY this will cause unsat
-				# TODO: Throw hands
-				
-				bind_id = sat.get_bind_id(mono, mono)
-				# Adding two clauses that are true and false will force an unsat
-				clause_true = create_clause(bind_id)
-				clause_false = create_clause(-bind_id)
-				sat.instruction_clauses.append(clause_true)
-				sat.instruction_clauses.append(clause_false)
+				raise NotFreeConstraintException(instruction, mono)
 
 			else:
 				clause = create_clause(*potential_binds)
@@ -261,9 +253,7 @@ def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
 				clause = create_clause(pair_id)
 				sat.instruction_clauses.append(clause)
 			else:
-				# TODO: Send exception on WHY this will cause unsat
-				# TODO: Throw hands
-				pass
+				raise PairedConstraintException(instruction, bsite, other_bsite)				
 		
 		elif instruction.i_type == INSTR.NOTPAIRED:
 			bsite = tbn.bindingsite_name_map.get(instruction.arguments[0])
@@ -293,8 +283,8 @@ def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
 				clause = create_clause(*potential_binds)
 				sat.instruction_clauses.append(clause)
 			else:
-				# Throw Hands
-				pass
+				raise AnyPairedConstraintException(instruction, bsite)
+
 		
 		elif instruction.i_type == INSTR.NOTANYPAIRED:
 			bsite = tbn.bindingsite_name_map.get(instruction.arguments[0])
@@ -309,12 +299,12 @@ def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
 					clause = create_clause(-pair_id)
 					sat.instruction_clauses.append(clause)
 			else:
-				# Throw Hands
+				# Can ignore because will not cause UNSAT.
 				pass
 		
-		# TODO: Add Error handling for wrong instruction types
 		else:
-			# TODO: Assert error, should never reach...?
+			# TODO: Should never enter here, default is to ignore.
+			
 			pass
 
 

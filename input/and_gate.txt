@@ -3,7 +3,8 @@ a* b* c* d*
 b* c*:s1 d* e*
 d e f
 a b >input1
-b c:s3 
-c d:s1 >input2
+b c:s2 
+c d:s3 >input2
 e f >output
 e* f*
+x:x3 >input3

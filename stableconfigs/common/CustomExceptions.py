@@ -59,3 +59,37 @@ class InvalidInstruction(Exception):
         self.bad_instr = bad_instr
     def __str__(self):
         return "Invalid Instruction '" + self.bad_name + "'. '" + self.str_line + "'"
+
+
+# Exceptions for Executing Instructions
+
+class TogetherConstraintException(Exception):
+    def __init__(self, instruction, mon1, mon2):
+        self.instruction = instruction
+        self.mon1 = mon1
+        self.mon2 = mon2
+    def __str__(self):
+        return "Monomer [" + self.mon1.name + "] and Monomer [" + self.mon2.name + "] cannot be together in any valid configuration."
+
+class NotFreeConstraintException(Exception):
+    def __init__(self, instruction, mon):
+        self.instruction = instruction
+        self.mon = mon
+    def __str__(self):
+        return "Monomer [" + self.mon.name +"] cannot be together with any other Monomer in any valid configuration."
+
+class PairedConstraintException(Exception):
+    def __init__(self, instruction, bsite1, bsite2):
+        self.instruction = instruction
+        self.bsite1 = bsite1
+        self.bsite2 = bsite2
+    def __str__(self):
+        return "Binding Site [" + self.bsite1.name + "] and Binding Site [" + self.bsite2.name + "] do not have complementary Binding Sites."
+
+class AnyPairedConstraintException(Exception):
+    def __init__(self, instruction, bsite):
+        self.instruction = instruction
+        self.bsite = bsite
+    def __str__(self):
+        return "Binding Site [" + self.bsite.name + "] does not have any complementary binding sites in the system."
+    
