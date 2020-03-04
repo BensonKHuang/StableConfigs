@@ -31,7 +31,7 @@ def my_post():
         if not succ:
             return HTTPResponse(status=403, body='Something went wrong')
 
-        # Return polymer output in expected for mat
+        # Return polymer output in expected format
         config_ouput_list = []
         for index, config in enumerate(config_list):
             config, config_size = config_to_output(config)

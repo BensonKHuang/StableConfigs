@@ -39,7 +39,7 @@ def get_stable_config(tbn_lines, instr_lines, gen_count):
     if len(tbn_problem.instructions) != 0:
         print("\nCOMPUTING STABLE CONFIGURATION WITH ADDITIONAL PROPERTIES:")
         Encoder.encode_instruction_clauses(tbn_problem, sat_problem)
-        get_stable_configs_using_instructions(tbn_problem, sat_problem, original_num_reps)
+        configs = get_stable_configs_using_instructions(tbn_problem, sat_problem, original_num_reps)
 
     # Generate more than one solution with no additional constraints
     elif tbn_problem.gen_count > 1:
