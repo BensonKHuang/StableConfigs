@@ -220,7 +220,7 @@ POST request body format (json):
             ["a", "b"],
             ["a*", "b*"],
             ["a*", ">mon1"],
-            ["b*"],
+            ["b*"]
         ],
         "instructions":[
             ["FREE", "mon1"]
