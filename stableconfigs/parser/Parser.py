@@ -13,6 +13,11 @@ def parse_monomer(tbn_problem: TBNProblem, str_line: str):
 
     monomer_name = None
     for token in tokens:
+        
+        # Ignore empty lines
+        if token is "":
+            break
+
         find_hash = token.find("#")
         if find_hash != -1:
             if find_hash == 0:  # if the hash was the first character, the entire line is a comment
