@@ -4,11 +4,5 @@ venv
 .
 *.pyc
 __pycache__
-stableconfigs/__pycache__
-stableconfigs/common/__pycache__
-stableconfigs/controller/__pycache__
-stableconfigs/encoder/__pycache__
-stableconfigs/decoder/__pycache__
-stableconfigs/parser/__pycache__
-
-test/__pycache__
+*/__pycache__
+build/
