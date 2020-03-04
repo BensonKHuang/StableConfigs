@@ -28,6 +28,5 @@ if __name__ == '__main__':
             instr_lines = instr_file.readlines()
             instr_file.close()
         
-        succ, msg = StableConfig.get_stable_config(tbn_lines, instr_lines, gen_count)
-        if not succ:
-            pass  # TODO: The error message is here.
+        StableConfig.get_stable_config(tbn_lines, instr_lines, gen_count)
+        

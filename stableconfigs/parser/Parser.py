@@ -8,7 +8,8 @@ from stableconfigs.common.CustomExceptions import *
 
 def parse_monomer(tbn_problem: TBNProblem, str_line: str):
     all_sites = []
-    tokens = str_line.strip().split(' ')
+    str_line = str_line.strip()
+    tokens = str_line.split(' ')
 
     monomer_name = None
     for token in tokens:
@@ -48,7 +49,8 @@ def parse_monomer(tbn_problem: TBNProblem, str_line: str):
 
 
 def parse_instruction(tbn_problem, str_line):
-    tokens = str_line.strip().split(' ')
+    str_line = str_line.strip()
+    tokens = str_line.split(' ')
 
     i_type = None
     arguments = list()  # For the most part, these are monomer names.
