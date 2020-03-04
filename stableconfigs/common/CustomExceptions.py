@@ -1,3 +1,6 @@
+# Custom Exceptions
+
+
 class MonomerMultipleNames(Exception):
     def __init__(self, str_line):
         self.str_line = str_line

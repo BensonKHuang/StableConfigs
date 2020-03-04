@@ -9,11 +9,8 @@ def get_stable_config(tbn_lines, instr_lines, gen_count):
     # parse the input to encode it into BindingSite/Monomer classes
     
     t0 = time.time()
-    succ, tbn_problem = parse_input_lines(tbn_lines, instr_lines)
+    tbn_problem = parse_input_lines(tbn_lines, instr_lines)
 
-    if not succ:
-        print("ERROR\n\t" + tbn_problem)
-        return False, tbn_problem
 
     tbn_problem.gen_count = gen_count
     configs = []
@@ -56,7 +53,7 @@ def get_stable_config(tbn_lines, instr_lines, gen_count):
     
     # Printing execution time
     print("\nCompleted in", time.time() - t0, "seconds.\n")
-    return True, configs
+    return configs
 
 
 def get_stable_configs_using_instructions(tbn_problem, sat_problem, original_num_reps):
