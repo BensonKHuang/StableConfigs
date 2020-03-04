@@ -11,9 +11,9 @@ Python tool to generate Stable Configurations of Monomers by reducing the proble
 + python3.6 or higher
 + pip3 (Python Package Installer for Python 3)
 
-Docker constraints are also specified in [Docker Usage](#-docker-usage) section.
+Docker instructions are also specified in [Docker Usage](#-docker-usage) section.
 
-# Installation constraints
+# Installation instructions
 
 Install the requirements (needed for Command Line Tool):
 
@@ -37,7 +37,7 @@ Install the requirements (needed for Command Line Tool):
   
 ## Command line tool
     
-    $ python3 -m stableconfigs {path/to/tbn_file.txt} {optional/path/to/constr.txt}
+    $ python3 -m stableconfigs {path/to/tbn_file.txt} {optional/path/to/constraints.txt}
 
 
 ### Solving General TBN Problems (tbn_file.txt)
@@ -53,7 +53,7 @@ The input file to solve tbn problems is as follows:
 - Ending the line with ":{name}" will uniquely label the monomer : "a b c d&ast; :m1"
 
 
-### Additional Feature Constraints (constr.txt)
+### Additional Feature Constraints (constraints.txt)
 
 In the construction file (the second argument), you can provide constraints to check additional properties
 
@@ -201,10 +201,10 @@ General TBN Problem Example:
 
 To run additional constraints, you must provide an additional file:
 
-    $ Docker run -v {absolute/local/path/tbn_file.txt}:/{tbn_file.txt} -v {absolute/local/path/constr.txt}:/{constr.txt} stablegen {tbn_file.txt} {constr.txt} 
+    $ Docker run -v {absolute/local/path/tbn_file.txt}:/{tbn_file.txt} -v {absolute/local/path/constraints.txt}:/{constraints.txt} stablegen {tbn_file.txt} {constraints.txt} 
 
 # API Server Usage
-We provide an api server that can serve StableConfigs over the network.
+We provide an API Server that can serve StableConfigs over the network.
 The default serve location is at http://localhost:5005/ that handles one POST request on /
 
 To run the server:
