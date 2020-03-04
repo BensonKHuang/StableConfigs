@@ -13,6 +13,13 @@ def parse_monomer(tbn_problem: TBNProblem, str_line: str):
 
     monomer_name = None
     for token in tokens:
+        find_hash = token.find("#")
+        if find_hash != -1:
+            if find_hash == 0:  # if the hash was the first character, the entire line is a comment
+                break
+            else:
+                token = token[:find_hash]
+
         if token[0] == ">":
             if monomer_name is not None:
                 raise MonomerMultipleNames(str_line)
@@ -39,6 +46,10 @@ def parse_monomer(tbn_problem: TBNProblem, str_line: str):
                 tbn_problem.site_type_to_sitelist_map[site.type] = SiteList(site.type)
 
             tbn_problem.site_type_to_sitelist_map[site.type].add(site)
+
+        if find_hash != -1:
+            break
+
     new_monomer = Monomer(tbn_problem, all_sites)
 
     # If monomer name exists, add it to monomer name map in the tbn problem
@@ -60,7 +71,7 @@ def parse_instruction(tbn_problem, str_line):
 
         find_hash = token.find("#")
         if find_hash != -1:
-            if find_hash == 0:  # if the '#' is found in the beginning of the token, the entire token is a comment
+            if find_hash == 0:
                 break
             else:
                 token = token[:find_hash]
