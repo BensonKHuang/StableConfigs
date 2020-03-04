@@ -49,7 +49,10 @@ def parse_monomer(tbn_problem: TBNProblem, str_line: str):
 
         if find_hash != -1:
             break
-
+    
+    if len(all_sites) == 0:
+        return
+        
     new_monomer = Monomer(tbn_problem, all_sites)
 
     # If monomer name exists, add it to monomer name map in the tbn problem
@@ -59,7 +62,7 @@ def parse_monomer(tbn_problem: TBNProblem, str_line: str):
         tbn_problem.assign_monomer_name(new_monomer, monomer_name)
 
 
-def parse_instruction(tbn_problem, str_line):
+def parse_instruction(tbn_problem: TBNProblem, str_line: str):
     str_line = str_line.strip()
     tokens = str_line.split(' ')
 
@@ -84,6 +87,10 @@ def parse_instruction(tbn_problem, str_line):
         if find_hash != -1:
             break
 
+    # If instruction file is blank/Only a comment, then just ignore instruction.
+    if i_type is None:
+        return
+    
     if i_type in Instruction.instr_set:
         if INSTR.arg_count[i_type] != -1 and len(arguments) != INSTR.arg_count[i_type]:
             raise InstructionArgumentCount(str_line, i_type, INSTR.arg_count[i_type], len(arguments))
@@ -107,6 +114,9 @@ def parse_input_lines(tbn_lines, instr_lines):
     # parse input
     for tbn_line in tbn_lines:
         parse_monomer(tbn_problem, tbn_line)
+    
+    if len(tbn_problem.all_monomers) == 0:
+        raise EmptyProblemException()
 
     # parse instr
     for instr_line in instr_lines:

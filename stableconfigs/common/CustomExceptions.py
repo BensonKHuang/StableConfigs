@@ -1,6 +1,10 @@
 # Custom Exceptions
 
 
+class EmptyProblemException(Exception):
+    def __str__(self):
+        return "Input contains no monomers."
+
 class MonomerMultipleNames(Exception):
     def __init__(self, str_line):
         self.str_line = str_line
