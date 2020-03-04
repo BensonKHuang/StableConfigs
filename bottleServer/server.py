@@ -15,19 +15,18 @@ def my_post():
         for index, monomer in enumerate(monomers):
             monomer_lines.append(' '.join(monomer))
 
-        
-        instr_lines = []
-        if 'instructions' in received_json:
-            instructions = received_json['instructions']
-            for index, token in enumerate(instructions):
-                instr_lines.append((' ').join(token))
+        constraints_lines = []
+        if 'constraints' in received_json:
+            constraints = received_json['constraints']
+            for index, token in enumerate(constraints):
+                constraints_lines.append((' ').join(token))
         
         gen = 1
         if 'gen' in received_json:
             gen = received_json['gen']
 
         # Call get stable config and delete file
-        succ, config_list = StableConfig.get_stable_config(monomer_lines, instr_lines, gen)
+        succ, config_list = StableConfig.get_stable_config(monomer_lines, constraints_lines, gen)
         if not succ:
             return HTTPResponse(status=403, body='Something went wrong')
 

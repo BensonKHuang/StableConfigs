@@ -19,7 +19,7 @@ class SATProblem:
 		self.bind_transitive_clauses = list()
 		self.bind_representatives_clauses = list()
 		self.increment_min_representatives_clauses = list()
-		self.instruction_clauses = list()
+		self.constraint_clauses = list()
 		self.unique_combination_clauses = list()
 
 		self.result = list()
@@ -139,7 +139,7 @@ class SATProblem:
 		for clause in self.increment_min_representatives_clauses:
 			solver.add_clause(clause)
 
-		for clause in self.instruction_clauses:
+		for clause in self.constraint_clauses:
 			solver.add_clause(clause)
 		
 		for clause in self.unique_combination_clauses:

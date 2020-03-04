@@ -17,7 +17,7 @@ class TBNProblem:
 
         self.gen_count = 1
 
-        self.instructions = list()
+        self.constraints = list()
 
     def assign_monomer_name(self, monomer, monomer_name):
         monomer.name = monomer_name

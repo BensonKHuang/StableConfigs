@@ -5,11 +5,11 @@ import stableconfigs.decoder.Decoder as Decoder
 import time
 
 
-def get_stable_config(tbn_lines, instr_lines, gen_count):
+def get_stable_config(tbn_lines, constr_lines, gen_count):
     # parse the input to encode it into BindingSite/Monomer classes
     
     t0 = time.time()
-    tbn_problem = parse_input_lines(tbn_lines, instr_lines)
+    tbn_problem = parse_input_lines(tbn_lines, constr_lines)
 
 
     tbn_problem.gen_count = gen_count
@@ -32,15 +32,17 @@ def get_stable_config(tbn_lines, instr_lines, gen_count):
     if original_num_reps > 0:
         print("Found an original stable configuration with [", original_num_reps, "] polymers.\n")
     
-    # Add instruction set clauses and solve specified number of times
-    if len(tbn_problem.instructions) != 0:
-        print("\nCOMPUTING STABLE CONFIGURATION WITH ADDITIONAL PROPERTIES:")
-        Encoder.encode_instruction_clauses(tbn_problem, sat_problem)
-        configs = get_stable_configs_using_instructions(tbn_problem, sat_problem, original_num_reps)
+    # Add constraints set clauses and solve specified number of times
+    if len(tbn_problem.constraints) != 0:
+        print("\nCOMPUTING STABLE CONFIGURATION WITH ADDITIONAL CONSTRAINTS:")
+        Encoder.encode_constraints_clauses(tbn_problem, sat_problem)
+        configs = get_stable_configs_using_constraints(
+            tbn_problem, sat_problem, original_num_reps)
 
     # Generate more than one solution with no additional constraints
     elif tbn_problem.gen_count > 1:
-        configs = get_stable_configs_using_instructions(tbn_problem, sat_problem, original_num_reps)
+        configs = get_stable_configs_using_constraints(
+            tbn_problem, sat_problem, original_num_reps)
     else:
         # Decode the problem into polymers
         polymers = Decoder.decode_boolean_values(tbn_problem, sat_problem)
@@ -56,7 +58,7 @@ def get_stable_config(tbn_lines, instr_lines, gen_count):
     return configs
 
 
-def get_stable_configs_using_instructions(tbn_problem, sat_problem, original_num_reps):
+def get_stable_configs_using_constraints(tbn_problem, sat_problem, original_num_reps):
     counter = 0
     configs = []
     # Generate multiple unique solutions
@@ -86,9 +88,9 @@ def get_stable_configs_using_instructions(tbn_problem, sat_problem, original_num
                 print("\t\t" + str(monomer))
             print()
 
-        print("Properties:")
-        for instr in tbn_problem.instructions:
-            print("\t" + str(instr))
+        print("Constraints:")
+        for constr in tbn_problem.constraints:
+            print("\t" + str(constr))
 
         # Encode a new unique solution
         Encoder.encode_unique_solution(tbn_problem, sat_problem)

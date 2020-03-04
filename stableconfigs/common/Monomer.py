@@ -24,5 +24,5 @@ class Monomer:
 
 
     def __str__(self):
-        monomer_name = ("\t" + self.name) if self.name is not None else ""
-        return (str(list(map(lambda x: str(x), self.BindingSites))) + monomer_name) 
+        monomer_name = ("\t>" + self.name) if self.name is not None else ""
+        return (str(list(map(lambda x: str(x), self.BindingSites))) + monomer_name)

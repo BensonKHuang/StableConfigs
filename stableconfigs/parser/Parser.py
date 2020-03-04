@@ -1,5 +1,5 @@
 # Parser library
-from stableconfigs.common.Instruction import Instruction, INSTR
+from stableconfigs.common.Constraint import Constraint, CONSTR
 from stableconfigs.common.BindingSite import BindingSite
 from stableconfigs.common.Monomer import Monomer
 from stableconfigs.common.TBNProblem import TBNProblem
@@ -62,11 +62,11 @@ def parse_monomer(tbn_problem: TBNProblem, str_line: str):
         tbn_problem.assign_monomer_name(new_monomer, monomer_name)
 
 
-def parse_instruction(tbn_problem: TBNProblem, str_line: str):
+def parse_constraint(tbn_problem: TBNProblem, str_line: str):
     str_line = str_line.strip()
     tokens = str_line.split(' ')
 
-    i_type = None
+    c_type = None
     arguments = list()  # For the most part, these are monomer names.
 
     for ind in range(len(tokens)):
@@ -80,22 +80,22 @@ def parse_instruction(tbn_problem: TBNProblem, str_line: str):
                 token = token[:find_hash]
 
         if ind == 0:
-            i_type = token
+            c_type = token
         else:
             arguments.append(token)
 
         if find_hash != -1:
             break
 
-    # If instruction file is blank/Only a comment, then just ignore instruction.
-    if i_type is None:
+    # If constraint file is blank/Only a comment, then just ignore constraint.
+    if c_type is None:
         return
     
-    if i_type in Instruction.instr_set:
-        if INSTR.arg_count[i_type] != -1 and len(arguments) != INSTR.arg_count[i_type]:
-            raise InstructionArgumentCount(str_line, i_type, INSTR.arg_count[i_type], len(arguments))
+    if c_type in Constraint.constr_set:
+        if CONSTR.arg_count[c_type] != -1 and len(arguments) != CONSTR.arg_count[c_type]:
+            raise ConstraintArgumentCount(str_line, c_type, CONSTR.arg_count[c_type], len(arguments))
         else:
-            if i_type in Instruction.binding_instr:
+            if c_type in Constraint.binding_constr:
                 for arg in arguments:
                     if arg not in tbn_problem.bindingsite_name_map:
                         raise NonexistentBindingSite(str_line, arg)
@@ -103,12 +103,12 @@ def parse_instruction(tbn_problem: TBNProblem, str_line: str):
                 for arg in arguments:
                     if arg not in tbn_problem.monomer_name_map:
                         raise NonexistentMonomer(str_line, arg)
-            Instruction(tbn_problem, i_type, arguments)
+            Constraint(tbn_problem, c_type, arguments)
     else:
-        raise InvalidInstruction(str_line, i_type)
+        raise InvalidConstraint(str_line, c_type)
 
 
-def parse_input_lines(tbn_lines, instr_lines):
+def parse_input_lines(tbn_lines, constr_lines):
     tbn_problem = TBNProblem()
     
     # parse input
@@ -118,9 +118,9 @@ def parse_input_lines(tbn_lines, instr_lines):
     if len(tbn_problem.all_monomers) == 0:
         raise EmptyProblemException()
 
-    # parse instr
-    for instr_line in instr_lines:
-        parse_instruction(tbn_problem, instr_line)
+    # parse constr
+    for constr_line in constr_lines:
+        parse_constraint(tbn_problem, constr_line)
         
     return tbn_problem
     

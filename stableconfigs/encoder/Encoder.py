@@ -1,7 +1,7 @@
 # class for Encoding/adding clauses to a SATProblem
 from stableconfigs.common.TBNProblem import TBNProblem
 from stableconfigs.encoder.SATProblem import SATProblem
-from stableconfigs.common.Instruction import Instruction, INSTR
+from stableconfigs.common.Constraint import Constraint, CONSTR
 from stableconfigs.common.CustomExceptions import *
 
 # Helper function that runs all basic functions
@@ -177,44 +177,44 @@ def increment_min_representatives(tbn: TBNProblem, sat: SATProblem):
 	sat.increment_min_representatives_clauses.append(create_clause(sum_id))
 
 
-# Encodes additional instructions into clauses
-def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
-	for instruction in tbn.instructions:
+# Encodes additional constraints into clauses
+def encode_constraints_clauses(tbn: TBNProblem, sat: SATProblem):
+	for constraint in tbn.constraints:
 		
 		# TOGETHER: Force monomers into the same polymer
-		if instruction.i_type == INSTR.TOGETHER:
+		if constraint.c_type == CONSTR.TOGETHER:
 			
 			# Compare every combination of monomers
 			visited_monomers = set()
-			for monomer_name in instruction.arguments:
+			for monomer_name in constraint.arguments:
 				mono = tbn.monomer_name_map.get(monomer_name)
 
 				for other_mon in visited_monomers:
 					if sat.does_bind_exist(mono, other_mon):
 						bind_id = sat.get_bind_id(mono, other_mon)
 						clause = create_clause(bind_id)
-						sat.instruction_clauses.append(clause)
+						sat.constraint_clauses.append(clause)
 					
 					else:
 						# Exception because there is no possible path for monomers to be bound together
-						raise TogetherConstraintException(instruction, mono, other_mon)
+						raise TogetherConstraintException(constraint, mono, other_mon)
 
 				visited_monomers.add(mono)
 
 		# NOTTOGETHER: Prevents two monomers from being in the same polymer
-		elif instruction.i_type == INSTR.NOTTOGETHER:
-			mono = tbn.monomer_name_map.get(instruction.arguments[0])
-			other_mon = tbn.monomer_name_map.get(instruction.arguments[1])
+		elif constraint.c_type == CONSTR.NOTTOGETHER:
+			mono = tbn.monomer_name_map.get(constraint.arguments[0])
+			other_mon = tbn.monomer_name_map.get(constraint.arguments[1])
 			
 			if sat.does_bind_exist(mono, other_mon):
 				bind_id = sat.get_bind_id(mono, other_mon)
 				clause = create_clause(-bind_id)
-				sat.instruction_clauses.append(clause)
+				sat.constraint_clauses.append(clause)
 
 		# FREE: Force monomer to not bind to any other monomer
-		elif instruction.i_type == INSTR.FREE:
+		elif constraint.c_type == CONSTR.FREE:
 			# Set every bind to false for that monomer
-			for monomer_name in instruction.arguments:
+			for monomer_name in constraint.arguments:
 				mono = tbn.monomer_name_map.get(monomer_name)
 
 				for other_mon in tbn.all_monomers:
@@ -222,11 +222,11 @@ def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
 						bind_id = sat.get_bind_id(mono, other_mon)
 						# Set bind clause to false
 						clause = create_clause(-bind_id)
-						sat.instruction_clauses.append(clause)
+						sat.constraint_clauses.append(clause)
 		
 		#NOTFREE: Force specified monomer to bind to any other monomers
-		elif instruction.i_type == INSTR.NOTFREE:
-			monomer_name = instruction.arguments[0]
+		elif constraint.c_type == CONSTR.NOTFREE:
+			monomer_name = constraint.arguments[0]
 			mono = tbn.monomer_name_map.get(monomer_name)
 
 			potential_binds = []
@@ -237,38 +237,38 @@ def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
 
 			# If there exists no binds, then we force unsat
 			if len(potential_binds) == 0:
-				raise NotFreeConstraintException(instruction, mono)
+				raise NotFreeConstraintException(constraint, mono)
 
 			else:
 				clause = create_clause(*potential_binds)
-				sat.instruction_clauses.append(clause)
+				sat.constraint_clauses.append(clause)
 
 		#PAIRED: Forces two binding sites to bind together
-		elif instruction.i_type == INSTR.PAIRED:
-			bsite = tbn.bindingsite_name_map.get(instruction.arguments[0])
-			other_bsite = tbn.bindingsite_name_map.get(instruction.arguments[1])
+		elif constraint.c_type == CONSTR.PAIRED:
+			bsite = tbn.bindingsite_name_map.get(constraint.arguments[0])
+			other_bsite = tbn.bindingsite_name_map.get(constraint.arguments[1])
 
 			if sat.does_pair_exist(bsite, other_bsite):
 				pair_id = sat.get_pair_id(bsite, other_bsite)
 				clause = create_clause(pair_id)
-				sat.instruction_clauses.append(clause)
+				sat.constraint_clauses.append(clause)
 			else:
-				raise PairedConstraintException(instruction, bsite, other_bsite)				
+				raise PairedConstraintException(constraint, bsite, other_bsite)				
 		
-		elif instruction.i_type == INSTR.NOTPAIRED:
-			bsite = tbn.bindingsite_name_map.get(instruction.arguments[0])
-			other_bsite = tbn.bindingsite_name_map.get(instruction.arguments[1])
+		elif constraint.c_type == CONSTR.NOTPAIRED:
+			bsite = tbn.bindingsite_name_map.get(constraint.arguments[0])
+			other_bsite = tbn.bindingsite_name_map.get(constraint.arguments[1])
 		
 			if sat.does_pair_exist(bsite, other_bsite):
 				pair_id = sat.get_pair_id(bsite, other_bsite)
 				clause = create_clause(-pair_id)
-				sat.instruction_clauses.append(clause)
+				sat.constraint_clauses.append(clause)
 			else:
 				# Can ignore because will not cause UNSAT.
 				pass
 
-		elif instruction.i_type == INSTR.ANYPAIRED:
-			bsite = tbn.bindingsite_name_map.get(instruction.arguments[0])
+		elif constraint.c_type == CONSTR.ANYPAIRED:
+			bsite = tbn.bindingsite_name_map.get(constraint.arguments[0])
 			if bsite.IsComplement:
 				other_binds = tbn.site_type_to_sitelist_map[bsite.type].get_normal_sites()
 			else:
@@ -281,13 +281,13 @@ def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
 					potential_binds.append(pair_id)
 				
 				clause = create_clause(*potential_binds)
-				sat.instruction_clauses.append(clause)
+				sat.constraint_clauses.append(clause)
 			else:
-				raise AnyPairedConstraintException(instruction, bsite)
+				raise AnyPairedConstraintException(constraint, bsite)
 
 		
-		elif instruction.i_type == INSTR.NOTANYPAIRED:
-			bsite = tbn.bindingsite_name_map.get(instruction.arguments[0])
+		elif constraint.c_type == CONSTR.NOTANYPAIRED:
+			bsite = tbn.bindingsite_name_map.get(constraint.arguments[0])
 			if bsite.IsComplement:
 				other_binds = tbn.site_type_to_sitelist_map[bsite.type].get_normal_sites()
 			else:
@@ -297,7 +297,7 @@ def encode_instruction_clauses(tbn: TBNProblem, sat: SATProblem):
 				for other_bsite in other_binds:
 					pair_id = sat.get_pair_id(bsite, other_bsite)
 					clause = create_clause(-pair_id)
-					sat.instruction_clauses.append(clause)
+					sat.constraint_clauses.append(clause)
 			else:
 				# Can ignore because will not cause UNSAT.
 				pass

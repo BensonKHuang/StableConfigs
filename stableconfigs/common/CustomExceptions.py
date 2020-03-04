@@ -29,14 +29,14 @@ class DuplicateMonomerName(Exception):
     def __str__(self):
         return "Duplicate Monomer name. '" + self.str_line + "'"
 
-class InstructionArgumentCount(Exception):
-    def __init__(self, str_line, i_type, expected_count, actual_count):
+class ConstraintArgumentCount(Exception):
+    def __init__(self, str_line, c_type, expected_count, actual_count):
         self.str_line = str_line
-        self.i_type = i_type
+        self.c_type = c_type
         self.expected_count = expected_count
         self.actual_count = actual_count
     def __str__(self):
-        return "Instruction '" + self.i_type + "' takes " + str(self.expected_count) + " arguments, got " \
+        return "Constraint '" + self.c_type + "' takes " + str(self.expected_count) + " arguments, got " \
                 + str(self.actual_count) + ". '" + self.str_line + "'"
 
 class NonexistentBindingSite(Exception):
@@ -53,42 +53,42 @@ class NonexistentMonomer(Exception):
     def __str__(self):
         return "Monomer '" + self.bad_name + "' does not exist. '" + self.str_line + "'"
 
-class InvalidInstruction(Exception):
-    def __init__(self, str_line, bad_instr):
+class InvalidConstraint(Exception):
+    def __init__(self, str_line, bad_constr):
         self.str_line = str_line
-        self.bad_instr = bad_instr
+        self.bad_constr = bad_constr
     def __str__(self):
-        return "Invalid Instruction '" + self.bad_name + "'. '" + self.str_line + "'"
+        return "Invalid Constraint '" + self.bad_name + "'. '" + self.str_line + "'"
 
 
-# Exceptions for Executing Instructions
+# Exceptions for Executing Constraints
 
 class TogetherConstraintException(Exception):
-    def __init__(self, instruction, mon1, mon2):
-        self.instruction = instruction
+    def __init__(self, constraint, mon1, mon2):
+        self.constraint = constraint
         self.mon1 = mon1
         self.mon2 = mon2
     def __str__(self):
         return "Monomer [" + self.mon1.name + "] and Monomer [" + self.mon2.name + "] cannot be together in any valid configuration."
 
 class NotFreeConstraintException(Exception):
-    def __init__(self, instruction, mon):
-        self.instruction = instruction
+    def __init__(self, constraint, mon):
+        self.constraint = constraint
         self.mon = mon
     def __str__(self):
         return "Monomer [" + self.mon.name +"] cannot be together with any other Monomer in any valid configuration."
 
 class PairedConstraintException(Exception):
-    def __init__(self, instruction, bsite1, bsite2):
-        self.instruction = instruction
+    def __init__(self, constraint, bsite1, bsite2):
+        self.constraint = constraint
         self.bsite1 = bsite1
         self.bsite2 = bsite2
     def __str__(self):
         return "Binding Site [" + self.bsite1.name + "] and Binding Site [" + self.bsite2.name + "] do not have complementary Binding Sites."
 
 class AnyPairedConstraintException(Exception):
-    def __init__(self, instruction, bsite):
-        self.instruction = instruction
+    def __init__(self, constraint, bsite):
+        self.constraint = constraint
         self.bsite = bsite
     def __str__(self):
         return "Binding Site [" + self.bsite.name + "] does not have any complementary binding sites in the system."

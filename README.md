@@ -4,16 +4,16 @@ Python tool to generate Stable Configurations of Monomers by reducing the proble
 
 #### Use Cases
 + Finding Stable Configurations of Thermodynamic Binding Networks
-+ Finding Stable Configurations with specified instructions
++ Finding Stable Configurations with specified constraints
 
 #### System Requirements for Command Line Tool and Native installation
 + POSIX-compliant operating system (Linux or MacOS environment) 
 + python3.6 or higher
 + pip3 (Python Package Installer for Python 3)
 
-Docker instructions are also specified in [Docker Usage](#-docker-usage) section.
+Docker constraints are also specified in [Docker Usage](#-docker-usage) section.
 
-# Installation instructions
+# Installation constraints
 
 Install the requirements (needed for Command Line Tool):
 
@@ -37,7 +37,7 @@ Install the requirements (needed for Command Line Tool):
   
 ## Command line tool
     
-    $ python3 -m stableconfigs {path/to/tbn_file.txt} {optional/path/to/instr.txt}
+    $ python3 -m stableconfigs {path/to/tbn_file.txt} {optional/path/to/constr.txt}
 
 
 ### Solving General TBN Problems (tbn_file.txt)
@@ -53,9 +53,9 @@ The input file to solve tbn problems is as follows:
 - Ending the line with ":{name}" will uniquely label the monomer : "a b c d&ast; :m1"
 
 
-### Additional Feature Instructions (instr.txt)
+### Additional Feature Constraints (constr.txt)
 
-In the instruction file (the second argument), you can provide instructions to check additional properties
+In the construction file (the second argument), you can provide constraints to check additional properties
 
 #### TOGETHER
 
@@ -150,14 +150,14 @@ Specifying **NOTANYPAIRED** attempts to force the specified binding site to not 
     b
 
 
-    stably_together_instructions.txt
+    stably_together_constraints.txt
 
     TOGETHER t1 t2
 
 
 #### Example 2 output
     
-    $ python3 -m stableconfigs input/stably_together_example.txt input/stably_together_instructions.txt
+    $ python3 -m stableconfigs input/stably_together_example.txt input/stably_together_constraints.txt
 
 
     ...
@@ -199,9 +199,9 @@ General TBN Problem Example:
 
     $ Docker run -v /users/solo/and.txt:/and.txt stablegen and.txt
 
-To run additional instructions, you must provide an additional file:
+To run additional constraints, you must provide an additional file:
 
-    $ Docker run -v {absolute/local/path/tbn_file.txt}:/{tbn_file.txt} -v {absolute/local/path/instr.txt}:/{instr.txt} stablegen {tbn_file.txt} {instr.txt} 
+    $ Docker run -v {absolute/local/path/tbn_file.txt}:/{tbn_file.txt} -v {absolute/local/path/constr.txt}:/{constr.txt} stablegen {tbn_file.txt} {constr.txt} 
 
 # API Server Usage
 We provide an api server that can serve StableConfigs over the network.
@@ -222,7 +222,7 @@ POST request body format (json):
             ["a*", ">mon1"],
             ["b*"]
         ],
-        "instructions":[
+        "constraints":[
             ["FREE", "mon1"]
         ],
         "gen":1
