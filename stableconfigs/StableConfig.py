@@ -5,14 +5,14 @@ import stableconfigs.decoder.Decoder as Decoder
 import time
 
 
-def get_stable_config(tbn_lines, constr_lines, gen_count):
+def get_stable_config(tbn_lines, constr_lines, gen_count, init_k):
     # parse the input to encode it into BindingSite/Monomer classes
     
     t0 = time.time()
     tbn_problem = parse_input_lines(tbn_lines, constr_lines)
 
-
     tbn_problem.gen_count = gen_count
+    tbn_problem.init_k = init_k
     configs = []
 
     # encode problem to SAT solver compatible problem

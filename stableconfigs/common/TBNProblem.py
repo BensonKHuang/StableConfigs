@@ -16,6 +16,7 @@ class TBNProblem:
         self.bindingsite_name_map = dict()
 
         self.gen_count = 1
+        self.init_k = 1
 
         self.constraints = list()
 
