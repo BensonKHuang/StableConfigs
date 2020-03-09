@@ -35,7 +35,7 @@ Install the requirements (needed for Command Line Tool):
     polymers = StableConfig.get_stable_configs(example_path)
 
   
-## Command line tool
+# Command line tool
     
     $ python3 -m stableconfigs {path/to/tbn_file.txt} {optional/path/to/constraints.txt}
 
@@ -45,7 +45,7 @@ Install the requirements (needed for Command Line Tool):
     -k {#}      provide an initial k value for minimum number of polymers 
 
 
-### Solving General TBN Problems (tbn_file.txt)
+## Solving General TBN Problems (tbn_file.txt)
 
 The input file to solve tbn problems is as follows:
 
@@ -59,7 +59,7 @@ The input file to solve tbn problems is as follows:
 - Ending the line with ">{name}" will uniquely label the monomer : "a b c d&ast; >m1"
 
 
-### Additional Feature Constraints (constraints.txt)
+## Additional Feature Constraints (constraints.txt)
 
 In the construction file (the second argument), you can provide constraints to check additional properties
 
@@ -110,6 +110,8 @@ Specifying **ANYPAIRED** forces a binding site to bind to some other binding sit
 Specifying **NOTANYPAIRED** attempts to force the specified binding site to not bind to any other binding site
 
     NOTANYPAIRED {b1}
+
+# Examples
 
 #### Example 1 input
 
@@ -213,7 +215,7 @@ Specifying **NOTANYPAIRED** attempts to force the specified binding site to not 
 
     Completed in 0.0018138885498046875 seconds.
 
-#### Exmaple 3 input
+#### Example 3 input
 
     stably_together_example.txt
 
