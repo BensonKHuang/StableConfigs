@@ -25,8 +25,12 @@ def my_post():
         if 'gen' in received_json:
             gen = received_json['gen']
 
+        init_k = 1
+        if 'init_k' in received_json:
+            init_k = received_json['init_k']
+
         # Call get stable config and delete file
-        succ, config_list = StableConfig.get_stable_config(monomer_lines, constraints_lines, gen)
+        succ, config_list = StableConfig.get_stable_config(monomer_lines, constraints_lines, gen, init_k)
         if not succ:
             return HTTPResponse(status=403, body='Something went wrong')
 

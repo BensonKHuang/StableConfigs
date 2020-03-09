@@ -84,7 +84,7 @@ class PairedConstraintException(Exception):
         self.bsite1 = bsite1
         self.bsite2 = bsite2
     def __str__(self):
-        return "Binding Site [" + self.bsite1.name + "] and Binding Site [" + self.bsite2.name + "] do not have complementary Binding Sites."
+        return "Binding Site [" + self.bsite1.name + "] and Binding Site [" + self.bsite2.name + "] are not complementary."
 
 class AnyPairedConstraintException(Exception):
     def __init__(self, constraint, bsite):
