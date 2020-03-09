@@ -1,35 +1,44 @@
 # Custom Exceptions
 
+class TBNException(Exception):
+    def __str__(self):
+        return ""
 
-class EmptyProblemException(Exception):
+
+class EmptyProblemException(TBNException):
     def __str__(self):
         return "Input contains no monomers."
 
-class MonomerMultipleNames(Exception):
+
+class MonomerMultipleNames(TBNException):
     def __init__(self, str_line):
         self.str_line = str_line
     def __str__(self):
         return "Monomer given multiple names. '" + self.str_line + "'"
 
-class InvalidBindingSiteName(Exception):
+
+class InvalidBindingSiteName(TBNException):
     def __init__(self, str_line):
         self.str_line = str_line
     def __str__(self):
         return "Invalid BindingSite name. '" + self.str_line + "'"
 
-class DuplicateBindingSiteName(Exception):
+
+class DuplicateBindingSiteName(TBNException):
     def __init__(self, str_line):
         self.str_line = str_line
     def __str__(self):
         return "Duplicate BindingSite name. '" + self.str_line + "'"
 
-class DuplicateMonomerName(Exception):
+
+class DuplicateMonomerName(TBNException):
     def __init__(self, str_line):
         self.str_line = str_line
     def __str__(self):
         return "Duplicate Monomer name. '" + self.str_line + "'"
 
-class ConstraintArgumentCount(Exception):
+
+class ConstraintArgumentCount(TBNException):
     def __init__(self, str_line, c_type, expected_count, actual_count):
         self.str_line = str_line
         self.c_type = c_type
@@ -39,21 +48,24 @@ class ConstraintArgumentCount(Exception):
         return "Constraint '" + self.c_type + "' takes " + str(self.expected_count) + " arguments, got " \
                 + str(self.actual_count) + ". '" + self.str_line + "'"
 
-class NonexistentBindingSite(Exception):
+
+class NonexistentBindingSite(TBNException):
     def __init__(self, str_line, bad_name):
         self.str_line = str_line
         self.bad_name = bad_name
     def __str__(self):
         return "BindingSite '" + self.bad_name + "' does not exist. '" + self.str_line + "'"
 
-class NonexistentMonomer(Exception):
+
+class NonexistentMonomer(TBNException):
     def __init__(self, str_line, bad_name):
         self.str_line = str_line
         self.bad_name = bad_name
     def __str__(self):
         return "Monomer '" + self.bad_name + "' does not exist. '" + self.str_line + "'"
 
-class InvalidConstraint(Exception):
+
+class InvalidConstraint(TBNException):
     def __init__(self, str_line, bad_constr):
         self.str_line = str_line
         self.bad_constr = bad_constr
@@ -63,7 +75,7 @@ class InvalidConstraint(Exception):
 
 # Exceptions for Executing Constraints
 
-class TogetherConstraintException(Exception):
+class TogetherConstraintException(TBNException):
     def __init__(self, constraint, mon1, mon2):
         self.constraint = constraint
         self.mon1 = mon1
@@ -71,14 +83,16 @@ class TogetherConstraintException(Exception):
     def __str__(self):
         return "Monomer [" + self.mon1.name + "] and Monomer [" + self.mon2.name + "] cannot be together in any valid configuration."
 
-class NotFreeConstraintException(Exception):
+
+class NotFreeConstraintException(TBNException):
     def __init__(self, constraint, mon):
         self.constraint = constraint
         self.mon = mon
     def __str__(self):
         return "Monomer [" + self.mon.name +"] cannot be together with any other Monomer in any valid configuration."
 
-class PairedConstraintException(Exception):
+
+class PairedConstraintException(TBNException):
     def __init__(self, constraint, bsite1, bsite2):
         self.constraint = constraint
         self.bsite1 = bsite1
@@ -86,7 +100,8 @@ class PairedConstraintException(Exception):
     def __str__(self):
         return "Binding Site [" + self.bsite1.name + "] and Binding Site [" + self.bsite2.name + "] are not complementary."
 
-class AnyPairedConstraintException(Exception):
+
+class AnyPairedConstraintException(TBNException):
     def __init__(self, constraint, bsite):
         self.constraint = constraint
         self.bsite = bsite

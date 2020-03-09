@@ -1,4 +1,5 @@
 from stableconfigs import StableConfig
+from stableconfigs.common.CustomExceptions import *
 from bottle import post, run, request, Bottle, HTTPResponse
 import json
 import os
@@ -30,19 +31,29 @@ def my_post():
             init_k = received_json['init_k']
 
         # Call get stable config and delete file
-        config_list = StableConfig.get_stable_config(monomer_lines, constraints_lines, gen, init_k)
-        # return HTTPResponse(status=403, body='Something went wrong')
-
-        # Return polymer output in expected format
         config_ouput_list = []
-        for index, config in enumerate(config_list):
-            config, config_size = config_to_output(config)
-            config_ouput_list.append({
-                "polymers": config, 
-                "polymers_count": config_size
-            })
+        try:
+            config_list = StableConfig.get_stable_config(monomer_lines, constraints_lines, gen, init_k)
+            # Return polymer output in expected format
+            for index, config in enumerate(config_list):
+                config, config_size = config_to_output(config)
+                config_ouput_list.append({
+                    "polymers": config,
+                    "polymers_count": config_size
+                })
 
-        return json.dumps({"configs":config_ouput_list})
+        except TBNException as e:
+            print(e)
+            return HTTPResponse(status=400, body=str(e))
+
+        except Exception as e:
+            print(e)
+            return HTTPResponse(status=401, body=str(e))
+
+        else:
+            return json.dumps({"configs": config_ouput_list})
+
+        
 
 def config_to_output(config):
     polymer_output = []
