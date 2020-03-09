@@ -68,6 +68,9 @@ def get_stable_configs_using_constraints(tbn_problem, sat_problem, original_num_
     while counter < tbn_problem.gen_count:
         sat_problem.reset_clauses()
         
+        while sat_problem.min_reps + 1 < tbn_problem.init_k:
+            Encoder.increment_min_representatives(tbn_problem, sat_problem)
+
         # solve the problem again (SAT solver)
         while sat_problem.success:
             Encoder.increment_min_representatives(tbn_problem, sat_problem)

@@ -30,9 +30,8 @@ def my_post():
             init_k = received_json['init_k']
 
         # Call get stable config and delete file
-        succ, config_list = StableConfig.get_stable_config(monomer_lines, constraints_lines, gen, init_k)
-        if not succ:
-            return HTTPResponse(status=403, body='Something went wrong')
+        config_list = StableConfig.get_stable_config(monomer_lines, constraints_lines, gen, init_k)
+        # return HTTPResponse(status=403, body='Something went wrong')
 
         # Return polymer output in expected format
         config_ouput_list = []
