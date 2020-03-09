@@ -19,6 +19,9 @@ def get_stable_config(tbn_lines, constr_lines, gen_count, init_k):
     sat_problem = SATProblem()
     Encoder.encode_basic_clause(tbn_problem, sat_problem)
     print("\nCOMPUTING ORIGINAL STABLE CONFIGURATION:")
+
+    while sat_problem.min_reps + 1 < tbn_problem.init_k:
+        Encoder.increment_min_representatives(tbn_problem, sat_problem)
     
     # solve the problem (SAT solver)
     while sat_problem.success:
