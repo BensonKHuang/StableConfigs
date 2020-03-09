@@ -282,18 +282,18 @@ POST request body format (json):
 
 POST response body format (json):
 ```json
-    {
-        "configs":[
-            {
-                "polymers":[
-                    [["a*", "b*"], ["a", "b"]], 
-                    [["b"]], 
-                    [["a"]]
-                ],
-                "polymers_count":3
-            }
-        ]
-    }
+{
+    "configs":[
+        {
+            "polymers":[
+                [["a*", "b*"], ["a", "b"]], 
+                [["b"]], 
+                [["a"]]
+            ],
+            "polymers_count":3
+        }
+    ]
+}
 ```
 
 
