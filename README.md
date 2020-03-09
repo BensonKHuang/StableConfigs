@@ -39,6 +39,11 @@ Install the requirements (needed for Command Line Tool):
     
     $ python3 -m stableconfigs {path/to/tbn_file.txt} {optional/path/to/constraints.txt}
 
+## Optional Command line flags 
+    
+    -g {#}      generate # number of configurations
+    -k {#}      provide an initial k value for minimum number of polymers 
+
 
 ### Solving General TBN Problems (tbn_file.txt)
 
@@ -46,11 +51,12 @@ The input file to solve tbn problems is as follows:
 
 #### Binding Sites
 - Each token represents a binding site: "a"
-- Each token that ends with a "&ast;" indicates a compliment binding site: "a&ast;"
+- Each token that ends with a "&ast;" indicates a complement binding site: "a&ast;"
+- Ending the token with ":{name}" will assign a unique name to the binding site: "a b c:site1"
 
 #### Monomers
 - Each line represents a monomer (space separated binding sites): "a b c d&ast;"
-- Ending the line with ":{name}" will uniquely label the monomer : "a b c d&ast; :m1"
+- Ending the line with ">{name}" will uniquely label the monomer : "a b c d&ast; >m1"
 
 
 ### Additional Feature Constraints (constraints.txt)
@@ -144,8 +150,8 @@ Specifying **NOTANYPAIRED** attempts to force the specified binding site to not 
 
     stably_together_example.txt
 
-    a :t1
-    a* b* :t2
+    a >t1
+    a* b* >t2
     a b
     b
 
@@ -157,30 +163,72 @@ Specifying **NOTANYPAIRED** attempts to force the specified binding site to not 
 
 #### Example 2 output
     
-    $ python3 -m stableconfigs input/stably_together_example.txt input/stably_together_constraints.txt
+    $ python3 -m stableconfigs -g 2 input/stably_together_example.txt input/stably_together_constraints.txt
 
 
-    ...
+    COMPUTING ORIGINAL STABLE CONFIGURATION:
+    ... Checking for k = 1 polymers
+    ... Checking for k = 2 polymers
+    ... Checking for k = 3 polymers
+    ... Checking for k = 4 polymers
     Found an original stable configuration with [ 3 ] polymers.
 
-    ...
-    Found a modified stable configuration with [ 2 ] polymers.
 
-    Entropy is [ 1 ] away from stable configuration
+    COMPUTING STABLE CONFIGURATION WITH ADDITIONAL CONSTRAINTS:
+    ... Checking for k = 1 polymers
+    ... Checking for k = 2 polymers
+    ... Checking for k = 3 polymers
+    Found a constrained stable configuration with [ 2 ] polymers.
 
-        Polymer number 1
-            ['a', 'b']
+    Entropy is [ 1 ] away from stable configuration:
 
-        Polymer number 2
-            ['a']	t2
-            ['a*', 'b*']	t1
-            ['b']	t3
+            Polymer number 1
+                    ['a']   >t2
+                    ['a*', 'b*']    >t1
+                    ['b']   >t3
 
-    Properties:
-        TOGETHER ['t2', 't3']
+            Polymer number 2
+                    ['a', 'b']
 
-    Completed in 0.008085012435913086 seconds.
+    Constraints:
+            TOGETHER ['t2', 't3']
 
+    ... Checking for k = 1 polymers
+    ... Checking for k = 2 polymers
+    ... Checking for k = 3 polymers
+    Found a constrained stable configuration with [ 2 ] polymers.
+
+    Entropy is [ 1 ] away from stable configuration:
+
+            Polymer number 1
+                    ['a']   >t2
+                    ['b']   >t3
+
+            Polymer number 2
+                    ['a*', 'b*']    >t1
+                    ['a', 'b']
+
+    Constraints:
+            TOGETHER ['t2', 't3']
+
+    Completed in 0.0018138885498046875 seconds.
+
+#### Exmaple 3 input
+
+    stably_together_example.txt
+
+    a >t1
+    a* b* >t2
+    a b
+    b
+
+#### Example 3 output
+
+    $ python3 -m stableconfigs -k 4 input/stably_together_example.txt
+
+    COMPUTING ORIGINAL STABLE CONFIGURATION:
+    ... Checking for k = 4 polymers
+    Could not find original stable configuration with [ 4 ] polymers.
 
 # Docker Usage
 
