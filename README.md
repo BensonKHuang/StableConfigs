@@ -265,20 +265,23 @@ To run the server with gunicorn on ubuntu:
     ./run.sh
 
 POST request body format (json):
-    {
-        "monomers":[
-            ["a", "b"],
-            ["a*", "b*"],
-            ["a*", ">mon1"],
-            ["b*"]
-        ],
-        "constraints":[
-            ["FREE", "mon1"]
-        ],
-        "gen":1
-    }
+```json
+{
+    "monomers":[
+        ["a", "b"],
+        ["a*", "b*"],
+        ["a*", ">mon1"],
+        ["b*"]
+    ],
+    "constraints":[
+        ["FREE", "mon1"]
+    ],
+    "gen":1
+}
+```
 
 POST response body format (json):
+```json
     {
         "configs":[
             {
@@ -291,7 +294,7 @@ POST response body format (json):
             }
         ]
     }
-
+```
 
 
 # Citation
