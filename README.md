@@ -276,7 +276,8 @@ POST request body format (json):
     "constraints":[
         ["FREE", "mon1"]
     ],
-    "gen":1
+    "gen":2,
+    "init_k":2
 }
 ```
 
