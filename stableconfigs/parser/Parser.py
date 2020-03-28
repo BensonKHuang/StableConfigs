@@ -27,8 +27,10 @@ def parse_monomer(tbn_problem: TBNProblem, str_line: str):
 
         if token[0] == ">":
             if monomer_name is not None:
-                raise MonomerMultipleNames(str_line)
+                raise MonomerMultipleNamesException(str_line)
             monomer_name = token[1:].strip()
+            if len(monomer_name) == 0 or monomer_name == '':
+                raise InvalidMonomerNameException(str_line)
         else:
             find_site_name = token.find(":")
             site_name = None
@@ -36,14 +38,14 @@ def parse_monomer(tbn_problem: TBNProblem, str_line: str):
                 site_name = token[(find_site_name + 1):]
                 token = token[:find_site_name]
                 if len(site_name) == 0 or len(token) == 0:
-                    raise InvalidBindingSiteName(str_line)
+                    raise InvalidBindingSiteNameException(str_line)
 
             site = BindingSite(tbn_problem, token)
             all_sites.append(site)
 
             if site_name is not None:
                 if site_name in tbn_problem.bindingsite_name_map:
-                    raise DuplicateBindingSiteName(str_line)
+                    raise DuplicateBindingSiteNameException(str_line)
                 tbn_problem.assign_bindingsite_name(site, site_name)
 
             # Create a new SiteMap for a specific type
@@ -63,7 +65,7 @@ def parse_monomer(tbn_problem: TBNProblem, str_line: str):
     # If monomer name exists, add it to monomer name map in the tbn problem
     if monomer_name is not None:
         if monomer_name in tbn_problem.monomer_name_map:
-            raise DuplicateMonomerName(str_line)
+            raise DuplicateMonomerNameException(str_line)
         tbn_problem.assign_monomer_name(new_monomer, monomer_name)
 
 
@@ -98,19 +100,20 @@ def parse_constraint(tbn_problem: TBNProblem, str_line: str):
     
     if c_type in Constraint.constr_set:
         if CONSTR.arg_count[c_type] != -1 and len(arguments) != CONSTR.arg_count[c_type]:
-            raise ConstraintArgumentCount(str_line, c_type, CONSTR.arg_count[c_type], len(arguments))
+            raise ConstraintArgumentCountException(
+                str_line, c_type, CONSTR.arg_count[c_type], len(arguments))
         else:
             if c_type in Constraint.binding_constr:
                 for arg in arguments:
                     if arg not in tbn_problem.bindingsite_name_map:
-                        raise NonexistentBindingSite(str_line, arg)
+                        raise NonexistentBindingSiteException(str_line, arg)
             else:
                 for arg in arguments:
                     if arg not in tbn_problem.monomer_name_map:
-                        raise NonexistentMonomer(str_line, arg)
+                        raise NonexistentMonomerException(str_line, arg)
             Constraint(tbn_problem, c_type, arguments)
     else:
-        raise InvalidConstraint(str_line, c_type)
+        raise InvalidConstraintException(str_line, c_type)
 
 
 def parse_input_lines(tbn_lines, constr_lines):

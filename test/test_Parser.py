@@ -5,19 +5,23 @@ from stableconfigs.parser.Parser import parse_input_lines
 from stableconfigs.common.Constraint import CONSTR
 from stableconfigs.common.CustomExceptions import *
 
+
 class Test_Parser(unittest.TestCase):
 
     def setUp(self):
-        self.monomer_basic = ["a b*", "a* b", "a", "a* b", "b", "b"]
-        self.monomer_tiny = ["a b", "a*"]
-        self.monomer_onesite = ["a", "a*", "a", "a*"]
-        self.monomer_and_gate_url = "../input/and_gate.txt"
-        self.monomer_labeled = ["a:s1 b:s2 >mon1", "a*:s3 b*:s4 >mon2", "a*:s5 >mon3", "b*:s6 >mon4"]
-        self.constr_empty = []
-        self.constr_and_gate_url = "../input/and_gate_constraints.txt"
+        self.monomer_labeled = ["a:s1 b:s2 >mon1",
+                                "a*:s3 b*:s4 >mon2",
+                                "a*:s5 >mon3",
+                                "b*:s6 >mon4"]
 
     def test_basic(self):
-        tbn_problem = parse_input_lines(self.monomer_basic, self.constr_empty)
+        monomer_basic = ["a b*",
+                         "a* b",
+                         "a",
+                         "a* b",
+                         "b",
+                         "b"]
+        tbn_problem = parse_input_lines(monomer_basic, [])
 
         # basic count check
         self.assertEqual(tbn_problem.monomer_count, 6)
@@ -32,7 +36,9 @@ class Test_Parser(unittest.TestCase):
         self.assertEqual(len(site_list_b._complementary_sites), 1)
 
     def test_no_b_complement(self):
-        tbn_problem = parse_input_lines(self.monomer_tiny, self.constr_empty)
+        monomer_tiny = ["a b",
+                        "a*"]
+        tbn_problem = parse_input_lines(monomer_tiny, [])
 
         # basic count check
         self.assertEqual(tbn_problem.monomer_count, 2)
@@ -47,7 +53,11 @@ class Test_Parser(unittest.TestCase):
         self.assertEqual(len(site_list_b._complementary_sites), 0)
 
     def test_one_site(self):
-        tbn_problem = parse_input_lines(self.monomer_onesite, self.constr_empty)
+        monomer_onesite = ["a",
+                           "a*",
+                           "a",
+                           "a*"]
+        tbn_problem = parse_input_lines(monomer_onesite, [])
 
         # basic count check
         self.assertEqual(tbn_problem.monomer_count, 4)
@@ -62,11 +72,12 @@ class Test_Parser(unittest.TestCase):
         self.assertEqual(site_list_b, None)
 
     def test_and_gate_parsing(self):
-        tbn_file = open(self.monomer_and_gate_url, 'rt')
+        monomer_and_gate_url = "../input/and_gate.txt"
+        tbn_file = open(monomer_and_gate_url, 'rt')
         monomer_and_gate = tbn_file.readlines()
         tbn_file.close()
 
-        tbn_problem = parse_input_lines(monomer_and_gate, self.constr_empty)
+        tbn_problem = parse_input_lines(monomer_and_gate, [])
 
         self.assertEqual(tbn_problem.monomer_count, 9)
         self.assertEqual(len(tbn_problem.all_monomers), 9)
@@ -79,15 +90,16 @@ class Test_Parser(unittest.TestCase):
         self.assertEqual(len(site_list_f._complementary_sites), 1)
 
     def test_and_gate_names(self):
-        tbn_file = open(self.monomer_and_gate_url, 'rt')
+        monomer_and_gate_url = "../input/and_gate.txt"
+        tbn_file = open(monomer_and_gate_url, 'rt')
         monomer_and_gate = tbn_file.readlines()
         tbn_file.close()
 
-        tbn_problem = parse_input_lines(monomer_and_gate, self.constr_empty)
+        tbn_problem = parse_input_lines(monomer_and_gate, [])
 
         # Verify Binding Site Names
         self.assertEqual(len(tbn_problem.bindingsite_name_map), 3)
-        
+
         bsite_1 = tbn_problem.bindingsite_name_map.get("s1")
         self.assertEqual(bsite_1.name, "s1")
         self.assertEqual(bsite_1.type, "c")
@@ -174,24 +186,59 @@ class Test_Parser(unittest.TestCase):
         self.assertEqual(constr.c_type, CONSTR.NOTANYPAIRED)
         self.assertEqual(len(constr.arguments), 1)
 
-    #Exception Handling
+    # Exception Handling
     def test_empty_problem_exception(self):
         self.assertRaises(EmptyProblemException, parse_input_lines, [], [])
 
-    #Parsing Exception Handling
+    # Parsing Exception Handling
     def test_duplicate_monomer_name_exception(self):
-        monomer_input = ["a >mon1", "b >mon1"]
-        self.assertRaises(DuplicateMonomerName, parse_input_lines, monomer_input, [])
-    
+        monomer_input = ["a >mon1",
+                         "b >mon1"]
+        self.assertRaises(DuplicateMonomerNameException,
+                          parse_input_lines, monomer_input, [])
+
     def test_duplicate_bsite_name_exception(self):
-        monomer_input = ["a:s1", "b:s1"]
-        self.assertRaises(DuplicateBindingSiteName, parse_input_lines, monomer_input, [])
+        monomer_input = ["a:s1",
+                         "b:s1"]
+        self.assertRaises(DuplicateBindingSiteNameException,
+                          parse_input_lines, monomer_input, [])
 
-    #Constraints Parsing Exception Handling
-    def test_invalid_bsite_name_exception(self):
-        monomer_input = ["a:"]
-        self.assertRaises(InvalidBindingSiteName, parse_input_lines, monomer_input, [])
-
+    # Constraints Parsing Exception Handling
     def test_invalid_monomer_name_exception(self):
         monomer_input = ["a >"]
-        self.assertRaises(InvalidMonomerName, parse_input_lines, monomer_input, [])
+        self.assertRaises(InvalidMonomerNameException,
+                          parse_input_lines, monomer_input, [])
+
+    def test_invalid_bsite_name_exception(self):
+        monomer_input = ["a:"]
+        self.assertRaises(InvalidBindingSiteNameException,
+                          parse_input_lines, monomer_input, [])
+
+    def test_monomer_muliple_name_exception(self):
+        monomer_input = ["a >m1 >m2"]
+        self.assertRaises(MonomerMultipleNamesException,
+                          parse_input_lines, monomer_input, [])
+
+    def test_nonexistent_monomer_exception(self):
+        monomer_input = ["a"]
+        constraint_input = ["FREE mon1"]
+        self.assertRaises(NonexistentMonomerException,
+                          parse_input_lines, monomer_input, constraint_input)
+
+    def test_nonexistent_bsite_exception(self):
+        monomer_input = ["a"]
+        constraint_input = ["ANYPAIRED s1"]
+        self.assertRaises(NonexistentBindingSiteException,
+                          parse_input_lines, monomer_input, constraint_input)
+
+    def test_constraint_argument_count_exception(self):
+        monomer_input = ["a:s1 a*:s2"]
+        constraint_input = ["ANYPAIRED s1 s2"]
+        self.assertRaises(ConstraintArgumentCountException,
+                          parse_input_lines, monomer_input, constraint_input)
+
+    def test_invalid_constraint_exception(self):
+        monomer_input = ["a"]
+        constraint_input = ["BADCONSTRAINT"]
+        self.assertRaises(InvalidConstraintException,
+                          parse_input_lines, monomer_input, constraint_input)

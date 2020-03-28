@@ -7,4 +7,3 @@ b c:s2
 c d:s3 >input2
 e f >output
 e* f*
-x:x3 >input3

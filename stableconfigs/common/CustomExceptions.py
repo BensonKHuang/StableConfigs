@@ -10,35 +10,43 @@ class EmptyProblemException(TBNException):
         return "Input contains no monomers."
 
 
-class MonomerMultipleNames(TBNException):
+class MonomerMultipleNamesException(TBNException):
     def __init__(self, str_line):
         self.str_line = str_line
     def __str__(self):
         return "Monomer given multiple names. '" + self.str_line + "'"
 
 
-class InvalidBindingSiteName(TBNException):
+class InvalidMonomerNameException(TBNException):
+    def __init__(self, str_line):
+        self.str_line = str_line
+
+    def __str__(self):
+        return "Invalid Monomer name. '" + self.str_line + "'"
+
+
+class InvalidBindingSiteNameException(TBNException):
     def __init__(self, str_line):
         self.str_line = str_line
     def __str__(self):
         return "Invalid BindingSite name. '" + self.str_line + "'"
 
 
-class DuplicateBindingSiteName(TBNException):
+class DuplicateBindingSiteNameException(TBNException):
     def __init__(self, str_line):
         self.str_line = str_line
     def __str__(self):
         return "Duplicate BindingSite name. '" + self.str_line + "'"
 
 
-class DuplicateMonomerName(TBNException):
+class DuplicateMonomerNameException(TBNException):
     def __init__(self, str_line):
         self.str_line = str_line
     def __str__(self):
         return "Duplicate Monomer name. '" + self.str_line + "'"
 
 
-class ConstraintArgumentCount(TBNException):
+class ConstraintArgumentCountException(TBNException):
     def __init__(self, str_line, c_type, expected_count, actual_count):
         self.str_line = str_line
         self.c_type = c_type
@@ -49,7 +57,7 @@ class ConstraintArgumentCount(TBNException):
                 + str(self.actual_count) + ". '" + self.str_line + "'"
 
 
-class NonexistentBindingSite(TBNException):
+class NonexistentBindingSiteException(TBNException):
     def __init__(self, str_line, bad_name):
         self.str_line = str_line
         self.bad_name = bad_name
@@ -57,7 +65,7 @@ class NonexistentBindingSite(TBNException):
         return "BindingSite '" + self.bad_name + "' does not exist. '" + self.str_line + "'"
 
 
-class NonexistentMonomer(TBNException):
+class NonexistentMonomerException(TBNException):
     def __init__(self, str_line, bad_name):
         self.str_line = str_line
         self.bad_name = bad_name
@@ -65,7 +73,7 @@ class NonexistentMonomer(TBNException):
         return "Monomer '" + self.bad_name + "' does not exist. '" + self.str_line + "'"
 
 
-class InvalidConstraint(TBNException):
+class InvalidConstraintException(TBNException):
     def __init__(self, str_line, bad_constr):
         self.str_line = str_line
         self.bad_constr = bad_constr
