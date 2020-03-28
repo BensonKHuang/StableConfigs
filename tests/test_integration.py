@@ -4,7 +4,7 @@ from stableconfigs.encoder.SATProblem import SATProblem
 from stableconfigs.parser.Parser import parse_input_file
 
 
-class Test_ProjectPipeline(unittest.TestCase):
+class IntegrationTest(unittest.TestCase):
 
 	def test_basic(self):
 		tbn_problem = parse_input_file("../input/basic.txt")

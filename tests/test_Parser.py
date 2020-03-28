@@ -6,7 +6,7 @@ from stableconfigs.common.Constraint import CONSTR
 from stableconfigs.common.CustomExceptions import *
 
 
-class Test_Parser(unittest.TestCase):
+class ParserTest(unittest.TestCase):
 
     def setUp(self):
         self.monomer_labeled = ["a:s1 b:s2 >mon1",
