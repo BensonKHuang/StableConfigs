@@ -63,3 +63,7 @@ class DecoderTest(unittest.TestCase):
         sat_problem.solve()
         polymers = Decoder.decode_boolean_values(self.tbn_problem, sat_problem)
         self.assertEqual(len(polymers), 0)
+
+
+if __name__ == '__main__':
+	unittest.main()

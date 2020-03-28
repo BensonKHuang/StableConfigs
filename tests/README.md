@@ -1,6 +1,6 @@
-# Testing
+# Test Suite
 
-To run all tests:
+To run all tests (including API tests, which will fail if Server is not running):
 
     $ python3.7 -m unittest discover -v
 
@@ -15,9 +15,10 @@ To run integration tests:
 
     $ python3.7 -m unittest test_intgeration.py -v
 
-To run api tests: 
+Running API tests will fail unless local server is running: 
 
-    $... Documentation coming soon
+    $ python3.7 -m stableconfigs -s #Start Server
+    $ python3.7 -m unittest test_api.py -v
 
 If there are formatting issues, it is likely due to a PYTHONPATH issue
 
