@@ -247,3 +247,16 @@ class EncoderTest(unittest.TestCase):
         Encoder.encode_basic_clause(tbn_problem, sat_problem)
         self.assertRaises(AnyPairedConstraintException,
                           Encoder.encode_constraints_clauses, tbn_problem, sat_problem)
+
+    
+    # Test additional encoder functionality
+    def test_encoder_reset_clauses(self):
+        sat_problem = SATProblem()
+        Encoder.encode_basic_clause(self.tbn_problem, sat_problem)
+        Encoder.increment_min_representatives(self.tbn_problem, sat_problem)
+        Encoder.increment_min_representatives(self.tbn_problem, sat_problem)
+        self.assertEqual(sat_problem.min_reps, 2)
+
+        sat_problem.reset_clauses()
+        self.assertEqual(sat_problem.min_reps, 0)
+        self.assertEqual(len(sat_problem.increment_min_representatives_clauses), 0)

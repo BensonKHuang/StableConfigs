@@ -2,10 +2,11 @@ import unittest
 from stableconfigs.encoder.SATProblem import SATProblem
 
 
-class Test_SATProblem(unittest.TestCase):
+class SatSolverTest(unittest.TestCase):
+
     def test_solve_empty_clause(self):
         sat_problem = SATProblem()
-        sat_problem.add_clause([])
+        sat_problem.constraint_clauses.append([])
         sat_problem.solve()
         success = sat_problem.success
         result = sat_problem.result
@@ -16,7 +17,7 @@ class Test_SATProblem(unittest.TestCase):
 
     def test_solve_single_clause(self):
         sat_problem = SATProblem()
-        sat_problem.add_clause([1])
+        sat_problem.constraint_clauses.append([1])
         sat_problem.solve()
         success = sat_problem.success
         result = sat_problem.result
@@ -27,9 +28,9 @@ class Test_SATProblem(unittest.TestCase):
 
     def test_solve_basic_clauses(self):
         sat_problem = SATProblem()
-        sat_problem.add_clause([1, 2, 3])
-        sat_problem.add_clause([-2])
-        sat_problem.add_clause([-3])
+        sat_problem.constraint_clauses.append([1, 2, 3])
+        sat_problem.constraint_clauses.append([-2])
+        sat_problem.constraint_clauses.append([-3])
         sat_problem.solve()
         success = sat_problem.success
         result = sat_problem.result
@@ -40,9 +41,9 @@ class Test_SATProblem(unittest.TestCase):
 
     def test_solve_conflicting_clauses(self):
         sat_problem = SATProblem()
-        sat_problem.add_clause([1, 2])
-        sat_problem.add_clause([-1])
-        sat_problem.add_clause([-2])
+        sat_problem.constraint_clauses.append([1, 2])
+        sat_problem.constraint_clauses.append([-1])
+        sat_problem.constraint_clauses.append([-2])
         sat_problem.solve()
         success = sat_problem.success
         result = sat_problem.result
@@ -53,12 +54,12 @@ class Test_SATProblem(unittest.TestCase):
 
     def test_solve_basic_clauses_2(self):
         sat_problem = SATProblem()
-        sat_problem.add_clause([-1, -3, -4])
-        sat_problem.add_clause([2, 3, -4])
-        sat_problem.add_clause([1, -2, 4])
-        sat_problem.add_clause([1, 3, 4])
-        sat_problem.add_clause([-1, 2, -3])
-        sat_problem.add_clause([2])
+        sat_problem.constraint_clauses.append([-1, -3, -4])
+        sat_problem.constraint_clauses.append([2, 3, -4])
+        sat_problem.constraint_clauses.append([1, -2, 4])
+        sat_problem.constraint_clauses.append([1, 3, 4])
+        sat_problem.constraint_clauses.append([-1, 2, -3])
+        sat_problem.constraint_clauses.append([2])
         sat_problem.solve()
         success = sat_problem.success
         result = sat_problem.result

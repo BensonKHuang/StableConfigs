@@ -6,14 +6,14 @@ To run all tests:
 
 To run individual unit tests:
 
-    $ python3.7 -m unittest test_parser.py
-    $ python3.7 -m unittest test_encoder.py
-    $ python3.7 -m unittest test_satsolver.py
-    $ python3.7 -m unittest test_decoder.py
+    $ python3.7 -m unittest test_parser.py -v
+    $ python3.7 -m unittest test_encoder.py -v
+    $ python3.7 -m unittest test_satsolver.py -v
+    $ python3.7 -m unittest test_decoder.py -v
 
 To run integration tests:
 
-    $ python3.7 -m unittest test_intgeration.py
+    $ python3.7 -m unittest test_intgeration.py -v
 
 To run api tests: 
 

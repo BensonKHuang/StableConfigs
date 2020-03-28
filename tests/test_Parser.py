@@ -242,3 +242,7 @@ class ParserTest(unittest.TestCase):
         constraint_input = ["BADCONSTRAINT"]
         self.assertRaises(InvalidConstraintException,
                           parse_input_lines, monomer_input, constraint_input)
+
+
+if __name__ == '__main__':
+	unittest.main()
