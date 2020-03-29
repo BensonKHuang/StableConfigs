@@ -78,7 +78,7 @@ class InvalidConstraintException(TBNException):
         self.str_line = str_line
         self.bad_constr = bad_constr
     def __str__(self):
-        return "Invalid Constraint '" + self.bad_name + "'. '" + self.str_line + "'"
+        return "Invalid Constraint '" + self.bad_constr + "'. '" + self.str_line + "'"
 
 
 # Exceptions for Executing Constraints
