@@ -1,5 +1,5 @@
 from stableconfigs import StableConfig
-from bottleServer import server
+from flaskserver import server
 import sys
 import argparse
 

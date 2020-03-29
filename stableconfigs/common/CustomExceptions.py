@@ -116,3 +116,9 @@ class AnyPairedConstraintException(TBNException):
     def __str__(self):
         return "Binding Site [" + self.bsite.name + "] does not have any complementary binding sites in the system."
     
+class MinPolymersExceedEntropyException(TBNException):
+    def __init__(self, init_k):
+        self.init_k = init_k
+
+    def __str__(self):
+        return "Minimum Polymers [" + str(self.init_k) + "] exceeds the max entropy of TBN system. No Results can be computed. Choose a lower value."

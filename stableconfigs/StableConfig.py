@@ -1,5 +1,6 @@
 from stableconfigs.parser.Parser import parse_input_lines
 from stableconfigs.encoder.SATProblem import SATProblem
+from stableconfigs.common.CustomExceptions import MinPolymersExceedEntropyException
 import stableconfigs.encoder.Encoder as Encoder
 import stableconfigs.decoder.Decoder as Decoder
 import time
@@ -39,7 +40,7 @@ def get_stable_config(tbn_lines, constr_lines, gen_count, init_k):
         print("Could not find original stable configuration with [", tbn_problem.init_k, "] polymers.\n")
         # Printing execution time
         print("\nCompleted in", time.time() - t0, "seconds.\n")
-        return configs
+        raise MinPolymersExceedEntropyException(tbn_problem.init_k)
 
     # Add constraints set clauses and solve specified number of times
     if len(tbn_problem.constraints) != 0:
@@ -64,7 +65,7 @@ def get_stable_config(tbn_lines, constr_lines, gen_count, init_k):
     
     # Printing execution time
     print("\nCompleted in", time.time() - t0, "seconds.\n")
-    return configs
+    return configs, original_num_reps
 
 
 def get_stable_configs_using_constraints(tbn_problem, sat_problem, original_num_reps):

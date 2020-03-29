@@ -23,7 +23,7 @@ setup(
 	],
 
 	python_requires='>=3.6, <4',
-	install_requires=['python-sat', 'Bottle'],
+	install_requires=['python-sat', 'Flask', 'flask-cors'],
 
 	project_urls={
 		'Bug Reports': 'https://github.com/BensonKHuang/StableConfigs/issues',
