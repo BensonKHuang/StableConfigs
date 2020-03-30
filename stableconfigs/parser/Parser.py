@@ -18,6 +18,10 @@ def parse_monomer(tbn_problem: TBNProblem, str_line: str):
         if token is "":
             break
 
+        # Check "*" in beginning case
+        if token[0] == "*":
+            raise InvalidBindingSiteNameException(str_line)
+
         find_hash = token.find("#")
         if find_hash != -1:
             if find_hash == 0:  # if the hash was the first character, the entire line is a comment
@@ -33,6 +37,11 @@ def parse_monomer(tbn_problem: TBNProblem, str_line: str):
                 raise InvalidMonomerNameException(str_line)
         else:
             find_site_name = token.find(":")
+
+            # Check ":" in beginning case
+            if find_site_name == 0:
+                raise InvalidBindingSiteNameException(str_line)
+
             site_name = None
             if find_site_name != -1:
                 site_name = token[(find_site_name + 1):]
@@ -131,4 +140,3 @@ def parse_input_lines(tbn_lines, constr_lines):
         parse_constraint(tbn_problem, constr_line)
         
     return tbn_problem
-    

@@ -4,7 +4,6 @@ class TBNException(Exception):
     def __str__(self):
         return ""
 
-
 class EmptyProblemException(TBNException):
     def __str__(self):
         return "Input contains no monomers."
