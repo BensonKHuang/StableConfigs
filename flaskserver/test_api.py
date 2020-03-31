@@ -22,7 +22,10 @@ class APITest(unittest.TestCase):
         
         self.assertEqual(res.status_code, 200)
         data = json.loads(res.text)
-        self.assertEqual(len(data["configs"]), 2)
+        self.assertEqual(data["success"], True)
+        self.assertEqual(data["count"], 2)
+        self.assertEqual(data["entropy"], 3)
+
 
     def test_basic_with_constraints(self):
 
@@ -46,7 +49,35 @@ class APITest(unittest.TestCase):
 
         self.assertEqual(res.status_code, 200)
         data = json.loads(res.text)
+        self.assertEqual(data["success"], True)
         self.assertEqual(data["configs"][0]["polymers_count"], 2)
+        self.assertEqual(data["count"], 1)
+        self.assertEqual(data["entropy"], 3)
+
+    def test_empty_error(self):
+        monomer_input = []
+        my_mon = []
+        my_const = []
+
+        dicToSend = {'monomers': my_mon, 'constraints': my_const}
+        res = requests.post('http://localhost:5005/', json=dicToSend)
+
+        self.assertEqual(res.status_code, 400)
+        data = json.loads(res.text)
+        self.assertEqual(data["success"], False)
+        self.assertEqual(data["error"]["type"], "EmptyProblemException")
+
+    def test_bsite_anypaired_constraint_exception(self):
+        my_mon = [["a:s1"]]
+        my_const = [["ANYPAIRED", "s1"]]
+
+        dicToSend = {'monomers': my_mon, 'constraints': my_const}
+        res = requests.post('http://localhost:5005/', json=dicToSend)
+
+        self.assertEqual(res.status_code, 400)
+        data = json.loads(res.text)
+        self.assertEqual(data["success"], False)
+        self.assertEqual(data["error"]["type"], "AnyPairedConstraintException")
 
 if __name__ == '__main__':
 	unittest.main()

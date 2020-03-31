@@ -2,6 +2,9 @@
 
 
 class BindingSite:
+    
+    COMPLEMENT_DELIMITER = "*"
+    
     # CONSTRUCTOR
 
     def __init__(self, tbn_problem, str_site):  # str_site = "a*", "b", etc.
@@ -9,7 +12,7 @@ class BindingSite:
         tbn_problem.site_count = tbn_problem.site_count + 1
 
         # check if complement
-        find_comp = str_site.find('*')
+        find_comp = str_site.find(COMPLEMENT_DELIMITER)
         has_comp = True
         if find_comp == -1:
             find_comp = len(str_site)

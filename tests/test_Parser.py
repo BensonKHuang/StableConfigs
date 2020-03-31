@@ -71,6 +71,22 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(len(site_list_a._complementary_sites), 2)
         self.assertEqual(site_list_b, None)
 
+    def test_comment(self):
+        monomer_comment_url = "../input/comment.txt"
+        tbn_file = open(monomer_comment_url, 'rt')
+        monomer_comment = tbn_file.readlines()
+        tbn_file.close()
+
+        tbn_problem = parse_input_lines(monomer_comment, [])
+
+        self.assertEqual(tbn_problem.monomer_count, 4)
+        self.assertEqual(len(tbn_problem.all_monomers), 4)
+        self.assertEqual(tbn_problem.site_count, 6)
+
+        site_list_c = tbn_problem.site_type_to_sitelist_map.get("c")
+
+        self.assertEqual("c" in tbn_problem.site_type_to_sitelist_map.keys(),  False)
+
     def test_and_gate_parsing(self):
         monomer_and_gate_url = "../input/and_gate.txt"
         tbn_file = open(monomer_and_gate_url, 'rt')
@@ -211,6 +227,16 @@ class ParserTest(unittest.TestCase):
 
     def test_invalid_bsite_name_exception(self):
         monomer_input = ["a:"]
+        self.assertRaises(InvalidBindingSiteNameException,
+                          parse_input_lines, monomer_input, [])
+
+    def test_invalid_bsite_name_exception_2(self):
+        monomer_input = ["*"]
+        self.assertRaises(InvalidBindingSiteNameException,
+                          parse_input_lines, monomer_input, [])
+    
+    def test_invalid_bsite_name_exception_3(self):
+        monomer_input = [":s1"]
         self.assertRaises(InvalidBindingSiteNameException,
                           parse_input_lines, monomer_input, [])
 

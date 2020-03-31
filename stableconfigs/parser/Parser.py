@@ -6,6 +6,10 @@ from stableconfigs.common.TBNProblem import TBNProblem
 from stableconfigs.common.SiteList import SiteList
 from stableconfigs.common.CustomExceptions import *
 
+COMMENT_CHARACTER = "#"
+MONOMER_NAME_CHARACTER = ">"
+BINDING_SITE_NAME_CHARACTER = ":"
+
 def parse_monomer(tbn_problem: TBNProblem, str_line: str):
     all_sites = []
     str_line = str_line.strip()
@@ -19,24 +23,24 @@ def parse_monomer(tbn_problem: TBNProblem, str_line: str):
             break
 
         # Check "*" in beginning case
-        if token[0] == "*":
+        if token[0] == BindingSite.COMPLEMENT_DELIMITER:
             raise InvalidBindingSiteNameException(str_line)
 
-        find_hash = token.find("#")
+        find_hash = token.find(COMMENT_CHARACTER)
         if find_hash != -1:
             if find_hash == 0:  # if the hash was the first character, the entire line is a comment
                 break
             else:
                 token = token[:find_hash]
 
-        if token[0] == ">":
+        if token[0] == MONOMER_NAME_CHARACTER:
             if monomer_name is not None:
                 raise MonomerMultipleNamesException(str_line)
             monomer_name = token[1:].strip()
             if len(monomer_name) == 0 or monomer_name == '':
                 raise InvalidMonomerNameException(str_line)
         else:
-            find_site_name = token.find(":")
+            find_site_name = token.find(BINDING_SITE_NAME_CHARACTER)
 
             # Check ":" in beginning case
             if find_site_name == 0:
@@ -88,7 +92,7 @@ def parse_constraint(tbn_problem: TBNProblem, str_line: str):
     for ind in range(len(tokens)):
         token = tokens[ind]
 
-        find_hash = token.find("#")
+        find_hash = token.find(COMMENT_CHARACTER)
         if find_hash != -1:
             if find_hash == 0:
                 break
