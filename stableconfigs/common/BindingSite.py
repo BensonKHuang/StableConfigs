@@ -12,7 +12,7 @@ class BindingSite:
         tbn_problem.site_count = tbn_problem.site_count + 1
 
         # check if complement
-        find_comp = str_site.find(COMPLEMENT_DELIMITER)
+        find_comp = str_site.find(BindingSite.COMPLEMENT_DELIMITER)
         has_comp = True
         if find_comp == -1:
             find_comp = len(str_site)
