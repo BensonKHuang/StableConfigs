@@ -81,7 +81,18 @@ def config_to_output(config):
     for index, polymer in enumerate(config):
         cur_polymer = []
         for monomer in polymer.monomer_list:
-            cur_monomer = list(map(lambda x: (x.type + "*") if x.IsComplement else x.type, monomer.BindingSites))
+            cur_monomer = []
+            # A BindingSite's name (if it has one) is appended to the end of the site string (a*:name).
+            for binding_site in monomer.BindingSites:
+                site_str = binding_site.type
+                if binding_site.IsComplement:
+                    site_str = site_str + "*"
+                if binding_site.name is not None:
+                    site_str = site_str + ":" + binding_site.name
+                cur_monomer.append(site_str)
+            # A monomer's name (if it has one) is the last element of the BindingSite list, starting with a '>'.
+            if monomer.name is not None:
+                cur_monomer.append(">" + monomer.name)
             cur_polymer.append(cur_monomer)
         polymer_output.append(cur_polymer)
     return polymer_output, len(polymer_output)
