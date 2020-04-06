@@ -310,14 +310,14 @@ def encode_constraints_clauses(tbn: TBNProblem, sat: SATProblem):
 
 # Encodes a unique solution combination
 def encode_unique_solution(tbn : TBNProblem, sat : SATProblem):
-	true_original_binds = []
+	true_pairs = []
 	for boolean in sat.result:
-		if boolean > 0 and boolean in sat.original_binds:
+		if boolean > 0 and boolean in sat.id_to_pair.keys():
 			# Adds constraints to not produce the original solution again
-			true_original_binds.append(boolean * -1)
+			true_pairs.append(boolean * -1)
 
 	# Adds new clause
-	clause = create_clause(*true_original_binds)
+	clause = create_clause(*true_pairs)
 	sat.unique_combination_clauses.append(clause)
 
 

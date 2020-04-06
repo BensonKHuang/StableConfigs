@@ -19,7 +19,7 @@ class IntegrationTest(unittest.TestCase):
 		while sat_problem.success:
 			Encoder.increment_min_representatives(tbn_problem, sat_problem)
 			sat_problem.solve()
-		self.assertEqual(sat_problem.min_reps, 5)
+		self.assertEqual(sat_problem.min_reps, 4)
 
 	def test_and_gate(self):
 		tbn_file = open("../input/and_gate.txt", 'rt')
