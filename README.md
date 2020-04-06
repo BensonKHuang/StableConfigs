@@ -11,7 +11,7 @@ Python tool to generate Stable Configurations of Monomers by reducing the proble
 + python3.6 or higher
 + pip3 (Python Package Installer for Python 3)
 
-Docker instructions are also specified in [Docker Usage](#-docker-usage) section.
+Docker instructions are also specified in [Docker Usage](#docker-usage) section.
 
 # Installation instructions
 
@@ -234,24 +234,31 @@ Specifying **NOTANYPAIRED** attempts to force the specified binding site to not 
 
 # Docker Usage
 
-StableConfigs contains a Dockerfile to support running the program on Docker. In order to use docker you need to have Docker locally on your machine. Using Docker is useful to ensure that the program will work on your machine.
+StableConfigs is now available on [Docker hub](https://hub.docker.com/r/stevenzwang/stableconfigs). This github repository also provides a Dockerfile to support building the program image locally via Docker. In order to use Docker you need to install Docker locally on your machine.
 
-Build a docker image:
-
-    $ Docker build -t stablegen .
-
+### Directly using docker image from docker hub:
 
 Run stable configs on docker and pass local files as arguments by using the "-v" docker option for mounting:
 
-    $ Docker run -v {/absolute/local/path/tbn_file.txt}:/{tbn_file.txt} stablegen {tbn_file.txt}
+    $ Docker run -v {/absolute/local/path/tbn_file.txt}:/{tbn_file.txt} stevenzwang/stableconfigs:latest {tbn_file.txt}
 
+To run additional constraints, please provide an additional constraint file as follows:
+
+    $ Docker run -v {absolute/local/path/tbn_file.txt}:/{tbn_file.txt} -v {absolute/local/path/constraints.txt}:/{constraints.txt} stevenzwang/stableconfigs:latest {tbn_file.txt} {constraints.txt}
+
+To run with command line flags, please provide flags as follows:
+
+    $ Docker run -v {absolute/local/path/tbn_file.txt}:/{tbn_file.txt} stevenzwang/stableconfigs:latest -g {#} -k {#} {tbn_file.txt}
+    
 General TBN Problem Example:
 
-    $ Docker run -v /users/solo/and.txt:/and.txt stablegen and.txt
+    $ Docker run -v /users/solo/and.txt:/and.txt stevenzwang/stableconfigs:latest -g 2 and.txt
+    
+### Building docker image locally:
 
-To run additional constraints, you must provide an additional file:
+Alternatively, you can build the docker image locally by cloning this repo and run the following command under this repository:
 
-    $ Docker run -v {absolute/local/path/tbn_file.txt}:/{tbn_file.txt} -v {absolute/local/path/constraints.txt}:/{constraints.txt} stablegen {tbn_file.txt} {constraints.txt} 
+    $ Docker build -t stableconfigs .
 
 
 # Citation
