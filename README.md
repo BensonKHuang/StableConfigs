@@ -236,13 +236,11 @@ Specifying **NOTANYPAIRED** attempts to force the specified binding site to not 
 
 StableConfigs is now available on [Docker hub](https://hub.docker.com/r/stevenzwang/stableconfigs). This github repository also provides a Dockerfile to support building the program image locally via Docker. In order to use Docker you need to install Docker locally on your machine.
 
-Directly using docker image from docker hub:
-
-    $ Docker run -v {/absolute/local/path/tbn_file.txt}:/{tbn_file.txt} stevenzwang/stableconfigs:stablegen {tbn_file.txt}
+### Directly using docker image from docker hub:
 
 Run stable configs on docker and pass local files as arguments by using the "-v" docker option for mounting:
 
-    $ Docker run -v {/absolute/local/path/tbn_file.txt}:/{tbn_file.txt} stablegen {tbn_file.txt}
+    $ Docker run -v {/absolute/local/path/tbn_file.txt}:/{tbn_file.txt} stevenzwang/stableconfigs:stablegen {tbn_file.txt}
 
 To run additional constraints, please provide an additional constraint file as follows:
 
@@ -256,6 +254,8 @@ General TBN Problem Example:
 
     $ Docker run -v /users/solo/and.txt:/and.txt stevenzwang/stableconfigs:stablegen -g 2 and.txt
     
+### Building docker image locally:
+
 Alternatively, you can build the docker image locally by cloning this repo and run the following command under this repository:
 
     $ Docker build -t stablegen .
