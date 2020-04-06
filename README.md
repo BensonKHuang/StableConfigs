@@ -240,25 +240,25 @@ StableConfigs is now available on [Docker hub](https://hub.docker.com/r/stevenzw
 
 Run stable configs on docker and pass local files as arguments by using the "-v" docker option for mounting:
 
-    $ Docker run -v {/absolute/local/path/tbn_file.txt}:/{tbn_file.txt} stevenzwang/stableconfigs:stablegen {tbn_file.txt}
+    $ Docker run -v {/absolute/local/path/tbn_file.txt}:/{tbn_file.txt} stevenzwang/stableconfigs:latest {tbn_file.txt}
 
 To run additional constraints, please provide an additional constraint file as follows:
 
-    $ Docker run -v {absolute/local/path/tbn_file.txt}:/{tbn_file.txt} -v {absolute/local/path/constraints.txt}:/{constraints.txt} stevenzwang/stableconfigs:stablegen {tbn_file.txt} {constraints.txt}
+    $ Docker run -v {absolute/local/path/tbn_file.txt}:/{tbn_file.txt} -v {absolute/local/path/constraints.txt}:/{constraints.txt} stevenzwang/stableconfigs:latest {tbn_file.txt} {constraints.txt}
 
 To run with command line flags, please provide flags as follows:
 
-    $ Docker run -v {absolute/local/path/tbn_file.txt}:/{tbn_file.txt} stevenzwang/stableconfigs:stablegen -g {#} -k {#} {tbn_file.txt}
+    $ Docker run -v {absolute/local/path/tbn_file.txt}:/{tbn_file.txt} stevenzwang/stableconfigs:latest -g {#} -k {#} {tbn_file.txt}
     
 General TBN Problem Example:
 
-    $ Docker run -v /users/solo/and.txt:/and.txt stevenzwang/stableconfigs:stablegen -g 2 and.txt
+    $ Docker run -v /users/solo/and.txt:/and.txt stevenzwang/stableconfigs:latest -g 2 and.txt
     
 ### Building docker image locally:
 
 Alternatively, you can build the docker image locally by cloning this repo and run the following command under this repository:
 
-    $ Docker build -t stablegen .
+    $ Docker build -t stableconfigs .
 
 
 # Citation
