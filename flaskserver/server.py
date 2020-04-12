@@ -1,12 +1,88 @@
 from stableconfigs import StableConfig
 from stableconfigs.common.CustomExceptions import *
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, url_for
 from flask_cors import CORS
+from celery import Celery, states
 import json
 import os
 
+from flaskserver.tasks import config_to_output
+from flaskserver.tasks import compute
+from stableconfigs.parser.Parser import parse_input_lines
+from stableconfigs.encoder.SATProblem import SATProblem
+from stableconfigs.common.TBNProblem import TBNProblem
+
 app = Flask(__name__)
+
+# Celery configuration
+app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
+app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
+
+# Initialize Celery
+celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+celery.conf.update(app.config)
+celery.register_task(compute)
 CORS(app)
+
+
+@app.route("/task", methods=['POST'])
+def create_task():
+    received_json = request.json
+    monomers = received_json['monomers']
+
+    monomer_lines = []
+    for index, monomer in enumerate(monomers):
+        monomer_lines.append(' '.join(monomer))
+
+    constraints_lines = []
+    if 'constraints' in received_json:
+        constraints = received_json['constraints']
+        for index, token in enumerate(constraints):
+            constraints_lines.append((' ').join(token))
+
+    gen = 1
+    if 'gen' in received_json:
+        gen = received_json['gen']
+
+    init_k = 1
+    if 'init_k' in received_json:
+        init_k = received_json['init_k']
+    
+    task = compute.apply_async((monomer_lines, constraints_lines, gen, init_k))
+    return jsonify({}), 202, {'Location': url_for('taskstatus', task_id = task.id)}
+
+
+@app.route('/status/<task_id>')
+def taskstatus(task_id):
+    task = compute.AsyncResult(task_id)
+    if task.state == "PROGRESS":
+        response = {
+            'state': task.state,
+            'count': task.info.get('count', 1),
+            'k': task.info.get('k', 0)
+        }
+
+    elif task.state != 'FAILURE':
+        response = {
+            'state': task.state,
+            'count': task.info.get('count', 0),
+            'k': task.info.get('k', 0),
+        }
+
+        if 'configs' in task.info:
+            response['configs'] = task.info['configs']
+        
+        if 'entropy' in task.info:
+            response['entropy'] = task.info['entropy']
+
+    else:
+        # something went wrong in the background job
+        response = {
+            'state': task.state,
+            'status': str(task.info),  # this is the exception raised
+        }
+    return jsonify(response)
+
 
 # Based expected call/response output of Post to look like Figure 6 from Proj. Definition
 @app.route("/", methods=['POST'])
@@ -76,27 +152,9 @@ def my_post():
         return jsonify(response), 200
 
 
-def config_to_output(config):
-    polymer_output = []
-    for index, polymer in enumerate(config):
-        cur_polymer = []
-        for monomer in polymer.monomer_list:
-            cur_monomer = []
-            # A BindingSite's name (if it has one) is appended to the end of the site string (a*:name).
-            for binding_site in monomer.BindingSites:
-                site_str = binding_site.type
-                if binding_site.IsComplement:
-                    site_str = site_str + "*"
-                if binding_site.name is not None:
-                    site_str = site_str + ":" + binding_site.name
-                cur_monomer.append(site_str)
-            # A monomer's name (if it has one) is the last element of the BindingSite list, starting with a '>'.
-            if monomer.name is not None:
-                cur_monomer.append(">" + monomer.name)
-            cur_polymer.append(cur_monomer)
-        polymer_output.append(cur_polymer)
-    return polymer_output, len(polymer_output)
-
-
 def run_app():
+    app.run(host='0.0.0.0', port=5005)
+
+
+if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5005)

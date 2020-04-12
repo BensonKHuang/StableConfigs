@@ -1,9 +1,78 @@
 from stableconfigs.parser.Parser import parse_input_lines
 from stableconfigs.encoder.SATProblem import SATProblem
+from stableconfigs.common.TBNProblem import TBNProblem
 from stableconfigs.common.CustomExceptions import MinPolymersExceedEntropyException
 import stableconfigs.encoder.Encoder as Encoder
 import stableconfigs.decoder.Decoder as Decoder
 import time
+
+
+def get_stable_config_v2(celery_task, tbn_problem: TBNProblem, sat_problem: SATProblem):
+    Encoder.encode_basic_clause(tbn_problem, sat_problem)
+
+    while sat_problem.min_reps < tbn_problem.init_k:
+        Encoder.increment_min_representatives(tbn_problem, sat_problem)
+    
+
+    # solve the problem (SAT solver)
+    while sat_problem.success:
+        celery_task.update_state(meta={'count': 1, 'k': sat_problem.min_reps})
+        sat_problem.solve()
+        if (sat_problem.success):
+            tbn_problem.original_num_reps = sat_problem.min_reps
+            Encoder.increment_min_representatives(tbn_problem, sat_problem)
+
+    if tbn_problem.original_num_reps == 0:
+        raise MinPolymersExceedEntropyException(tbn_problem.init_k)
+
+    # Add constraints set clauses and solve specified number of times
+    if len(tbn_problem.constraints) != 0:
+        Encoder.encode_constraints_clauses(tbn_problem, sat_problem)
+        tbn_problem.results = get_stable_configs_using_constraints_v2(
+            celery_task, tbn_problem, sat_problem)
+
+    # Generate more than one solution with no additional constraints
+    elif tbn_problem.gen_count > 1:
+        tbn_problem.results = get_stable_configs_using_constraints_v2(
+            celery_task, tbn_problem, sat_problem)
+    else:
+        # Decode the problem into polymers
+        polymers = Decoder.decode_boolean_values(tbn_problem, sat_problem)
+        tbn_problem.results.append(polymers)
+    
+    tbn_problem.completed = True
+
+
+def get_stable_configs_using_constraints_v2(celery_task, tbn_problem: TBNProblem, sat_problem: SATProblem):
+    counter = 0
+    # Generate multiple unique solutions
+    while counter < tbn_problem.gen_count:
+        sat_problem.reset_clauses()
+
+        while sat_problem.min_reps < tbn_problem.init_k:
+            Encoder.increment_min_representatives(tbn_problem, sat_problem)
+
+        modified_num_reps = 0
+
+        # solve the problem again (SAT solver)
+        while sat_problem.success:
+            celery_task.update_state(
+                meta={'count': counter + 1, 'k': sat_problem.min_reps})
+            sat_problem.solve()
+            if (sat_problem.success):
+                modified_num_reps = sat_problem.min_reps
+                Encoder.increment_min_representatives(tbn_problem, sat_problem)
+
+        if modified_num_reps == 0:
+            break
+
+        # Decode the problem into polymers
+        polymers = Decoder.decode_boolean_values(tbn_problem, sat_problem)
+        tbn_problem.results.append(polymers)
+    
+        # Encode a new unique solution
+        Encoder.encode_unique_solution(tbn_problem, sat_problem)
+        counter += 1
 
 
 def get_stable_config(tbn_lines, constr_lines, gen_count, init_k):
