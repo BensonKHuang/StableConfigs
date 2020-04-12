@@ -77,31 +77,30 @@ def create_task():
         init_k = received_json['init_k']
     
     task = compute.apply_async((monomer_lines, constraints_lines, gen, init_k))
-    return jsonify({}), 202, {'Location': url_for('taskstatus', task_id = task.id)}
+    response = {'location': url_for('taskstatus', task_id=task.id)}
+    return jsonify(response), 202, 
 
 
 @app.route('/status/<task_id>')
 def taskstatus(task_id):
     task = compute.AsyncResult(task_id)
-    if task.state == "PROGRESS":
+    
+    if task.ready():
+        
+        response = {
+            'state': task.state,
+            'configs': task.result["configs"],
+            'count': task.result["count"],
+            'entropy': task.result["entropy"]
+        }
+    
+    elif task.state != 'FAILURE':
+        
         response = {
             'state': task.state,
             'count': task.info.get('count', 1),
-            'k': task.info.get('k', 0)
-        }
-
-    elif task.state != 'FAILURE':
-        response = {
-            'state': task.state,
-            'count': task.info.get('count', 0),
             'k': task.info.get('k', 0),
         }
-
-        if 'configs' in task.info:
-            response['configs'] = task.info['configs']
-        
-        if 'entropy' in task.info:
-            response['entropy'] = task.info['entropy']
 
     else:
         # something went wrong in the background job

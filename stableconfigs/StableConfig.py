@@ -18,7 +18,8 @@ def get_stable_config_v2(celery_task, tbn_problem: TBNProblem, sat_problem: SATP
 
     # solve the problem (SAT solver)
     while sat_problem.success:
-        celery_task.update_state(meta={'count': 1, 'k': sat_problem.min_reps})
+        celery_task.update_state(state="PROGRESS", meta={
+            'status': "Progress", 'count': 1, 'k': sat_problem.min_reps})
         sat_problem.solve()
         if (sat_problem.success):
             original_num_reps = sat_problem.min_reps
@@ -58,8 +59,8 @@ def get_stable_configs_using_constraints_v2(celery_task, tbn_problem: TBNProblem
 
         # solve the problem again (SAT solver)
         while sat_problem.success:
-            celery_task.update_state(
-                meta={'count': counter + 1, 'k': sat_problem.min_reps})
+            celery_task.update_state(state="PROGRESS", meta={
+                'status': "Progress",  'count': counter + 1, 'k': sat_problem.min_reps})
             sat_problem.solve()
             if (sat_problem.success):
                 modified_num_reps = sat_problem.min_reps
@@ -77,7 +78,7 @@ def get_stable_configs_using_constraints_v2(celery_task, tbn_problem: TBNProblem
         counter += 1
 
     return configs
-    
+
 def get_stable_config(tbn_lines, constr_lines, gen_count, init_k):
     # parse the input to encode it into BindingSite/Monomer classes
     
