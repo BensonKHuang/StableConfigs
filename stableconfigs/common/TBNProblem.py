@@ -20,10 +20,6 @@ class TBNProblem:
 
         self.constraints = list()
 
-        self.completed = False
-        self.original_num_reps = 0
-        self.results = []
-
     def assign_monomer_name(self, monomer, monomer_name):
         monomer.name = monomer_name
         self.monomer_name_map[monomer_name] = monomer

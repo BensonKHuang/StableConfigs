@@ -1,5 +1,5 @@
 from stableconfigs import StableConfig
-from flaskserver import server
+from flaskserver import tasks
 import sys
 import argparse
 
@@ -16,7 +16,7 @@ if __name__ == '__main__':
     init_k = options.k
 
     if options.s:
-        server.run_app()
+        tasks.run_app()
     else:
         file_path = options.rest[0]
         tbn_file = open(file_path, 'rt')

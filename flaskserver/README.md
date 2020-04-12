@@ -14,6 +14,14 @@ To run the flask server from root directory:
 
     $ python3 -m stableconfigs -s
 
+## Start Redis (OSX or Unix)
+
+    $ ./run-redis.sh
+
+## Start Celery Worker
+
+    $ celery -A flaskserver.tasks.celery worker --loglevel=info
+
 ## Production Deployment
 Gunicorn (pip3 install gunicorn) is a production-ready Python WSGI HTTTP Server. 
 To run the server with Gunicorn on your Ubuntu server:

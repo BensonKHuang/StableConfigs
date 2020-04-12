@@ -8,6 +8,8 @@ import time
 
 
 def get_stable_config_v2(celery_task, tbn_problem: TBNProblem, sat_problem: SATProblem):
+    configs = []
+    original_num_reps = 0
     Encoder.encode_basic_clause(tbn_problem, sat_problem)
 
     while sat_problem.min_reps < tbn_problem.init_k:
@@ -19,31 +21,31 @@ def get_stable_config_v2(celery_task, tbn_problem: TBNProblem, sat_problem: SATP
         celery_task.update_state(meta={'count': 1, 'k': sat_problem.min_reps})
         sat_problem.solve()
         if (sat_problem.success):
-            tbn_problem.original_num_reps = sat_problem.min_reps
+            original_num_reps = sat_problem.min_reps
             Encoder.increment_min_representatives(tbn_problem, sat_problem)
 
-    if tbn_problem.original_num_reps == 0:
+    if original_num_reps == 0:
         raise MinPolymersExceedEntropyException(tbn_problem.init_k)
 
     # Add constraints set clauses and solve specified number of times
     if len(tbn_problem.constraints) != 0:
         Encoder.encode_constraints_clauses(tbn_problem, sat_problem)
-        tbn_problem.results = get_stable_configs_using_constraints_v2(
+        configs = get_stable_configs_using_constraints_v2(
             celery_task, tbn_problem, sat_problem)
 
     # Generate more than one solution with no additional constraints
     elif tbn_problem.gen_count > 1:
-        tbn_problem.results = get_stable_configs_using_constraints_v2(
+        configs = get_stable_configs_using_constraints_v2(
             celery_task, tbn_problem, sat_problem)
     else:
         # Decode the problem into polymers
         polymers = Decoder.decode_boolean_values(tbn_problem, sat_problem)
-        tbn_problem.results.append(polymers)
-    
-    tbn_problem.completed = True
+        configs.append(polymers)
 
+    return configs, original_num_reps
 
 def get_stable_configs_using_constraints_v2(celery_task, tbn_problem: TBNProblem, sat_problem: SATProblem):
+    configs = []
     counter = 0
     # Generate multiple unique solutions
     while counter < tbn_problem.gen_count:
@@ -68,13 +70,14 @@ def get_stable_configs_using_constraints_v2(celery_task, tbn_problem: TBNProblem
 
         # Decode the problem into polymers
         polymers = Decoder.decode_boolean_values(tbn_problem, sat_problem)
-        tbn_problem.results.append(polymers)
+        configs.append(polymers)
     
         # Encode a new unique solution
         Encoder.encode_unique_solution(tbn_problem, sat_problem)
         counter += 1
 
-
+    return configs
+    
 def get_stable_config(tbn_lines, constr_lines, gen_count, init_k):
     # parse the input to encode it into BindingSite/Monomer classes
     
@@ -181,3 +184,24 @@ def get_stable_configs_using_constraints(tbn_problem, sat_problem, original_num_
         Encoder.encode_unique_solution(tbn_problem, sat_problem)
         counter += 1
     return configs
+
+def config_to_output(config):
+    polymer_output = []
+    for index, polymer in enumerate(config):
+        cur_polymer = []
+        for monomer in polymer.monomer_list:
+            cur_monomer = []
+            # A BindingSite's name (if it has one) is appended to the end of the site string (a*:name).
+            for binding_site in monomer.BindingSites:
+                site_str = binding_site.type
+                if binding_site.IsComplement:
+                    site_str = site_str + "*"
+                if binding_site.name is not None:
+                    site_str = site_str + ":" + binding_site.name
+                cur_monomer.append(site_str)
+            # A monomer's name (if it has one) is the last element of the BindingSite list, starting with a '>'.
+            if monomer.name is not None:
+                cur_monomer.append(">" + monomer.name)
+            cur_polymer.append(cur_monomer)
+        polymer_output.append(cur_polymer)
+    return polymer_output, len(polymer_output)
