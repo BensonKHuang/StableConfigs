@@ -121,3 +121,12 @@ class MinPolymersExceedEntropyException(TBNException):
 
     def __str__(self):
         return "Minimum Polymers [" + str(self.init_k) + "] exceeds the max entropy of TBN system. No Results can be computed. Choose a lower value."
+
+
+class EarlyTerminationException(TBNException):
+    def __init__(self, count, k):
+        self.count = count
+        self.k = k
+
+    def __str__(self):
+        return "Early Termination at count [" + str(self.count) + "] min polymers [" + str(self.k) + "]." 
