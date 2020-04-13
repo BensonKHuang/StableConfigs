@@ -33,9 +33,9 @@ To run the server with Gunicorn on your Ubuntu server:
 
 ## API Request Body and Response Examples
 
-#### /task POST
+### /task POST
 
-request body format (json)
+*request*
 ```json
 {
     "monomers":[
@@ -52,14 +52,14 @@ request body format (json)
 }
 ```
 
-response body format (json):
+*response*
 ```json
 {   
-    "task_id": <task_id>,
+    "task_id": "{task_id}",
 }
 ```
 
-#### /status/<task_id> GET
+### /status/<task_id> GET
 
 
 **status_code 200** : Completed 
@@ -84,27 +84,38 @@ response body format (json):
 **status_code 202** : In Progress
 ```json
 {
-    "status": "PROGRESS",
+    "status": "Progress",
     "count": "{current_configuration_number}",
     "k": "{current_min_polymer_k}"
 }
 ```
 
-**status_code 400** : Exception
+**status_code 400** : Time Out
 ```json
 {
-    "status": "{Exception message}",
+    "status": "TimedOut",
+    "message": "{Exception string...}"
 }
 ```
 
-**status_code 401** : Time Out
+**status_code 401** : TBNException
 ```json
 {
-    "status": "Timed out exception",
+    "status": "TBNException",
+    "message": "{Exception string...}"
 }
 ```
 
-#### /terminate/<task_id> DELETE
+**status_code 402** : Exception
+```json
+{
+    "status": "Exception",
+    "message": "{Exception string...}"
+}
+```
+
+### /terminate/<task_id> DELETE
+
 ```json
 {
     "status": "terminating task: {task_id}"
@@ -115,5 +126,4 @@ response body format (json):
 
 Running API tests will fail unless local server is running: 
 
-    $ python3.7 -m stableconfigs -s #Start Server
-    $ python3.7 -m unittest flaskserver/test_api.py -v
+    $ python3.7 -m unittest server/tests/test_api.py -v
