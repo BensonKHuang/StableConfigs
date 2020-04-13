@@ -20,13 +20,13 @@ task_id = json.loads(res.text)["task_id"]
 
 res = requests.get('http://localhost:5005/status/' + task_id)
 print(str(res.status_code) + ": " + res.text)
-res = requests.get('http://localhost:5005/status/' + task_id)
-print(str(res.status_code) + ": " + res.text)
 
-res = requests.delete('http://localhost:5005/terminate/' + task_id)
-print(str(res.status_code) + ": " + res.text)
+# res = requests.delete('http://localhost:5005/terminate/' + task_id)
+# print(str(res.status_code) + ": " + res.text)
 
 while True:
     res = requests.get('http://localhost:5005/status/' + task_id)
     print(str(res.status_code) + ": " + res.text)
+    if res.status_code != 202 and res.status_code != 404:
+        break
 

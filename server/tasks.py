@@ -8,6 +8,7 @@ from celery.exceptions import SoftTimeLimitExceeded, Ignore
 from celery.app.control import Control
 from celery.contrib.abortable import AbortableTask
 
+import collections
 import json
 import os
 
@@ -19,11 +20,11 @@ app = Flask(__name__)
 CORS(app)
 
 # Celery configuration
-app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
-app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
+app.config['broker_url'] = 'redis://localhost:6379/0'
+app.config['result_backend'] = 'redis://localhost:6379/0'
 celery = Celery(
     app.name,
-    broker=app.config['CELERY_BROKER_URL']
+    broker=app.config['broker_url']
 )
 
 # Configure timeout of redis broker cache to 5 minutes
@@ -31,12 +32,13 @@ celery.conf.update(app.config)
 celery.conf.result_expires = 300
 
 # Celery Tasks
-@celery.task(name='tasks.compute', bind=True, time_limit=240, soft_time_limit=120, base=AbortableTask)
+@celery.task(name='tasks.compute', bind=True, time_limit=240, soft_time_limit=90, base=AbortableTask)
 def compute(self, tbn_lines, constr_lines, gen_count, init_k):
 
     self.update_state(state="PROGRESS", meta={'status': "Progress", 'count': 0, 'k': 0})
 
     config_output_list = []
+    response = ""
     try:
         results, entropy = StableConfig.get_stable_config(
             tbn_lines, constr_lines, gen_count, init_k, self)
@@ -48,17 +50,33 @@ def compute(self, tbn_lines, constr_lines, gen_count, init_k):
                 "polymers_count": polymers_count
             })
 
-        return {
-            'status': "Complete",
+    except SoftTimeLimitExceeded as e:
+        response = {
+            'status': "Timeout",
+            'message': str(e)
+        }
+
+    except TBNException as e:
+        response = {
+            'status': "TBNException",
+            'message': str(e)
+        }
+    # Unexpected Exception
+    except Exception as e:
+        response = {
+            'status': "Exception",
+            'message': str(e)
+        }
+    # Succeed
+    else:
+        response = {
+            'status': "Completed",
             'configs': config_output_list,
             'count': len(results),
             'entropy': entropy
-            }
+        }
 
-    except Exception as e:
-        # Exceptions will automatically fail the task
-        print("Exception occurred: " + str(e))
-
+    return response
 
 # API Routes
 @app.route("/task", methods=['POST'])
@@ -95,46 +113,30 @@ def taskstatus(task_id):
     task = compute.AsyncResult(task_id)
     
     # Complete
-    if task.ready() and task.result is not None:
-        response = {
-            'state': task.state,
-            'configs': task.result["configs"],
-            'count': task.result["count"],
-            'entropy': task.result["entropy"]
-        }
-        return jsonify(response), 200
+    if task.ready() :
+        # Succeed
+        if task.result["status"] == "Completed":
+            return jsonify(task.result), 200
 
-    # Timeout
-    elif task.ready() and task.result is None:
-        # Timeout occurred
-        response = {
-            'status': "Timed out exception"  # this is the exception raised
-        }
-        return jsonify(response), 401
+        # Timeout
+        elif task.result["status"] == "Timeout":
+            return jsonify(task.result), 400
+
+        # TBN Exception
+        elif task.result["status"] == "TBNException":
+            return jsonify(task.result), 401
+
+        else:
+            return jsonify(task.result), 402
 
     # In Progress
     elif task.state == "PROGRESS":
-        response = {
-            'status': task.info.get('status', "Unavailable"),
-            'count': task.info.get('count', 1),
-            'k': task.info.get('k', 0),
-        }
-        return jsonify(response), 202
+        return jsonify(task.info), 202
 
     # Input Failure
-    elif task.state == states.FAILURE:
-        response = {
-            'status': str(task.info)  # this is the exception raised
-        }
-        return jsonify(response), 400
-
-    # Unexpected Case
     else:
-        # something went wrong in the background job
-        response = {
-            'status': str(task.info),  # this is the exception raised
-        }
-        return jsonify(response), 402
+        return jsonify(str(task.info)), 404
+
 
 
 @app.route('/terminate/<task_id>', methods=['DELETE'])

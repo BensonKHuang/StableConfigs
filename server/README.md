@@ -2,36 +2,40 @@
 We provide an API Server that can serve StableConfigs over the network.
 The default serve location is at http://localhost:5005/ that handles one POST request on "/"
 
-### Prerequisites
-To run the server locally or in product, you need to install the stableconfigs python module on your machine:
 
-    $ python3 setup.py build
-    $ python3 setup.py install
+## Start Server ...
 
+### Requirements
+- OSX or Unix machine 
 
-## Local Server Deployment
-To run the flask server from root directory:
+#### Create a virtual environment (from the server directory)
+    
+    $ virtualenv stableenv
+    $ source stableenv/bin/activate
+    (stableenv) $ pip install -r requirements.txt
 
-    $ python3 -m stableconfigs -s
+#### Install core library
+You need to install the stableconfigs python module (from root directory) on your machine:
 
-## Start Redis (OSX or Unix)
+    (stableenv) $ python3 setup.py install
 
+#### Start Redis Server 
     $ ./run-redis.sh
 
-## Start Celery Worker
+#### Start Celery Broker worker
+    $ ./celery.sh
 
-    $ celery -A flaskserver.tasks.celery worker --loglevel=info
-
-## Production Deployment
+#### Start gunicorn wsgi - flask server
 Gunicorn (pip3 install gunicorn) is a production-ready Python WSGI HTTTP Server. 
 To run the server with Gunicorn on your Ubuntu server:
-    
-    $ cd flaskserver
-    $ ./run.sh
+
+    $ ./gunicorn.sh
 
 ## API Request Body and Response Examples
 
-POST request body format (json):
+#### /task POST
+
+request body format (json)
 ```json
 {
     "monomers":[
@@ -48,33 +52,62 @@ POST request body format (json):
 }
 ```
 
-POST response body format (json):
+response body format (json):
 ```json
 {   
-    "success": true,
+    "task_id": <task_id>,
+}
+```
+
+#### /status/<task_id> GET
+
+
+**status_code 200** : Completed 
+```json
+{   
+    "status": "COMPLETE",
     "configs":[
-        {
-            "polymers":[
-                [["a*", "b*"], ["a", "b"]], 
-                [["b"]], 
-                [["a"]]
-            ],
-            "polymers_count":3
-        }
-    ],
+            {
+                "polymers":[
+                    [["a*", "b*"], ["a", "b"]], 
+                    [["b"]], 
+                    [["a"]]
+                ],
+                "polymers_count":3
+            }
+        ],
     "count":1,
     "entropy": 3
 }
 ```
 
-POST response error:
+**status_code 202** : In Progress
 ```json
-{   
-    "success": false,
-    "error": {
-                "type": "EmptyProblemException",
-                "message": "EmptyProblemException"
-            }
+{
+    "status": "PROGRESS",
+    "count": "{current_configuration_number}",
+    "k": "{current_min_polymer_k}"
+}
+```
+
+**status_code 400** : Exception
+```json
+{
+    "status": "{Exception message}",
+}
+```
+
+**status_code 401** : Time Out
+```json
+{
+    "status": "Timed out exception",
+}
+```
+
+#### /terminate/<task_id> DELETE
+```json
+{
+    "status": "terminating task: {task_id}"
 }
 ```
 

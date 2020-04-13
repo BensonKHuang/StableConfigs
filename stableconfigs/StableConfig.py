@@ -10,11 +10,16 @@ import time
 def get_stable_config(tbn_lines, constr_lines, gen_count, init_k, celery_task = None):
     # parse the input to encode it into BindingSite/Monomer classes
 
+    t0 = time.time()
+
     if celery_task is not None:
+
+        if celery_task.is_aborted():
+            raise EarlyTerminationException(0, 0)
+
         celery_task.update_state(state="PROGRESS",
             meta={'status': "Progress", 'count': 0, 'k': 0})
 
-    t0 = time.time()
     tbn_problem = parse_input_lines(tbn_lines, constr_lines)
 
     tbn_problem.gen_count = gen_count
