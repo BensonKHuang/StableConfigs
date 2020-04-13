@@ -27,11 +27,16 @@ celery = Celery(
     broker=app.config['broker_url']
 )
 
-# Configure timeout of redis broker cache to 5 minutes
 celery.conf.update(app.config)
-celery.conf.result_expires = 300
 
-# Celery Tasks
+# Celery results only exist in Redis backend results for 5 minutes
+celery.conf.result_expires = 300
+# Celery workers will restart after 20 tasks are run
+celery.conf.worker_max_tasks_per_child = 20
+# Celery workers will restart after exceeding 150 MB (150,000 KB) of resident memory (will complete the task still)
+celery.conf.worker_max_memory_per_child = 150000
+
+# Celery Task, Raises timeout exception after 90 seconds (configurable, but soft_time_limit < time_limit < gunicorn timeout)
 @celery.task(name='tasks.compute', bind=True, time_limit=240, soft_time_limit=90, base=AbortableTask)
 def compute(self, tbn_lines, constr_lines, gen_count, init_k):
 
@@ -113,9 +118,14 @@ def taskstatus(task_id):
     task = compute.AsyncResult(task_id)
     
     # Complete
-    if task.ready() :
+    if task.ready():
+
+        # Unexpected exception / Empty result / Server error
+        if task.result is None or isinstance(task.result, Exception):
+            return jsonify(task.result), 402
+
         # Succeed
-        if task.result["status"] == "Completed":
+        elif task.result["status"] == "Completed":
             return jsonify(task.result), 200
 
         # Timeout
@@ -126,14 +136,14 @@ def taskstatus(task_id):
         elif task.result["status"] == "TBNException":
             return jsonify(task.result), 401
 
+        # All catch, default to Exception
         else:
             return jsonify(task.result), 402
 
     # In Progress
-    elif task.state == "PROGRESS":
+    elif task.state == "PROGRESS" or task.state == states.PENDING:
         return jsonify(task.info), 202
 
-    # Input Failure
     else:
         return jsonify(str(task.info)), 404
 

@@ -1,2 +1,2 @@
 #!/bin/bash
-celery -A server.tasks.celery worker --loglevel=info
+celery -A tasks:celery worker --loglevel=info
