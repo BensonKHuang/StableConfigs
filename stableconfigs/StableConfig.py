@@ -1,15 +1,25 @@
 from stableconfigs.parser.Parser import parse_input_lines
 from stableconfigs.encoder.SATProblem import SATProblem
-from stableconfigs.common.CustomExceptions import MinPolymersExceedEntropyException
+from stableconfigs.common.TBNProblem import TBNProblem
+from stableconfigs.common.CustomExceptions import *
 import stableconfigs.encoder.Encoder as Encoder
 import stableconfigs.decoder.Decoder as Decoder
 import time
 
 
-def get_stable_config(tbn_lines, constr_lines, gen_count, init_k):
+def get_stable_config(tbn_lines, constr_lines, gen_count, init_k, celery_task = None):
     # parse the input to encode it into BindingSite/Monomer classes
-    
+
     t0 = time.time()
+
+    if celery_task is not None:
+
+        if celery_task.is_aborted():
+            raise EarlyTerminationException(0, 0)
+
+        celery_task.update_state(state="PROGRESS",
+            meta={'status': "Progress", 'count': 0, 'k': 0})
+
     tbn_problem = parse_input_lines(tbn_lines, constr_lines)
 
     tbn_problem.gen_count = gen_count
@@ -28,6 +38,15 @@ def get_stable_config(tbn_lines, constr_lines, gen_count, init_k):
 
     # solve the problem (SAT solver)
     while sat_problem.success:
+        
+        if celery_task is not None:
+            
+            if celery_task.is_aborted():
+                raise EarlyTerminationException(1, sat_problem.min_reps)
+
+            celery_task.update_state(state="PROGRESS",
+                meta={'status': "Progress", 'count': 1, 'k': sat_problem.min_reps})
+        
         print("... Checking for k =", sat_problem.min_reps, "polymers")
         sat_problem.solve()
         if (sat_problem.success):
@@ -47,12 +66,12 @@ def get_stable_config(tbn_lines, constr_lines, gen_count, init_k):
         print("\nCOMPUTING STABLE CONFIGURATION WITH ADDITIONAL CONSTRAINTS:")
         Encoder.encode_constraints_clauses(tbn_problem, sat_problem)
         configs = get_stable_configs_using_constraints(
-            tbn_problem, sat_problem, original_num_reps)
+            tbn_problem, sat_problem, original_num_reps, celery_task)
 
     # Generate more than one solution with no additional constraints
     elif tbn_problem.gen_count > 1:
         configs = get_stable_configs_using_constraints(
-            tbn_problem, sat_problem, original_num_reps)
+            tbn_problem, sat_problem, original_num_reps, celery_task)
     else:
         # Decode the problem into polymers
         polymers = Decoder.decode_boolean_values(tbn_problem, sat_problem)
@@ -68,7 +87,7 @@ def get_stable_config(tbn_lines, constr_lines, gen_count, init_k):
     return configs, original_num_reps
 
 
-def get_stable_configs_using_constraints(tbn_problem, sat_problem, original_num_reps):
+def get_stable_configs_using_constraints(tbn_problem, sat_problem, original_num_reps, celery_task = None):
     counter = 0
     configs = []
     # Generate multiple unique solutions
@@ -82,6 +101,15 @@ def get_stable_configs_using_constraints(tbn_problem, sat_problem, original_num_
         
         # solve the problem again (SAT solver)
         while sat_problem.success:
+
+            if celery_task is not None:
+                
+                if celery_task.is_aborted():
+                    raise EarlyTerminationException(counter + 1, sat_problem.min_reps)
+
+                celery_task.update_state(state="PROGRESS",
+                    meta={'status': "Progress",  'count': counter + 1, 'k': sat_problem.min_reps})
+
             print("... Checking for k =", sat_problem.min_reps, "polymers")
             sat_problem.solve()
             if (sat_problem.success):
@@ -112,3 +140,24 @@ def get_stable_configs_using_constraints(tbn_problem, sat_problem, original_num_
         Encoder.encode_unique_solution(tbn_problem, sat_problem)
         counter += 1
     return configs
+
+def config_to_output(config):
+    polymer_output = []
+    for index, polymer in enumerate(config):
+        cur_polymer = []
+        for monomer in polymer.monomer_list:
+            cur_monomer = []
+            # A BindingSite's name (if it has one) is appended to the end of the site string (a*:name).
+            for binding_site in monomer.BindingSites:
+                site_str = binding_site.type
+                if binding_site.IsComplement:
+                    site_str = site_str + "*"
+                if binding_site.name is not None:
+                    site_str = site_str + ":" + binding_site.name
+                cur_monomer.append(site_str)
+            # A monomer's name (if it has one) is the last element of the BindingSite list, starting with a '>'.
+            if monomer.name is not None:
+                cur_monomer.append(">" + monomer.name)
+            cur_polymer.append(cur_monomer)
+        polymer_output.append(cur_polymer)
+    return polymer_output, len(polymer_output)
