@@ -1,7 +1,12 @@
 # API Server Usage
 We provide an API Server that can serve StableConfigs over the network.
-The default serve location is at http://localhost:5005/ that handles one POST request on "/"
+The default serve location is at http://localhost:5005/ 
 
+This has 3 APIs, and uses async and celery distriubted task queue to manage computations:
+    - start task:  /task POST
+    - task status: /status/<task_id> GET
+    - terminate: /terminate/<task_id> DELETE
+ 
 
 ## Start Server ...
 
@@ -14,7 +19,7 @@ The default serve location is at http://localhost:5005/ that handles one POST re
     $ source stableenv/bin/activate
     (stableenv) $ pip install -r requirements.txt
 
-#### Install core library
+#### Install core libraries
 You need to install the stableconfigs python module (from root directory) on your machine:
 
     (stableenv) $ python3 setup.py install
