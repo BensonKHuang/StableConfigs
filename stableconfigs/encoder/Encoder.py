@@ -11,6 +11,7 @@ def encode_basic_clause(tbn: TBNProblem, sat: SATProblem):
 	encode_pair_implies_bind(tbn, sat)
 	encode_bind_transitive(tbn, sat)
 	encode_bind_representatives(tbn, sat)
+	encode_constraints_clauses(tbn, sat)
 
 # Encoding Saturated Configs
 # Ensure a binding site binds to at most one other binding site

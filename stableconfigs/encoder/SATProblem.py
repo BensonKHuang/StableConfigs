@@ -114,7 +114,7 @@ class SATProblem:
 		self.result = list()
 
 
-	def add_clauses_to_solver(self, solver):
+	def add_clauses_to_solver(self, solver, constraints_flag: bool):
 		for clause in self.each_site_binds_at_most_once_clauses:
 			solver.add_clause(clause)
 
@@ -138,21 +138,23 @@ class SATProblem:
 
 		for clause in self.increment_min_representatives_clauses:
 			solver.add_clause(clause)
-
-		for clause in self.constraint_clauses:
-			solver.add_clause(clause)
 		
 		for clause in self.unique_combination_clauses:
 			solver.add_clause(clause)
 
-	def solve(self):
+		# Only add constraints flag if enabled 
+		if constraints_flag: 
+			for clause in self.constraint_clauses:
+				solver.add_clause(clause)
+
+	def solve(self, constraints_flag: bool):
 		solver = Glucose4()
 
 		# solver = Maplesat()
 		# solver = Lingeling()
 		# solver = Cadical()
 
-		self.add_clauses_to_solver(solver)
+		self.add_clauses_to_solver(solver, constraints_flag)
 
 		success = solver.solve()
 		if success:

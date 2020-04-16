@@ -48,7 +48,7 @@ def get_stable_config(tbn_lines, constr_lines, gen_count, init_k, celery_task = 
                 meta={'status': "Progress", 'count': 1, 'k': sat_problem.min_reps})
         if celery_task is None:
             print("... Checking for k =", sat_problem.min_reps, "polymers")
-        sat_problem.solve()
+        sat_problem.solve(False)
         if (sat_problem.success):
             original_num_reps = sat_problem.min_reps
             Encoder.increment_min_representatives(tbn_problem, sat_problem)
@@ -66,7 +66,6 @@ def get_stable_config(tbn_lines, constr_lines, gen_count, init_k, celery_task = 
     # Add constraints set clauses and solve specified number of times
     if len(tbn_problem.constraints) != 0:
         print("\nCOMPUTING STABLE CONFIGURATION WITH ADDITIONAL CONSTRAINTS:")
-        Encoder.encode_constraints_clauses(tbn_problem, sat_problem)
         configs = get_stable_configs_using_constraints(
             tbn_problem, sat_problem, original_num_reps, celery_task)
 
@@ -116,7 +115,7 @@ def get_stable_configs_using_constraints(tbn_problem, sat_problem, original_num_
                     meta={'status': "Progress",  'count': counter + 1, 'k': sat_problem.min_reps})
             if celery_task is None:
                 print("... Checking for k =", sat_problem.min_reps, "polymers")
-            sat_problem.solve()
+            sat_problem.solve(True)
             if (sat_problem.success):
                 modified_num_reps = sat_problem.min_reps
                 Encoder.increment_min_representatives(tbn_problem, sat_problem)
