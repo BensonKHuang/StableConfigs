@@ -9,7 +9,7 @@ from stableconfigs.encoder.SATProblem import SATProblem
 class IntegrationTest(unittest.TestCase):
 
 	def test_basic(self):
-		tbn_file = open("../input/basic.txt", 'rt')
+		tbn_file = open("../input/classic.txt", 'rt')
 		tbn_problem = parse_input_lines(tbn_file.readlines(), [])
 		tbn_file.close()
 		sat_problem = SATProblem()

@@ -26,4 +26,5 @@ if __name__ == '__main__':
         constr_lines = constr_file.readlines()
         constr_file.close()
     
-    StableConfig.get_stable_config(tbn_lines, constr_lines, gen_count, init_k)
+    # By default, will print to terminal during computation. Returns a list of configurations
+    configs = StableConfig.get_stable_config(tbn_lines, constr_lines, gen_count, init_k)

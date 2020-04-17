@@ -129,7 +129,13 @@ Specifying **NOTANYPAIRED** attempts to force the specified binding site to not 
     
     $ python3 -m stableconfigs input/basic.txt
 
-    Found a stable configuration with [ 4 ] polymers:
+    [1] COMPUTING ORIGINAL STABLE CONFIGURATION:
+    ... Checking for k = 1 polymers
+    ... Checking for k = 2 polymers
+    ... Checking for k = 3 polymers
+    ... Checking for k = 4 polymers
+    ... Checking for k = 5 polymers
+    Found an original stable configuration with [ 4 ] polymers.
 
         Polymer number 1
                 ['a', 'b*']
@@ -145,7 +151,7 @@ Specifying **NOTANYPAIRED** attempts to force the specified binding site to not 
         Polymer number 4
                 ['b']
 
-    Completed in 0.0041961669921875 seconds.
+    Completed in 0.002486705780029297 seconds.
 
 
 #### Example 2 input
@@ -168,15 +174,28 @@ Specifying **NOTANYPAIRED** attempts to force the specified binding site to not 
     $ python3 -m stableconfigs -g 2 input/stably_together_example.txt input/stably_together_constraints.txt
 
 
-    COMPUTING ORIGINAL STABLE CONFIGURATION:
+    [1] COMPUTING ORIGINAL STABLE CONFIGURATION:
     ... Checking for k = 1 polymers
     ... Checking for k = 2 polymers
     ... Checking for k = 3 polymers
     ... Checking for k = 4 polymers
     Found an original stable configuration with [ 3 ] polymers.
 
+            Polymer number 1
+                    ['a']   >t2
 
-    COMPUTING STABLE CONFIGURATION WITH ADDITIONAL CONSTRAINTS:
+            Polymer number 2
+                    ['a*', 'b*']    >t1
+                    ['a', 'b']
+
+            Polymer number 3
+                    ['b']   >t3
+
+
+    COMPUTING WITH FOLLOWING CONSTRAINTS:
+            TOGETHER ['t2', 't3']
+
+    [1] COMPUTING STABLE CONFIGURATION WITH ADDITIONAL CONSTRAINTS:
     ... Checking for k = 1 polymers
     ... Checking for k = 2 polymers
     ... Checking for k = 3 polymers
@@ -192,9 +211,7 @@ Specifying **NOTANYPAIRED** attempts to force the specified binding site to not 
             Polymer number 2
                     ['a', 'b']
 
-    Constraints:
-            TOGETHER ['t2', 't3']
-
+    [2] COMPUTING STABLE CONFIGURATION WITH ADDITIONAL CONSTRAINTS:
     ... Checking for k = 1 polymers
     ... Checking for k = 2 polymers
     ... Checking for k = 3 polymers
@@ -210,10 +227,8 @@ Specifying **NOTANYPAIRED** attempts to force the specified binding site to not 
                     ['a*', 'b*']    >t1
                     ['a', 'b']
 
-    Constraints:
-            TOGETHER ['t2', 't3']
 
-    Completed in 0.0018138885498046875 seconds.
+    Completed in 0.0022509098052978516 seconds.
 
 #### Example 3 input
 
@@ -228,7 +243,7 @@ Specifying **NOTANYPAIRED** attempts to force the specified binding site to not 
 
     $ python3 -m stableconfigs -k 4 input/stably_together_example.txt
 
-    COMPUTING ORIGINAL STABLE CONFIGURATION:
+    [1] COMPUTING ORIGINAL STABLE CONFIGURATION:
     ... Checking for k = 4 polymers
     Could not find original stable configuration with [ 4 ] polymers.
 
