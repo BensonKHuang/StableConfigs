@@ -275,6 +275,18 @@ Alternatively, you can build the docker image locally by cloning this repo and r
 
     $ Docker build -t stableconfigs .
 
+# FAQ
+
+#### How do I add more constraints?
+1. Register your new Constraint in the `stableconfigs.common.Constraint.py` file. 
+2. Add the number of arguments in the Constraints Enum
+3. Add the encoding of constraints in `Encoder.py:encode_constraints_clauses()` function.
+
+#### How do I change the Monomer or Binding Site keywords?
+1. Modify the string constant "KEYWORD" in `stableconfigs/common/` `Monomer.py` or `BindingSite.py` files
+
+    Monomer.KEYWORD = ">"
+    BindingSite.KEYWORD = ":"
 
 # Citation
 

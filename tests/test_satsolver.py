@@ -7,7 +7,7 @@ class SatSolverTest(unittest.TestCase):
     def test_solve_empty_clause(self):
         sat_problem = SATProblem()
         sat_problem.constraint_clauses.append([])
-        sat_problem.solve()
+        sat_problem.solve(True)
         success = sat_problem.success
         result = sat_problem.result
 
@@ -18,7 +18,7 @@ class SatSolverTest(unittest.TestCase):
     def test_solve_single_clause(self):
         sat_problem = SATProblem()
         sat_problem.constraint_clauses.append([1])
-        sat_problem.solve()
+        sat_problem.solve(True)
         success = sat_problem.success
         result = sat_problem.result
 
@@ -31,7 +31,7 @@ class SatSolverTest(unittest.TestCase):
         sat_problem.constraint_clauses.append([1, 2, 3])
         sat_problem.constraint_clauses.append([-2])
         sat_problem.constraint_clauses.append([-3])
-        sat_problem.solve()
+        sat_problem.solve(True)
         success = sat_problem.success
         result = sat_problem.result
 
@@ -44,7 +44,7 @@ class SatSolverTest(unittest.TestCase):
         sat_problem.constraint_clauses.append([1, 2])
         sat_problem.constraint_clauses.append([-1])
         sat_problem.constraint_clauses.append([-2])
-        sat_problem.solve()
+        sat_problem.solve(True)
         success = sat_problem.success
         result = sat_problem.result
 
@@ -60,7 +60,7 @@ class SatSolverTest(unittest.TestCase):
         sat_problem.constraint_clauses.append([1, 3, 4])
         sat_problem.constraint_clauses.append([-1, 2, -3])
         sat_problem.constraint_clauses.append([2])
-        sat_problem.solve()
+        sat_problem.solve(True)
         success = sat_problem.success
         result = sat_problem.result
 

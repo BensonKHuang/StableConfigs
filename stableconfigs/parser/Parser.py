@@ -7,8 +7,6 @@ from stableconfigs.common.SiteList import SiteList
 from stableconfigs.common.CustomExceptions import *
 
 COMMENT_CHARACTER = "#"
-MONOMER_NAME_CHARACTER = ">"
-BINDING_SITE_NAME_CHARACTER = ":"
 
 def parse_monomer(tbn_problem: TBNProblem, str_line: str):
     all_sites = []
@@ -33,14 +31,14 @@ def parse_monomer(tbn_problem: TBNProblem, str_line: str):
             else:
                 token = token[:find_hash]
 
-        if token[0] == MONOMER_NAME_CHARACTER:
+        if token[0] == Monomer.KEYWORD:
             if monomer_name is not None:
                 raise MonomerMultipleNamesException(str_line)
             monomer_name = token[1:].strip()
             if len(monomer_name) == 0 or monomer_name == '':
                 raise InvalidMonomerNameException(str_line)
         else:
-            find_site_name = token.find(BINDING_SITE_NAME_CHARACTER)
+            find_site_name = token.find(BindingSite.KEYWORD)
 
             # Check ":" in beginning case
             if find_site_name == 0:

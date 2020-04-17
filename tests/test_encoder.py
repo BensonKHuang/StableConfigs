@@ -118,7 +118,6 @@ class EncoderTest(unittest.TestCase):
     def test_constraints_encoder_monomer_free(self):
         sat_problem = SATProblem()
         Encoder.encode_basic_clause(self.tbn_problem, sat_problem)
-        Encoder.encode_constraints_clauses(self.tbn_problem, sat_problem)
         self.assertEqual(len(sat_problem.constraint_clauses), 8)
         for clause in sat_problem.constraint_clauses:
             self.assertEqual(len(clause), 1)
@@ -128,7 +127,6 @@ class EncoderTest(unittest.TestCase):
         tbn_problem = parse_input_lines(self.monomer_input, constraint_input)
         sat_problem = SATProblem()
         Encoder.encode_basic_clause(tbn_problem, sat_problem)
-        Encoder.encode_constraints_clauses(tbn_problem, sat_problem)
 
         self.assertEqual(len(sat_problem.constraint_clauses), 1)
         self.assertEqual(len(sat_problem.constraint_clauses[0]), 8)
@@ -138,7 +136,6 @@ class EncoderTest(unittest.TestCase):
         tbn_problem = parse_input_lines(self.monomer_input, constraint_input)
         sat_problem = SATProblem()
         Encoder.encode_basic_clause(tbn_problem, sat_problem)
-        Encoder.encode_constraints_clauses(tbn_problem, sat_problem)
 
         self.assertEqual(len(sat_problem.constraint_clauses), 1)
         self.assertEqual(len(sat_problem.constraint_clauses[0]), 1)
@@ -148,7 +145,6 @@ class EncoderTest(unittest.TestCase):
         tbn_problem = parse_input_lines(self.monomer_input, constraint_input)
         sat_problem = SATProblem()
         Encoder.encode_basic_clause(tbn_problem, sat_problem)
-        Encoder.encode_constraints_clauses(tbn_problem, sat_problem)
 
         self.assertEqual(len(sat_problem.constraint_clauses), 1)
         self.assertEqual(len(sat_problem.constraint_clauses[0]), 1)
@@ -159,7 +155,7 @@ class EncoderTest(unittest.TestCase):
         tbn_problem = parse_input_lines(self.monomer_input, constraint_input)
         sat_problem = SATProblem()
         Encoder.encode_basic_clause(tbn_problem, sat_problem)
-        Encoder.encode_constraints_clauses(tbn_problem, sat_problem)
+
 
         self.assertEqual(len(sat_problem.constraint_clauses), 1)
         self.assertEqual(len(sat_problem.constraint_clauses[0]), 1)
@@ -173,7 +169,7 @@ class EncoderTest(unittest.TestCase):
         tbn_problem = parse_input_lines(self.monomer_input, constraint_input)
         sat_problem = SATProblem()
         Encoder.encode_basic_clause(tbn_problem, sat_problem)
-        Encoder.encode_constraints_clauses(tbn_problem, sat_problem)
+
 
         self.assertEqual(len(sat_problem.constraint_clauses), 1)
         self.assertEqual(len(sat_problem.constraint_clauses[0]), 1)
@@ -188,7 +184,7 @@ class EncoderTest(unittest.TestCase):
         tbn_problem = parse_input_lines(self.monomer_input, constraint_input)
         sat_problem = SATProblem()
         Encoder.encode_basic_clause(tbn_problem, sat_problem)
-        Encoder.encode_constraints_clauses(tbn_problem, sat_problem)
+
 
         self.assertEqual(len(sat_problem.constraint_clauses), 1)
         num_complement = tbn_problem.site_type_to_sitelist_map.get(
@@ -202,7 +198,7 @@ class EncoderTest(unittest.TestCase):
         tbn_problem = parse_input_lines(self.monomer_input, constraint_input)
         sat_problem = SATProblem()
         Encoder.encode_basic_clause(tbn_problem, sat_problem)
-        Encoder.encode_constraints_clauses(tbn_problem, sat_problem)
+
 
         num_complement = tbn_problem.site_type_to_sitelist_map.get(
             "c").get_normal_site_count()
@@ -214,9 +210,8 @@ class EncoderTest(unittest.TestCase):
         constraint_input = ["TOGETHER mon1 mon2"]
         tbn_problem = parse_input_lines(monomer_input, constraint_input)
         sat_problem = SATProblem()
-        Encoder.encode_basic_clause(tbn_problem, sat_problem)
         self.assertRaises(TogetherConstraintException,
-                          Encoder.encode_constraints_clauses, tbn_problem, sat_problem)
+                          Encoder.encode_basic_clause, tbn_problem, sat_problem)
 
     def test_constraints_encoder_not_free_constraint_exception(self):
         monomer_input = ["a >mon1",
@@ -224,9 +219,8 @@ class EncoderTest(unittest.TestCase):
         constraint_input = ["NOTFREE mon1"]
         tbn_problem = parse_input_lines(monomer_input, constraint_input)
         sat_problem = SATProblem()
-        Encoder.encode_basic_clause(tbn_problem, sat_problem)
         self.assertRaises(NotFreeConstraintException,
-                          Encoder.encode_constraints_clauses, tbn_problem, sat_problem)
+                          Encoder.encode_basic_clause, tbn_problem, sat_problem)
 
     def test_constraints_encoder_paired_constraint_exception(self):
         monomer_input = ["a:s1",
@@ -234,9 +228,8 @@ class EncoderTest(unittest.TestCase):
         constraint_input = ["PAIRED s1 s2"]
         tbn_problem = parse_input_lines(monomer_input, constraint_input)
         sat_problem = SATProblem()
-        Encoder.encode_basic_clause(tbn_problem, sat_problem)
         self.assertRaises(PairedConstraintException,
-                          Encoder.encode_constraints_clauses, tbn_problem, sat_problem)
+                          Encoder.encode_basic_clause, tbn_problem, sat_problem)
 
     def test_constraints_encoder_any_paired_constraint_exception(self):
         monomer_input = ["a:s1",
@@ -244,9 +237,8 @@ class EncoderTest(unittest.TestCase):
         constraint_input = ["ANYPAIRED s1"]
         tbn_problem = parse_input_lines(monomer_input, constraint_input)
         sat_problem = SATProblem()
-        Encoder.encode_basic_clause(tbn_problem, sat_problem)
         self.assertRaises(AnyPairedConstraintException,
-                          Encoder.encode_constraints_clauses, tbn_problem, sat_problem)
+                          Encoder.encode_basic_clause, tbn_problem, sat_problem)
 
     
     # Test additional encoder functionality

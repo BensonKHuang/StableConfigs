@@ -147,7 +147,7 @@ class SATProblem:
 			for clause in self.constraint_clauses:
 				solver.add_clause(clause)
 
-	def solve(self, constraints_flag: bool):
+	def solve(self, constraints_flag = False):
 		solver = Glucose4()
 
 		# solver = Maplesat()

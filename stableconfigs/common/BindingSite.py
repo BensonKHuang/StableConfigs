@@ -4,7 +4,7 @@
 class BindingSite:
     
     COMPLEMENT_DELIMITER = "*"
-    
+    KEYWORD = ":"
     # CONSTRUCTOR
 
     def __init__(self, tbn_problem, str_site):  # str_site = "a*", "b", etc.
@@ -29,6 +29,6 @@ class BindingSite:
         self.ParentMonomer = None
 
     def __str__(self):
-        name = (":" + self.name) if self.name != None else ""
+        name = (self.KEYWORD + self.name) if self.name != None else ""
         site_print = (self.type + "*") if self.IsComplement else self.type
         return site_print + name
