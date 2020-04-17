@@ -142,18 +142,39 @@ To have celery message broker work, you need to install redis on in your directo
 
     (backendenv) $ ./install-redis.sh 
 
-#### 4. Setup supervisor and copy all configuration files to your machine
+#### 4. Modify your server/configs/conf.d files to use your machine's absolute path
+You need to modify the following files to use your machine's absolute path. 
+Run the command to see your path: 
+
+    $ pwd
+
+- `redis.conf`:
+
+    directory={/path/to/StableConfigs/root}/server/redis-stable
+    command={/path/to/StableConfigs/root}/server/redis-stable/src/redis-server
+
+- `celeryd.conf`:
+
+    directory={/path/to/StableConfigs/root}
+    command={/path/to/virtualenv}/bin/celery -A server.tasks.celery worker --loglevel=info
+
+- `gunicornd.conf`:
+
+    directory={/path/to/StableConfigs/root}/server
+    command={/path/to/virtualenv}/bin/gunicorn -w 1 --timeout 3000 -b 0.0.0.0:5005 tasks:app
+
+#### 5. Setup supervisor and copy all configuration files to your machine
 Create the supervisor directories and copy the files over to /etc/supervisor/
 *Note: You will likely have to run with sudo permissions to create log directories*
 
     (backendenv) $ sudo ./setup-supervisor.sh 
 
-#### 5. Run supervisor daemon (on your machine)
+#### 6. Run supervisor daemon (on your machine)
 *Note: You will likely have to run with sudo permissions unless group permissions are added*
     
     (backendenv) $ supervisord /etc/supervisor/supervisord.conf
 
-#### 6. Check status of process (on your machine)
+#### 7. Check status of process (on your machine)
 *Note: You will likely have to run with sudo permissions unless group permissions are added*
 
     (backendenv) $ supervisorctl 
