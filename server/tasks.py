@@ -16,6 +16,8 @@ from stableconfigs.parser.Parser import parse_input_lines
 from stableconfigs.encoder.SATProblem import SATProblem
 from stableconfigs.common.TBNProblem import TBNProblem
 
+TIMEOUT = 90
+
 app = Flask(__name__)
 CORS(app)
 
@@ -36,8 +38,8 @@ celery.conf.worker_max_tasks_per_child = 20
 # Celery workers will restart after exceeding 150 MB (150,000 KB) of resident memory (will complete the task still)
 celery.conf.worker_max_memory_per_child = 150000
 
-# Celery Task, Raises timeout exception after 90 seconds (configurable, but soft_time_limit < time_limit < gunicorn timeout)
-@celery.task(name='tasks.compute', bind=True, time_limit=240, soft_time_limit=90, base=AbortableTask)
+# Celery Task, Raises timeout exception after 90 seconds (configurable, but soft_time_limit < time_limit)
+@celery.task(name='tasks.compute', bind=True, time_limit=TIMEOUT*2, soft_time_limit=TIMEOUT, base=AbortableTask)
 def compute(self, tbn_lines, constr_lines, gen_count, init_k):
 
     self.update_state(state="PROGRESS", meta={'status': "Progress", 'count': 0, 'k': 0})

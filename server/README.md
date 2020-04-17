@@ -3,38 +3,9 @@ We provide an API Server that can serve StableConfigs over the network.
 The default serve location is at http://localhost:5005/ 
 
 This has 3 APIs, and uses async and celery distriubted task queue to manage computations:
-    - start task:  /task POST
-    - task status: /status/<task_id> GET
-    - terminate: /terminate/<task_id> DELETE
- 
-
-## Start Server ...
-
-### Requirements
-- OSX or Unix machine 
-
-#### Create a virtual environment (from the server directory)
-    
-    $ virtualenv stableenv
-    $ source stableenv/bin/activate
-    (stableenv) $ pip install -r requirements.txt
-
-#### Install core libraries
-You need to install the stableconfigs python module (from root directory) on your machine:
-
-    (stableenv) $ python3 setup.py install
-
-#### Start Redis Server 
-    $ ./run-redis.sh
-
-#### Start Celery Broker worker
-    $ ./celery.sh
-
-#### Start gunicorn wsgi - flask server
-Gunicorn (pip3 install gunicorn) is a production-ready Python WSGI HTTTP Server. 
-To run the server with Gunicorn on your Ubuntu server:
-
-    $ ./gunicorn.sh
+- start task:  /task POST
+- task status: /status/<task_id> GET
+- terminate: /terminate/<task_id> DELETE
 
 ## API Request Body and Response Examples
 
@@ -132,3 +103,159 @@ To run the server with Gunicorn on your Ubuntu server:
 Running API tests will fail unless local server is running: 
 
     $ python3.7 -m unittest server/tests/test_api.py -v
+
+# Deployment
+
+## Tech Stack
+- Supervisor (Manages and runs all backend daemons concurrently)
+    - Gunicorn (production-ready Python WSGI HTTP Server)
+        - Flask Server
+        - StableConfigs
+    - Celery (Asynchronous Distirbuted Task Queue)
+    - Redis (Message and Results broker for Celery)
+
+### Requirements
+- OSX or Unix machine 
+- Python >= 3.5
+
+## Start Server locally ...
+
+#### 1. Create a virtual environment
+    
+    $ python3 -m venv ~/backendenv
+    $ source ~/backendenv/bin/activate
+
+    (backendenv) $ pip3 install -r server/requirements.txt
+
+*Note: To Deactivate and exit virtual environment:*
+
+    (backendenv) $ deactivate
+    $
+
+#### 2. Install core libraries
+You need to install the stableconfigs python module (from root directory) on your machine:
+
+    (backendenv) $ python3 setup.py install
+
+#### 3. Install redis source
+To have celery message broker work, you need to install redis on in your directory
+
+    (backendenv) $ ./install-redis.sh 
+
+#### 4. Setup supervisor and copy all configuration files to your machine
+Create the supervisor directories and copy the files over to /etc/supervisor/
+*Note: You will likely have to run with sudo permissions to create log directories*
+
+    (backendenv) $ sudo ./setup-supervisor.sh 
+
+#### 5. Run supervisor daemon (on your machine)
+*Note: You will likely have to run with sudo permissions unless group permissions are added*
+    
+    (backendenv) $ supervisord /etc/supervisor/supervisord.conf
+
+#### 6. Check status of process (on your machine)
+*Note: You will likely have to run with sudo permissions unless group permissions are added*
+
+    (backendenv) $ supervisorctl 
+    supervisor> 
+    
+    #or
+
+    (backendenv) $ supervisorctl <command>
+
+Supervisor commands:
+
+    supervisor> status 
+    celery                           RUNNING   pid 53638, uptime 0:02:08
+    gunicorn                         RUNNING   pid 53639, uptime 0:02:08
+    redis                            RUNNING   pid 53637, uptime 0:02:08
+
+Daemon statuses:
+
+    supervisor> status <program_name>
+    celery                           RUNNING   pid 53638, uptime 0:02:12
+
+Restart processes:
+    
+    supervisor> restart <program_name>
+
+    supervisor> restart celery
+    celery: stopped
+    celery: started
+
+Reload entire supervisor daemon:
+
+    supervisor> reload
+    Really restart the remote supervisord process y/N? y
+    Restarted supervisord
+
+Shutdown server completely:
+
+    supervisor> shutdown
+
+More information on supervisorctl: 
+
+    supervisor> help 
+
+## Deploying with Supervisor on a Server
+
+#### 0. Check if you can start the server locally using the previous instructions 
+- Create your python virtual environment 
+- Install the core library
+- Install the Redis Broker
+
+#### 1. Add user group
+Assuming you are deploying to a unix environment, we should not deploy with sudo permissions.
+We should crearte a user group and set appropriate permissions in our .conf files (commented out)
+
+    $ groupadd supervisor
+    $ usermod -a <your-username> -G supervisor
+
+To find your username (on Linux), you can run:
+
+    $ whoami
+
+Relog into your server to propagate user groups (so new group membership takes effect).
+
+#### 2. Edit configuration files
+Edit the server/configs/supervisord.conf file:
+
+    [unix_http_server]
+    file=/var/run/supervisor.sock ; (the path to the socket file)
+    chmod=0770 ; socket file mode (default 0700)
+    chown=root:supervisor
+
+#### 3. Setup supervisor and copy all configuration files to your machine
+
+    (backendenv) $ sudo ./setup-supervisor.sh
+
+#### 4. Run supervisor daemon or reload SupervisorCTL
+
+    (backendenv) $ supervisorctl reload
+
+
+## FAQ (for deployment)
+
+#### What is general flow of API? 
+1. `POST /task request` with appropriate request format, which will return you <task_id>
+2. `GET /status/<task_id>` will return you status of computation or results if finished
+3. `DELETE /terminate/<task_id>` will terminate the computation if it is currently in progress
+
+#### How do I change timeout?
+Go to the tasks.py file and change the `TIMEOUT` flag to whatever integer seconds (Currently set to 90)
+
+#### How do I persist results longer?
+Currently the default of the redis backend results is set to 300 seconds. 
+Go to the tasks.py file and change the `celery.conf.result_expires = 300` to a greater number
+
+#### If the website is currently in deployment and I want to make a change, what do I do?
+1. After updating the code, check if all tests are passing:
+    
+    $ cd tests
+    $ python3 -m unittest discover -v
+
+2. After confirming your change, run `python3 setup.py install` in your python virtual environment (will update the build/ folder):
+
+3. Reload your supervisor daemon:
+
+    $ supervisorctl reload
