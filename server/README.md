@@ -280,3 +280,10 @@ Go to the tasks.py file and change the `celery.conf.result_expires = 300` to a g
 3. Reload your supervisor daemon:
 
     $ supervisorctl reload
+
+#### The Supervisor process is sort of messed up. How can I stop the process ...?
+
+You can print out the supervisor daemon processes here and manually kill them:
+
+    $ ps -ef | grep supervisor
+    $ pkill -9 <pid>
