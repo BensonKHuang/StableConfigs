@@ -278,6 +278,12 @@ Go to the tasks.py file and change the `TIMEOUT` flag to whatever integer second
 Currently the default of the redis backend results is set to 300 seconds. 
 Go to the tasks.py file and change the `celery.conf.result_expires = 300` to a greater number
 
+#### If the server is shutdown and I want to redeploy, what do I do?
+If your server resets, autorestart is not currently enabled.
+To start the server again, simply run `(backendenv) $ supervisord /etc/supervisor/supervisord.conf`
+
+You can enable autorestart by changing each conf.d/*.conf file by adding the `autorestart=true` flag
+
 #### If the website is currently in deployment and I want to make a change, what do I do?
 1. After updating the code, check if all tests are passing:
     
