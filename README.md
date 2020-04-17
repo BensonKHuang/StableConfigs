@@ -8,7 +8,7 @@ Python tool to generate Stable Configurations of Monomers by reducing the proble
 
 #### System Requirements for Command Line Tool and Native installation
 + POSIX-compliant operating system (Linux or MacOS environment) 
-+ python3.6 or higher
++ python3.4 or higher
 + pip3 (Python Package Installer for Python 3)
 
 Docker instructions are also specified in [Docker Usage](#docker-usage) section.
@@ -16,6 +16,7 @@ Docker instructions are also specified in [Docker Usage](#docker-usage) section.
 # Installation instructions
 
 Install the requirements (needed for Command Line Tool):
+If first time installing python-sat, might take a few minutes:
 
     $ pip3 install -r requirements.txt
 
@@ -24,7 +25,7 @@ Install the requirements (needed for Command Line Tool):
     $ python3 setup.py build
     $ python3 setup.py install
 
-*Use a virtual environment (virtualenv) or add "--user" flag if working on personal environment to end of commands*
+*Use a virtual environment `python3 -m venv env` or add "--user" flag if working on personal environment to end of commands*
 
 
 ## Python Usage (import in project)

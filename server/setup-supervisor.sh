@@ -1,4 +1,9 @@
 #!/bin/bash
+
+# Change these values to fit your machine's absolute path
+SRC_DIR=/Users/BensonHuang/Code/StableConfigs
+VENV_DIR=/Users/BensonHuang/backendenv
+
 # Add supervisor directory if doesn't exist 
 if [ ! -d /etc/supervisor ]; then
     mkdir /etc/supervisor
@@ -14,8 +19,11 @@ if [ ! -d /var/log/supervisor ]; then
     mkdir /var/log/supervisor
 fi
 
-# Copy primary supervisor conf file
-cp configs/supervisord.conf /etc/supervisor/
+# Modify the configuration file to use your Path
+# Cannot do environment variables in supervisord.conf file 
+sed -i "s/SRC_DIR/$SRC_DIR/g" supervisord.conf
+sed -i "s/VENV_DIR/$VENV_DIR/g" supervisord.conf
 
-# Copy program supervisor conf files
-cp configs/conf.d/*.conf /etc/supervisor/conf.d/
+
+# Copy primary supervisor conf file
+cp supervisord.conf /etc/supervisor/

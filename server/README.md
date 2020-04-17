@@ -129,11 +129,12 @@ Running API tests will fail unless local server is running:
 
 ## Start Server locally ...
 
-#### 1. Create a virtual environment
+#### 1. Create a virtual environment and download environment libraries/binaries
     
     $ python3 -m venv ~/backendenv
     $ source ~/backendenv/bin/activate
 
+    (backendenv) $ pip3 install --upgrade pip
     (backendenv) $ pip3 install -r server/requirements.txt
 
 *Note: To Deactivate and exit virtual environment:*
@@ -176,22 +177,27 @@ Run the command to see your path:
 Create the supervisor directories and copy the files over to /etc/supervisor/
 *Note: You will likely have to run with sudo permissions to create log directories*
 
-    (backendenv) $ sudo ./setup-supervisor.sh 
+    (backendenv) $ sudo ./setup-supervisor.sh
+
+*Note: If you have to use sudo, you should instead grant user write permissions to the following directories*
+
+- /var/log/supervisor/
+- /etc/supervisor/
 
 #### 6. Run supervisor daemon (on your machine)
-*Note: You will likely have to run with sudo permissions unless group permissions are added*
+*Note: You will likely have to run with sudo permissions permissions*
     
-    (backendenv) $ supervisord /etc/supervisor/supervisord.conf
+    (backendenv) $ sudo ~/backendenv/bin/supervisord -c /etc/supervisor/supervisord.conf
 
 #### 7. Check status of process (on your machine)
 *Note: You will likely have to run with sudo permissions unless group permissions are added*
 
-    (backendenv) $ supervisorctl 
+    (backendenv) $ sudo ~/backendenv/bin/supervisorctl 
     supervisor> 
     
     #or
 
-    (backendenv) $ supervisorctl <command>
+    (backendenv) $ ~/backendenv/bin/supervisorctl <command>
 
 Supervisor commands:
 
@@ -234,18 +240,11 @@ More information on supervisorctl:
 - Install the core library
 - Install the Redis Broker
 
-#### 1. Add user group
-Assuming you are deploying to a unix environment, we should not deploy with sudo permissions.
-We should crearte a user group and set appropriate permissions in our .conf files (commented out)
+#### 1. Add user groups
+Assuming you are deploying to a unix environment, we should not deploy with root.
+The current .conf files in this repository do not reflect this, and should be changed according to the use case.
 
-    $ groupadd supervisor
-    $ usermod -a <your-username> -G supervisor
-
-To find your username (on Linux), you can run:
-
-    $ whoami
-
-Relog into your server to propagate user groups (so new group membership takes effect).
+In the supervisord.conf file, uncomment `; user={username}`, providing an appropriate username with non-root permissions
 
 #### 2. Edit configuration files
 Edit the server/configs/supervisord.conf file:
