@@ -66,6 +66,15 @@ This has 3 APIs, and uses async and celery distriubted task queue to manage comp
 }
 ```
 
+**status_code 203** : Try Again
+```json
+{
+    "status": "Progress",
+    "count": "{current_configuration_number}",
+    "k": "{current_min_polymer_k}"
+}
+```
+
 **status_code 400** : Time Out
 ```json
 {
@@ -280,6 +289,11 @@ Go to the tasks.py file and change the `celery.conf.result_expires = 300` to a g
 3. Reload your supervisor daemon:
 
     $ supervisorctl reload
+
+#### Why isn't supervisord working? 
+
+You might have a supervisord instance already running. Supervisor manages one configuration file only, which is default to supervisord.conf
+Check if you have an instance running using: `sudo supervisorctl status`
 
 #### The Supervisor process is sort of messed up. How can I stop the process ...?
 

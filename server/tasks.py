@@ -120,11 +120,12 @@ def taskstatus(task_id):
     task = compute.AsyncResult(task_id)
     
     # Complete
-    if task.ready():
-
+    if task.ready() or task.state == states.SUCCESS:
         # Unexpected exception / Empty result / Server error
         if task.result is None or isinstance(task.result, Exception):
-            return jsonify(task.result), 402
+            response = jsonify(task.result)
+            task.forget()
+            return response, 402
 
         # Succeed
         elif task.result["status"] == "Completed":
@@ -147,7 +148,9 @@ def taskstatus(task_id):
         return jsonify(task.info), 202
 
     else:
-        return jsonify(str(task.info)), 404
+        # There is a race issue, where the results available right after calling task.ready().
+        # Return a 203 to signal user to try again (!!!)
+        return jsonify("Please GET /status of task again."), 203
 
 
 
