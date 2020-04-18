@@ -109,7 +109,7 @@ This has 3 APIs, and uses async and celery distriubted task queue to manage comp
 
 ## Testing API
 
-Running API tests will fail unless local server is running: 
+Running API tests will fail unless a local server is running: 
 
     $ python3.7 -m unittest server/tests/test_api.py -v
 
@@ -127,91 +127,99 @@ Running API tests will fail unless local server is running:
 - OSX or Unix machine 
 - Python >= 3.5
 
-## Start Server locally ...
+## First Steps to setup build files for deployment:
 
 #### 1. Create a virtual environment and download environment libraries/binaries
     
-    $ python3 -m venv ~/backendenv
-    $ source ~/backendenv/bin/activate
+    $ python3 -m venv ~/env
+    $ source ~/env/bin/activate
 
-    (backendenv) $ pip3 install --upgrade pip
-    (backendenv) $ pip3 install -r server/requirements.txt
+    (env) $ pip3 install --upgrade pip
+    (env) $ pip3 install -r server/requirements.txt
 
 *Note: To Deactivate and exit virtual environment:*
 
-    (backendenv) $ deactivate
-    $
+    (env) $ deactivate
 
 #### 2. Install core libraries
 You need to install the stableconfigs python module (from root directory) on your machine:
 
-    (backendenv) $ python3 setup.py install
+    (env) $ python3 setup.py install
 
 #### 3. Install redis source
 To have celery message broker work, you need to install redis on in your directory
 
-    (backendenv) $ ./install-redis.sh 
+    (env) $ ./install-redis.sh 
 
-#### 4. Modify your server/configs/conf.d files to use your machine's absolute path
+## [Option 1] Start Server Manually without Supervisor
+If you want to quickly run the processes locally, you can simply run the following command line commands. 
+This is not a good long term solution, as it doesn't daemonize (detach from shell) the processes. 
+
+##### 1. Start the Redis Server
+
+    (env) $ server/redis-stable/src/redis-server
+
+##### 2. Start the Celery Worker
+Run the code from root directory
+
+    (env) $ celery -A server.tasks.celery worker --loglevel=info
+
+##### 3. Start the Gunicorn Worker
+    (env) $ cd server/
+    (env) $ gunicorn -w 1 --timeout 3000 -b 0.0.0.0:5005 tasks:app
+
+## [Option 2] Start Server Locally with Supervisor Daemon for Production Deployment ...
+You will want to start the server locally with supervisor for much faster development speed and actual deployment.
+Supervisor will daemonize all the (above) redis, celery, and gunicorn processes, which will be managed by your OS.
+
+#### 1. Modify your codemod script to use your machine's absolute path
 You need to modify the following files to use your machine's absolute path. 
-Run the command to see your path: 
+In the file `setup-supervisor.sh`, modify the $SRC_DIR and $VENV_DIR variables to point to your machine's absolute path.
 
-    $ pwd
+    # Change these values to fit your machine's absolute path for source directory and virtual env path 
+    SRC_DIR="/path/to/StableConfigs"
+    VENV_DIR="/path/to/env"
 
-- `redis.conf`:
-
-    directory={/path/to/StableConfigs/root}/server/redis-stable
-    command={/path/to/StableConfigs/root}/server/redis-stable/src/redis-server
-
-- `celeryd.conf`:
-
-    directory={/path/to/StableConfigs/root}
-    command={/path/to/virtualenv}/bin/celery -A server.tasks.celery worker --loglevel=info
-
-- `gunicornd.conf`:
-
-    directory={/path/to/StableConfigs/root}/server
-    command={/path/to/virtualenv}/bin/gunicorn -w 1 --timeout 3000 -b 0.0.0.0:5005 tasks:app
-
-#### 5. Setup supervisor and copy all configuration files to your machine
-Create the supervisor directories and copy the files over to /etc/supervisor/
+#### 2. Setup supervisor and copy all configuration files to your machine
+Create the supervisor directories, update paths in supervisord.conf files, and copies file over to /etc/supervisor/
 *Note: You will likely have to run with sudo permissions to create log directories*
 
-    (backendenv) $ sudo ./setup-supervisor.sh
+    (env) $ sudo ./setup-supervisor.sh
 
 *Note: If you have to use sudo, you should instead grant user write permissions to the following directories*
 
 - /var/log/supervisor/
 - /etc/supervisor/
 
-#### 6. Run supervisor daemon (on your machine)
+#### 3. Run supervisor daemon (on your machine)
 *Note: You will likely have to run with sudo permissions permissions*
     
-    (backendenv) $ sudo ~/backendenv/bin/supervisord -c /etc/supervisor/supervisord.conf
+    (env) $ sudo ~/env/bin/supervisord -c /etc/supervisor/supervisord.conf
 
-#### 7. Check status of process (on your machine)
+#### 4. Check status of processes (on your machine)
 *Note: You will likely have to run with sudo permissions unless group permissions are added*
 
-    (backendenv) $ sudo ~/backendenv/bin/supervisorctl 
-    supervisor> 
-    
-    #or
+Enter supervisor mode:
 
-    (backendenv) $ ~/backendenv/bin/supervisorctl <command>
+    (env) $ sudo ~/env/bin/supervisorctl 
+    supervisor> <command>
 
-Supervisor commands:
+    # EQUIVALENT COMMAND: 
+    (env) $ ~/env/bin/supervisorctl <command>
 
-    supervisor> status 
+*status* - Supervisor Status for all processes:
+
+    supervisor> status
     celery                           RUNNING   pid 53638, uptime 0:02:08
     gunicorn                         RUNNING   pid 53639, uptime 0:02:08
     redis                            RUNNING   pid 53637, uptime 0:02:08
 
-Daemon statuses:
+*status <program_name>* - Daemon statuses:
 
-    supervisor> status <program_name>
+    supervisor> status celery
     celery                           RUNNING   pid 53638, uptime 0:02:12
 
-Restart processes:
+*restart <program_name>* - Restart process:
     
     supervisor> restart <program_name>
 
@@ -219,49 +227,25 @@ Restart processes:
     celery: stopped
     celery: started
 
-Reload entire supervisor daemon:
+*reload* - Reload entire supervisor daemon and processes:
 
     supervisor> reload
     Really restart the remote supervisord process y/N? y
     Restarted supervisord
 
-Shutdown server completely:
+*shutdown* - Shutdown server completely:
 
     supervisor> shutdown
 
-More information on supervisorctl: 
+*help* - More information on supervisorctl: 
 
     supervisor> help 
 
-## Deploying with Supervisor on a Server
-
-#### 0. Check if you can start the server locally using the previous instructions 
-- Create your python virtual environment 
-- Install the core library
-- Install the Redis Broker
-
-#### 1. Add user groups
-Assuming you are deploying to a unix environment, we should not deploy with root.
-The current .conf files in this repository do not reflect this, and should be changed according to the use case.
-
-In the supervisord.conf file, uncomment `; user={username}`, providing an appropriate username with non-root permissions
-
-#### 2. Edit configuration files
-Edit the server/configs/supervisord.conf file:
-
-    [unix_http_server]
-    file=/var/run/supervisor.sock ; (the path to the socket file)
-    chmod=0770 ; socket file mode (default 0700)
-    chown=root:supervisor
-
-#### 3. Setup supervisor and copy all configuration files to your machine
-
-    (backendenv) $ sudo ./setup-supervisor.sh
-
-#### 4. Run supervisor daemon or reload SupervisorCTL
-
-    (backendenv) $ supervisorctl reload
-
+#### 5. (Optional) Tips for Production
+While not covered in this documentation, for proper deployment, you should use appropriate deployment techniques, including:
+1. Setting up user groups/permissions with supervisor (not running with root)
+2. Setting up a proxy server such as nginx to prevent DDoS and other security features
+3. Dockerize this workflow for faster container deployment 
 
 ## FAQ (for deployment)
 
@@ -279,7 +263,7 @@ Go to the tasks.py file and change the `celery.conf.result_expires = 300` to a g
 
 #### If the server is shutdown and I want to redeploy, what do I do?
 If your server resets, autorestart is not currently enabled.
-To start the server again, simply run `(backendenv) $ supervisord /etc/supervisor/supervisord.conf`
+To start the server again, simply run `(env) $ ~/env/bin/supervisord /etc/supervisor/supervisord.conf`
 
 You can enable autorestart by changing each conf.d/*.conf file by adding the `autorestart=true` flag
 
@@ -297,8 +281,13 @@ You can enable autorestart by changing each conf.d/*.conf file by adding the `au
 
 #### Why isn't supervisord working? 
 
-You might have a supervisord instance already running. Supervisor manages one configuration file only, which is default to supervisord.conf
-Check if you have an instance running using: `sudo supervisorctl status`
+1. You might have a supervisord instance already running. Supervisor manages one configuration file only, which is default to supervisord.conf.
+    - Check if you have an instance running using: `sudo supervisorctl status`
+
+2. You may have set up false paths from your script. The `setup-supervisor.sh` script simply creates the directories and codemods the configuration file.
+
+3. Check the logs in /var/log/supervisor/ for information regarding specific processes. 
+
 
 #### The Supervisor process is sort of messed up. How can I stop the process ...?
 
