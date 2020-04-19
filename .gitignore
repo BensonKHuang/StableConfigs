@@ -9,4 +9,5 @@ build/
 *.egg-info
 dist/
 server/redis-stable
+server/setup-supervisor.sh
 server/supervisord.conf
