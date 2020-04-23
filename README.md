@@ -62,7 +62,7 @@ The input file to solve tbn problems is as follows:
 
 ## Additional Feature Constraints (constraints.txt)
 
-In the construction file (the second argument), you can provide constraints to check additional properties
+In the construction file (the second argument), you can provide constraints to check additional properties. You need to use the exact keyword for the constraint to be registered.
 
 #### TOGETHER
 

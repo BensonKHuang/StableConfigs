@@ -80,8 +80,7 @@ def parse_monomer(tbn_problem: TBNProblem, str_line: str):
 
 
 def parse_constraint(tbn_problem: TBNProblem, str_line: str):
-    str_line = str_line.strip()
-    tokens = str_line.split(' ')
+    tokens = str_line.split()
 
     c_type = None
     arguments = list()  # For the most part, these are monomer names.
