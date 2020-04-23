@@ -9,12 +9,12 @@ class EmptyProblemException(TBNException):
         return "Input contains no monomers."
 
 
-class InvalidMonomerNameException(TBNException):
+class EmptyMonomerNameException(TBNException):
     def __init__(self, str_line):
         self.str_line = str_line
 
     def __str__(self):
-        return "Invalid Monomer name. '" + self.str_line + "'"
+        return "Empty Monomer name. '" + self.str_line + "'. Note that any whitespace after the monomer name keyword is ignored."
 
 
 class InvalidBindingSiteNameException(TBNException):

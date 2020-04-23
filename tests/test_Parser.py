@@ -222,7 +222,7 @@ class ParserTest(unittest.TestCase):
     # Constraints Parsing Exception Handling
     def test_invalid_monomer_name_exception(self):
         monomer_input = ["a >"]
-        self.assertRaises(InvalidMonomerNameException,
+        self.assertRaises(EmptyMonomerNameException,
                           parse_input_lines, monomer_input, [])
 
     def test_invalid_bsite_name_exception(self):

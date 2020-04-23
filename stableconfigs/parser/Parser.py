@@ -33,7 +33,7 @@ def parse_monomer(tbn_problem: TBNProblem, str_line: str):
         if token[0] == Monomer.KEYWORD:
             monomer_name = token[1:].strip()
             if len(monomer_name) == 0 or monomer_name == '':
-                raise InvalidMonomerNameException(str_line)
+                raise EmptyMonomerNameException(str_line)
             # Monomer name is the last token
             break
         else:
