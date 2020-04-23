@@ -240,11 +240,6 @@ class ParserTest(unittest.TestCase):
         self.assertRaises(InvalidBindingSiteNameException,
                           parse_input_lines, monomer_input, [])
 
-    def test_monomer_muliple_name_exception(self):
-        monomer_input = ["a >m1 >m2"]
-        self.assertRaises(MonomerMultipleNamesException,
-                          parse_input_lines, monomer_input, [])
-
     def test_nonexistent_monomer_exception(self):
         monomer_input = ["a"]
         constraint_input = ["FREE mon1"]

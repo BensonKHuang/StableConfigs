@@ -9,13 +9,6 @@ class EmptyProblemException(TBNException):
         return "Input contains no monomers."
 
 
-class MonomerMultipleNamesException(TBNException):
-    def __init__(self, str_line):
-        self.str_line = str_line
-    def __str__(self):
-        return "Monomer given multiple names. '" + self.str_line + "'"
-
-
 class InvalidMonomerNameException(TBNException):
     def __init__(self, str_line):
         self.str_line = str_line

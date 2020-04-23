@@ -10,15 +10,14 @@ COMMENT_CHARACTER = "#"
 
 def parse_monomer(tbn_problem: TBNProblem, str_line: str):
     all_sites = []
-    str_line = str_line.strip()
-    tokens = str_line.split(' ')
+    tokens = str_line.split()
 
     monomer_name = None
     for token in tokens:
         
-        # Ignore empty lines
+        # Ignore empty tokens
         if token is "":
-            break
+            continue
 
         # Check "*" in beginning case
         if token[0] == BindingSite.COMPLEMENT_DELIMITER:
@@ -32,11 +31,11 @@ def parse_monomer(tbn_problem: TBNProblem, str_line: str):
                 token = token[:find_hash]
 
         if token[0] == Monomer.KEYWORD:
-            if monomer_name is not None:
-                raise MonomerMultipleNamesException(str_line)
             monomer_name = token[1:].strip()
             if len(monomer_name) == 0 or monomer_name == '':
                 raise InvalidMonomerNameException(str_line)
+            # Monomer name is the last token
+            break
         else:
             find_site_name = token.find(BindingSite.KEYWORD)
 
