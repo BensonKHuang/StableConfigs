@@ -16,7 +16,7 @@ def parse_monomer(tbn_problem: TBNProblem, str_line: str):
     for token in tokens:
         
         # Ignore empty tokens
-        if token is "":
+        if token == "":
             continue
 
         # Check "*" in beginning case
