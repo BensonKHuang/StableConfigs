@@ -9,11 +9,13 @@ services:
       - "5005:5005"
     depends_on:
       - redis
+    restart: unless-stopped
 
   redis:
     image: "redis:alpine"
     ports:
       - "6379:6379"
+    restart: unless-stopped
 
   worker:
     build: 
@@ -22,3 +24,4 @@ services:
     command: celery -A server.tasks.celery worker --loglevel=info
     depends_on:
       - redis
+    restart: unless-stopped
