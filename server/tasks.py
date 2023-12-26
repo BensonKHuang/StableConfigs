@@ -22,8 +22,13 @@ app = Flask(__name__)
 CORS(app)
 
 # Celery configuration
-app.config['broker_url'] = 'redis://localhost:6379/0'
-app.config['result_backend'] = 'redis://localhost:6379/0'
+# app.config['broker_url'] = 'redis://localhost:6379/0'
+# app.config['result_backend'] = 'redis://localhost:6379/0'
+##  For Docker (DS):
+app.config['broker_url'] = 'redis://redis:6379/0'
+app.config['result_backend'] = 'redis://redis:6379/0'
+
+
 celery = Celery(
     app.name,
     broker=app.config['broker_url']

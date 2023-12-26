@@ -1,0 +1,26 @@
+##### Dockerize the Server ######
+# created by DS
+
+# Use an official Python runtime as a parent image
+FROM python:3.12.1
+
+# Set the working directory in the container
+WORKDIR /usr/src/app
+
+# Copy everything into the container at /usr/src/app
+COPY . .
+
+# Install any needed packages specified in requirements.txt
+RUN pip install --no-cache-dir -r server/requirements.txt
+
+# Install your application
+RUN python setup.py install
+
+# Make port 5005 available to the world outside this container
+EXPOSE 5005
+
+# Define environment variable
+ENV NAME World
+
+# Run gunicorn when the container launches
+CMD ["gunicorn", "-w", "1", "--timeout", "3000", "-b", "0.0.0.0:5005", "server.tasks:app"]
