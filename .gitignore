@@ -11,3 +11,4 @@ dist/
 server/redis-stable
 server/setup-supervisor.sh
 server/supervisord.conf
+dump.rdb
